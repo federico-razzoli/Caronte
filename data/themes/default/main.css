@@ -1,0 +1,177 @@
+/*
+ *    Frame Principale
+ *    ================
+ */
+
+/*    >> BOX <<
+*/
+
+/* page = window */
+div[id], body, html
+{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+/* main & auxiliary boxes */
+div[id]
+{
+	overflow: auto;
+	clear:right;
+	width: 82%;
+}
+
+/* menu */
+div#boxMenu
+{
+	float: left;
+	width: 15%;
+	padding-left: 1%;
+	padding-right: 1%;
+	background-color: #cccc88;
+}
+
+/* main box */
+div#boxMain
+{
+	float: left;
+	display: block;
+	padding-left: 1%;
+}
+
+/* auxiliary box titles */
+div.boxAux h1
+{
+	color:black;
+	text-align: center;
+	font-family: arial;
+	font-size: 14px;
+	line-height: 150%;
+}
+
+
+/*    >> MENU <<
+*/
+
+div#boxMenu A:link, div#boxMenu A:visited
+{
+	color: #330000;
+}
+
+div#boxMenu A:hover, div#boxMenu A:active
+{
+	color: white;
+	background-color: black;
+}
+
+div#boxMenu A
+{
+	display:block;
+	font-size: 14px;
+	line-height:16px;
+	font-family: "Times New Roman", Times, Serif;
+}
+
+div#boxMenu HR
+{
+	width:50%;
+	margin:0 auto;
+	padding:0;
+}
+
+/* menu section */
+div#boxMenu DIV
+{
+	width:100%;
+	height:auto;
+	margin-top:16px; /* equal to buttons line-height */
+}
+
+/* menu section title */
+div#boxMenu .sectionTitle
+{
+	color:#000000;
+	display:block;
+	font-size: 14px;
+	font-weight:bold;
+	line-height:16px;
+	font-family: Arial;
+	margin:0 auto;
+	text-align:center;
+}
+
+/*    >> TAG <<
+*/
+
+A {
+	text-decoration: none;
+}
+A:link, A:visited {
+	color: blue;
+}
+A:hover, A:active {
+	color: red;
+}
+
+UL {
+	padding: 0;
+	margin: 0;
+	padding-left: 3%;
+	list-style-image:url("img/ul.gif");
+}
+
+LI {
+	margin-left: 0;
+}
+
+H1 {
+	text-align: center;
+	font-family: "Times New Roman", freeSerif, BitstreamVera;
+	font-size: 32px;
+	/*color: #2222FF;*/
+	color: green;
+	margin-bottom:10px;
+}
+
+H2 {
+	text-align: center;
+	font-family : Verdana, "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	color: #444444;
+	margin-top:0px;
+	margin-bottom:0px;
+}
+
+P {
+	font-family: "Times New Roman", freeSerif, BitstreamVera;
+	font-size: 15px;
+	color: black;
+}
+
+
+/*    >> STILI <<
+*/
+
+/* Evidenzia un paragrafo intero */
+.evidFrase {
+	font-size: 18px;
+	font-style: italic;
+	color: green;
+	margin-left:5%;
+}
+
+/* Evidenzia una singola parola all'interno di un paragrafo */
+.evidParola {
+	font-weight: bold;
+	color: red;
+}
+
+/* Libri, pergamene, filastrocche... */
+.libro
+{
+	font-style:italic;
+	padding-left:2%;
+}
+

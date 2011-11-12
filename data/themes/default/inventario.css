@@ -1,0 +1,20 @@
+/*
+ *    Frame Inventario
+ *    ================
+ */
+
+A {
+	text-decoration: none;
+	font-family: Arial, Helvetica, "Nimbus Sans L", "Liberation Sans", FreeSans, Sans-serif;
+	font-size: 14px;
+}
+A:hover {
+	font-weight: bold;
+}
+
+.titolo {
+	text-align: center;
+	font-family: Arial, Helvetica, "Nimbus Sans L", "Liberation Sans", FreeSans, Sans-serif;
+	font-weight: bold;
+	font-size: 14px;
+}
