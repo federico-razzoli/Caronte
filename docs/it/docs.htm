@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Documentazione IDRA</title>
+  </head>
+  <body>
+    <h1>Documentazione di IDRA 2</h1>
+    IDRA 2 si basa su IDRA, di Enrico Colombini.<br>
+    <h2>Creare un'estensione</h2>
+    Segue la documentazione dell'API.<br>
+    <h3>API</h3>
+    <h4>Classe queue()</h4>
+    <div style="margin-left: 40px;">La classe queue() &egrave; stata
+      creata per uso interno, ma potrebbe risultare utile alle
+      estensioni che interagiscono con altre estensioni o fanno un uso
+      intensivo degli eventi del DOM.<br>
+    </div>
+    <br>
+    Quando si caricano dinamicamente diverse librerie, si usano gli
+    eventi del DOM o i timeout di JavaScript, non &egrave; sempre facile
+    stabilire l'ordine di esecuzione delle varie porzioni di codice. In
+    alcuni casi potrebbe addirittura dipendere dal browser, anche se non
+    abbiamo notizie certe in proposito. Un buon approfondimento &egrave;
+    l'articolo <a
+      href="http://ejohn.org/blog/how-javascript-timers-work/">How
+      JavaScript Timers Work</a>, di John Resig.<br>
+    <br>
+    queue() permette di eseguire un'istruzione specificata soltanto
+    quando si saranno verificate le condizioni necessarie per la sua
+    esecuzione. Le condizioni vengono passate da programma sottoforma di
+    stringa e possono essere di due tipi:<br>
+    <ul>
+      <li>Nome di un oggetto: quando l'oggetto sar&agrave; caricato
+        (cio&egrave; non sar&agrave; undefined) la condizione
+        sar&agrave; vera;</li>
+      <li>Espressione booleana: quando l'espressione non
+        restituir&agrave; false, la condizione sar&agrave; vera.<br>
+      </li>
+    </ul>
+    Le condizioni vanno passate in un unico array. Se la condizione
+    &egrave; una sola, non &egrave; necessario che si trovi in un array.
+    Se viene passato un array vuoto o il valore null, l'istruzione
+    verr&agrave; eseguita senza aspettare (nessuna condizione &egrave;
+    stata specificata).<br>
+    <br>
+    Esempi:<br>
+    <br>
+    queue.add("alert('extExample &egrave; caricato')",
+    "plugins.get('extExample')");<br>
+    queue.add("alert('extExample &egrave; caricato')",
+    ["plugins.get('extExample')"]);<br>
+    queue.add("plugins.get('extExample').faiQualcosa()",
+    ["plugins.get('extExample')",
+    "?plugins.get('extEsempio').isReady"]);<br>
+    queue.add("alert('Odio aspettare!')", []);<br>
+    queue.add("alert('Odio aspettare!')");<br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

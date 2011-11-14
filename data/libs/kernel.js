@@ -8,10 +8,24 @@
  *    MetaInfo
  */
 
-var idra        = new Object()
-idra.versione   = "2.0"
-idra.data       = "2011"
-idra.copyright  = "2000 Enrico Colombini\n2011 Federico Razzoli"
+var SW = new Object()
+
+SW.info =
+{
+	name        : "IDRA - Ipertesto Dinamico per Racconti d'Avventura",
+	url         : ["https://github.com/santec/IDRA Progetto su GitHub",
+	               "http://www.erix.it/idra.html Il vecchio sito ufficiale"],
+	version     : "2.0.1",
+	maturity    : "Sviluppo",
+	date        : "2011",
+	license     : "GPLv2",
+	licenseURL  : "https://www.gnu.org/licenses/gpl-2.0.html",
+	author      : "Federico Razzoli",
+	contacts    : "santec [At) riseup [Dot' net",
+	copyright   : "2000 Enrico Colombini\n2011 Federico Razzoli",
+	descr       : "Una versione rivisitata di IDRA, un framework per giochi d'avventura scritto da Enrico Colombini.",
+	notes       : ""
+};
 
 
 /*
@@ -34,6 +48,8 @@ var durataCookie       = 365;          // giorni
 
 var boxMain = gui.createArea("boxMain", "box");
 gui.draw();
+
+var menu = new menuHandler("boxMenu");
 
 
 /*
@@ -62,13 +78,16 @@ var eventi = new Object;
 // Intestazione(pag) se esiste, pag(), PiePagina(pag) se esiste,
 // prima di mostrare la pagina salva la situazione in statoPrecedente
 
-function vai(pag) {
+function vai(pag)
+{
 	qui = pag; // ricorda la pagina
 	statoPrecedente = creaStringaStato(); //situazione prima di eseguire la pagina
 	apriPagina();
+	events.exec("PageBegin");
 	if (window.header) header(pag);
 	pag(); //scrive la pagina
 	if (window.footer) footer(pag);
+	events.exec("PageEnd");
 	chiudiPagina();
 }
 
@@ -254,7 +273,6 @@ function continua(p1, p2, p3) {
 
 function apriPagina(opzioni, stylesheet)
 {
-//	idPagina++; //assegna un ID univoco
 	nscelte = 0; // reset contatore scelte
 }
 
@@ -327,15 +345,99 @@ function levaSpaziAttorno(s) {
 // ===== Avvio, riavvio e informazioni  =====================================
 
 
-function gioca()
+function infoMenu()
 {
-	qui = null; //non e' aperta nessuna pagina
-	v = new Object(); //rialloca per evitare dati 'dimenticati' se riparte
+	var secInfo = menu.addSection("secInfo", "Info su...", "Informazioni sui software in uso");
+	secInfo.addButton("bttInfoApp",  "showInfo(info)",  null,  "Questa Applicazione",  "Informazioni su questa Applicazione");
+	secInfo.addButton("bttInfoSW",  "showInfo(SW.info)",  null,  "IDRA",  "Informazioni su IDRA");
+	for (var p in plugins.get()) {
+		secInfo.addButton("bttInfoPlugin" + p,  "showInfo(plugins.get('" + p + "').info)",  null,  p,  "Informazioni sull'Estensione " + p);
+	}
+}
+
+function showInfo(infoSet)
+{
+	var out = '<table border="0">\n';
+	if (infoSet["name"]) {
+		out += "  <tr>\n" +
+		       "    <td>Name</td>\n"
+			   "    <td>" + infoSet["name"] + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["version"]) {
+		var version = (infoSet["maturity"]) ?
+			infoSet["version"] + " (" + infoSet["version"] + ")" :
+			infoSet["version"];
+		out += "  <tr>\n" +
+		       "    <td>Version</td>\n"
+			   "    <td>" + version + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["date"]) {
+		out += "  <tr>\n" +
+		       "    <td>Date</td>\n"
+			   "    <td>" + infoSet["date"] + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["author"]) {
+		out += "  <tr>\n" +
+		       "    <td>Author</td>\n"
+			   "    <td>" + infoSet["author"] + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["contacts"]) {
+		out += "  <tr>\n" +
+		       "    <td>Contacts</td>\n"
+			   "    <td>" + infoSet["contacts"] + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["copyright"]) {
+		out += "  <tr>\n" +
+		       "    <td>Copyright</td>\n"
+			   "    <td>" + infoSet["copyright"].replace("\n", "<br>") + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["license"] || infoSet["licenseURL"]) {
+		var license;
+		if (infoSet["license"] && infoSet["licenseURL"])
+			license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["license"] + "</a>";
+		else if (infoSet["license"])
+			license = infoSet["license"];
+		else
+			license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["licenseURL"] + "</a>";
+		out += "  <tr>\n" +
+		       "    <td>License</td>\n"
+			   "    <td>" + infoSet["license"] + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["descr"]) {
+		out += "  <tr>\n" +
+		       "    <td>Description</td>\n"
+			   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n"
+			   "  </tr>\n";
+	}
+	if (infoSet["notes"]) {
+		out += "  <tr>\n" +
+		       "    <td>Notes</td>\n"
+			   "    <td>" + infoSet["notes"].replace("\n", "<br>") + "</td>\n"
+			   "  </tr>\n";
+	}
+	out += "</table>\n";
+}
+
+function prepare()
+{
+	// assign application options
+	if (typeof defaultOptions == "undefined")
+		defaultOptions = null;
+	options = opt(options, defaultOptions);
+	
+	qui = null; // no page open
+	v = new Object(); // re-alloc to clean garbage
 	gioco = new Object();
 	if (window.GiocoInfo) GiocoInfo();
 	if (gioco.titolo)
 		parent.document.title = gioco.titolo;
-	var menu = new menuHandler("boxMenu");
 	
 	var sound = menu.addSection("secSound");
 	sound.addButton("bttMusic",  "playstop",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
@@ -346,10 +448,14 @@ function gioca()
 	saveMe.addButton("bttLoad",     "load",     null,  "Carica",      "Riprendi una situazione salvata");
 	saveMe.addButton("bttRestart",  "restart",  null,  "Ricomincia",  "Ricomincia l'avventura");
 	
+	infoMenu();
+	
 	menu.draw();
+	
+	events.exec("ApplicationBegin");
+	
 	Inizia(); //azzera variabili e va alla prima pagina
 }
-
 
 // Mostra pagina di informazioni, copyright e licenza di Idra
 
@@ -541,8 +647,8 @@ function leggiCookie(nome) {
 function m_infoIdra() {
   testo("<center>&nbsp;<br><i>Realizzato con</i>")
   testo('<h1><font color="#006600">Idra</font></h1>')
-  testo("<i>(Ipertesto Dinamico per Racconti d'Avventura, v ", idra.versione, ")</i><p>")
-  testo("Idra &egrave; ", idra.copyright, "<p></center>")
+  testo("<i>(Ipertesto Dinamico per Racconti d'Avventura, v ", SW.version, ")</i><p>")
+  testo("Idra &egrave; ", SW.copyright, "<p></center>")
   testo('<font size = "-1"><b>Idra</b> &egrave; <font color="#cc0000">free software</font>; &egrave; lecito redistribuirlo e/o modificarlo secondo i termini della GNU GPL (Licenza Pubblica Generica GNU) come &egrave; pubblicata dalla Free Software Foundation; o la versione 2 della licenza o (a propria scelta) una versione successiva.')
   testo(" Questo programma &egrave; distribuito nella speranza che sia utile, ma <b>senza alcuna garanzia</b>; senza neppure la garanzia implicita di <b>negoziabilit&agrave;</b> o di <b>applicabilit&agrave; per un particolare scopo</b>. Per ulteriori dettagli vedasi la licenza GNU GPL (Licenza Pubblica Generica GNU).")
   testo(' Qualora non aveste ricevuto una copia della licenza GNU GPL insieme a questo programma, la potete richiedere alla Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. La pagina Web della GNU &egrave; a <a href="http://www.gnu.org">www.gnu.org</a> (attenzione: facendo clic sui link si esce dal gioco).')

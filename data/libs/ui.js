@@ -1,3 +1,5 @@
+
+// user interface handler
 var gui = new function ()
 {
 	/*
@@ -7,11 +9,15 @@ var gui = new function ()
 	// create new writeble area
 	this.createArea = function(id, type, title, before, size)
 	{
+		events.exec("GUICreateArea");
+		
 		// create elem
-		var newArea = new area(id, type, title, size);
+		var newArea = new area(id, type, title, size); // befor must not be passed
 		if (before) {
-			for (var i in this.arrArea)
+			for (var i in this.arrArea) {
 				this.arrArea[parseInt(i + 1)] = this.arrArea[i];
+				this.first++;
+			}
 			this.arrArea[0] = newArea;
 		} else
 			this.arrArea[this.arrArea.length] = newArea;
@@ -19,7 +25,8 @@ var gui = new function ()
 		// if this elem is box, resize other elems
 		if (type == "box" && this.first == null) {
 			// remember 1st id (main box)
-			this.first = this.arrArea.length - 1;
+			this.first     = 0;
+			this.mainSize  = 100;
 		}
 		return newArea;
 	}
@@ -27,16 +34,19 @@ var gui = new function ()
 	// draw all boxes
 	this.draw = function()
 	{
+		events.exec("GUIDraw");
+		
 		// get all non-main boxes size
 		var oldSize = 0;
 		for (var i in this.arrArea) {
-			if (this.arrArea[i].type == "box" && i != this.first) {
+			if (this.arrArea[i].type == "box") {
 				oldSize += this.arrArea[i].size;
 			}
 		}
+		oldSize -= this.mainSize;
 		
 		// get new autosize for main box
-		var newSize = this.arrArea[this.first].size - oldSize;
+		var newSize = this.mainSize - oldSize;
 		
 		// draw all boxes
 		for (var i in this.arrArea) {
@@ -46,7 +56,7 @@ var gui = new function ()
 		}
 		
 		// resize main box
-		this.arrArea[i].resizeBox(newSize);
+		this.arrArea[this.first].resizeBox(newSize);
 	}
 	
 	/*
@@ -55,6 +65,7 @@ var gui = new function ()
 	
 	this.arrArea   = new Array();  // all document's area objects
 	this.first     = null;         // id of first area (will be resized when creating more elems)
+	this.mainSize  = null;
 }
 
 // box or window object

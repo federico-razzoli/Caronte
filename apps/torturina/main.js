@@ -1,12 +1,4 @@
-﻿// required extensions;
-
-var extensions =
-{
-	"extObjects" : {}
-};
-
-
-// ===== Informazioni =======================================================
+﻿// ===== Informazioni =======================================================
 
 
 // Mostra informazioni sul gioco
@@ -87,7 +79,7 @@ function header(pag) {
 }
 
 function footer(pag) {
-	plugins.get("extObjects").mostraOggetti("");
+	//plugins.get("extObjects").mostraOggetti("");
 }
 
 

@@ -17,9 +17,9 @@ function extObjects()
 	{
 		// box
 		
-		this.boxOggetti = gui.createArea("boxOggetti", "box", "Inventario", true, 25);
+		this.boxObjects = gui.createArea("boxObjects", "box", this.options.get("title"), false, this.options.get("size"));
 		gui.draw();
-		this.boxOggetti.setCSSProperty('#DDDDDD', 'backgroundColor');
+		this.boxObjects.setCSSProperty(this.options.get("backgroundColor"), 'backgroundColor');
 		
 		// ===== Variabili ==========================================================
 		
@@ -62,9 +62,9 @@ function extObjects()
 	this.testoOggetti = function()
 	{
 		for (var i = 0; i < arguments.length; i++) {
-			this.boxOggetti.write(arguments[i]);
+			this.boxObjects.write(arguments[i]);
 		}
-		this.boxOggetti.send();
+		this.boxObjects.send();
 	}
 	
 	// Scrive/aggiorna area oggetti, selezionando l'oggetto ogg, se indicato;
@@ -86,9 +86,9 @@ function extObjects()
 				var desc = this.datiOgg[i + 1]; //descrizione oggetto da mostrare
 				// separator
 				if (i > 0) {
-					this.boxOggetti.write(repeat("&nbsp;", 5))
+					this.boxObjects.write(repeat("&nbsp;", 5))
 				}
-				this.boxOggetti.write("<a href=\"javascript:plugins.get('extObjects').mostraOggetti('" + ogg + "')\">");
+				this.boxObjects.write("<a href=\"javascript:plugins.get('extObjects').mostraOggetti('" + ogg + "')\">");
 				var selez = (ogg == this.selez); //vera se l'oggetto e' selezionato
 				if (window.DescriviOggetto) {
 					//chiama funzione utente per scrivere o disegnare
@@ -96,15 +96,15 @@ function extObjects()
 				} else {
 					//default: usa <b> per evidenziare oggetto selezionato
 					if (selez) {
-						this.boxOggetti.write("<b>" + desc + "</b>");
+						this.boxObjects.write("<b>" + desc + "</b>");
 					} else {
-						this.boxOggetti.write(desc);
+						this.boxObjects.write(desc);
 					}
 				}
-				this.boxOggetti.write("</a>");
+				this.boxObjects.write("</a>");
 			}
 		}
-		this.boxOggetti.send();
+		this.boxObjects.send();
 		this.nscelte = 0; //azzera contatore di identificazione per rinvioOgg
 	}
 	
@@ -136,6 +136,15 @@ function extObjects()
 		scelta(this.preRinvio + desc + this.postRinvio, "plugins.get('extObjects').eseguiRinvioOgg('" + this.nscelte + "')")
 		this.scelte[this.nscelte] = tavola //associa l'intera hash table all'azione
 		this.nscelte++
+	}
+	
+	/*
+	 *    Events
+	 */
+	
+	// when page ends, update boxObjects
+	this.onPageEnd = function() { //seguono argomenti opzionali, vedi sopra
+		this.mostraOggetti("");
 	}
 	
 	/*
@@ -171,7 +180,7 @@ function extObjects()
 		maturity    : "Release Candidate",
 		date        : "2011",
 		license     : "GPLv2",
-		licenseUrl  : "",
+		licenseURL  : "",
 		author      : "Federico Razzoli",
 		contacts    : "santec [At) riseup [Dot' net",
 		copyright   : "2000 Enrico Colombini\n2011 Federico Razzoli",
@@ -179,5 +188,10 @@ function extObjects()
 		notes       : "Derived from Erix's Oggetti extension for IDRA. Adapted for IDRA2."
 	}
 	
-	this.load();
+	this.defaultOptions =
+	{
+		title            : "",
+		size             : 20,
+		backgroundColor  : "#DDDDDD"
+	}
 }

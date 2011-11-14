@@ -6,13 +6,19 @@
  */
 
 
+// error handler
 window.onerror = function(err, url, line, stop)
  {
-	var                out  =        "Error: "  + err;
+	var                out  =        "Error: "  + err.toString();
 	if (url)           out += "\n" + "URL: "    + url;
 	if (line != null)  out += "\n" + "Line: "   + line;
 	alert(out);
 }
+var issue = window.onerror;
+
+
+// application options will be loaded later
+var options = new Array;
 
 // wait all passed objects are loaded, then execute func
 var queue = new function()
@@ -43,16 +49,16 @@ var queue = new function()
 				var item     = this.list[x];
 				var func     = item[0];
 				var objects  = item[1];
-				if (!isArray(objects)) objects = [];
+				
+				// check objects validity
+				if (objects == null) objects = [];
+				else if (!isArray(objects)) objects = [objects];
 				
 				// this item is lazy? (loop on objects)
 				itemLazy = false;
 				for (var y in objects) {
-					// check item
-					if (eval("typeof " + objects[y] + " == 'undefined';"))
-						itemLazy = true;
-					else if (eval(objects[y])  === false)
-						itemLazy = true;
+					// check current condition
+					if (!this.checkCondition(objects[y])) itemLazy = true;
 					if (itemLazy) break;
 					//else alert("lazy " + objects[y]);
 				}
@@ -71,6 +77,20 @@ var queue = new function()
 		if (this.list.length > 0) this.defer();
 	}
 	
+	// condition is (alreay) satisfied?
+	this.checkCondition = function(cond)
+	{
+		// check condition type
+		if (cond.charAt(0) == '?') {
+			// starts with '?' - it's boolean condition
+			cond = cond.substr(1);
+			return !(eval(cond) === false);
+		} else {
+			// no suffix: object
+			return eval("typeof " + cond + " != 'undefined';");
+		}
+	}
+	
 	// set new timeout
 	this.defer = function()
 	{
@@ -83,33 +103,77 @@ var queue = new function()
 	this.lock      = false;  // prevents conflicts
 }
 
+// defines all IDRA events
+function defineEvents()
+{
+	// define events
+	events.define("GUIDraw", true);             // gui.draw()
+	events.define("GUICreateArea", true);       // gui.createArea()
+	events.define("PluginsReady", true);        // plugins
+	events.define("PluginLoaded", true);        // plugins.add()
+	events.define("ApplicationBegin", true);    // gioca()
+	events.define("PageBegin", true);           // vai()
+	events.define("PageEnd", true);             // vai()
+}
+
 // includes js libs and calls adventure
 function init()
 {
-	var arrScripts = Array(
-			"ui",             // output system
-			"menu",           // menu handler
-			"tinybox",        // modal window
-			"idra",           // game system
-			"plugin_loader"   // load/unload extensions
-		);
-	for (var i in arrScripts) {
-		link("js", "libs/" + arrScripts[i]);
-	}
-	link("css", "themes/default/main");
+	// default css
+	link("css", "data/themes/default/main");
 	
-	//queue.add("link('js', 'plugin_loader')",  ["extensions", "gui", "getSupportedProperty", "menuHandler"]);
+	// event handler
+	queue.add("link('js', 'data/libs/events')");
+	queue.add("defineEvents()", ["events"]);
+	// output system
+	queue.add("link('js', 'data/libs/ui')", ["events", "?events.isDefined('PageEnd')"]);
+	// game system
+	queue.add("link('js', 'data/libs/kernel')", ["gui"]);
+	// menu handler
+	queue.add("link('js', 'data/libs/menu')");
+	// load / config extensions
+	queue.add("link('js', 'data/libs/plugin_loader')", ["gui", "menuHandler", "events"]);
 	
-	var appName;
+	var appName = null;
+	
 	if (document.URL.indexOf("?") > 0) {
-		appName = document.URL.substring(document.URL.indexOf("?") + 1);
-	} else {
-		appName = "gioco";
+		var qs = document.URL.substring(document.URL.indexOf("?") + 1);
+		var separatorPos = qs.indexOf("/");
+		if (separatorPos == -1) {
+			// only appName
+			appName = qs;
+		} else {
+			// appName + params
+			appName = qs.substr(0, separatorPos);
+			var params = qs.substr(separatorPos + 1);;
+			params = params.split("&");
+			for (var x in params) {
+				// divide keys from values
+				var temp  = params[x].split("=");
+				var key   = temp[0];
+				var val   = temp[1] ? temp[1] : true;
+				options[key] = val;
+			}
+			// free memory
+			delete params;
+		}
+		// free memory
+		delete qs;
+		delete separatorPos;
 	}
-	link("js", appName);
 	
-	queue.add("plugins.loadAll()",  ["idra", "Inizia", "extensions", "gui", "getSupportedProperty", "eventi", "menuHandler"]);
-	queue.add("gioca()",            ["Inizia", "gioca", "plugins.ready"]);
+	if (appName == null) {
+		// application configuration
+		link("js", "apps/gioco_conf");
+		link("js", "apps/gioco");
+	} else {
+		// application configuration
+		link("js", "apps/" + appName + "/conf");
+		// application code
+		queue.add("link('js', 'apps/" + appName + "/main')", ["plugins"]);
+	}
+	queue.add("plugins.loadAll()",  ["plugins", "SW", "Inizia", "extensions", "gui", "getSupportedProperty", "eventi", "menuHandler"]);
+	queue.add("prepare()",          ["Inizia", "prepare", "?typeof plugins != 'undefined' && plugins.ready"]);
 }
 
 // given filetype and filename, returns id
@@ -135,19 +199,20 @@ function removeFromDOM(id)
 //     @file    : string     : file path + name starting from "data"
 function link(type, file)
 {
-	var loaded = false;
+	// define tag
 	if (type == "js") {
 		tag        = document.createElement("script");
 		tag.setAttribute("type",    "text/javascript");
-		tag.setAttribute("src",     "data/" + file + ".js");
+		tag.setAttribute("src",     file + ".js");
 		//tag.setAttribute("onload",  "loaded = 1");
 	} else {
 		tag        = document.createElement("link");
 		tag.setAttribute("rel", "stylesheet");
 		tag.setAttribute("type", "text/css");
-		tag.setAttribute("href", "data/" + file + ".css");
+		tag.setAttribute("href", file + ".css");
 	}
 	tag.setAttribute("id", libId(type, file));
+	// insert into DOM
 	document.getElementsByTagName("head")[0].appendChild(tag);
 }
 
@@ -156,6 +221,32 @@ function unlink(type, file)
 {
 	id = libId(type, file);
 	removeFromDOM(id);
+}
+
+// object which contains options
+//     @userOptions     : Object    : options specified by user / extension
+//     @defaultOptions  : Object    : default values, only used for unspecified options
+function opt(userOptions, defaultOptions)
+{
+	// accessor
+	this.get = function(o)
+	{
+		return this.list[o];
+	}
+	
+	// Constructor
+	// set default values
+	this.list = new Object();
+	if (defaultOptions != null) {
+		for (var o in defaultOptions) {
+			list[o] = defaultOptions[o];
+		}
+	}
+	// overwrite defaults
+	for (var o in userOptions) {
+		list[o] = userOptions[o];
+	}
+	return this;
 }
 
 

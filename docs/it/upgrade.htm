@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Passare a IDRA 2</title>
+  </head>
+  <body>
+    <h1>Passare a IDRA 2</h1>
+    Questo documento vuole essere una guida rapida per chi, conoscendo
+    gi&agrave; la prima versione di IDRA di Enrico Colombini, desidera
+    scrivere avventure per IDRA 2 (o aggiornare le vecchie avventure).<br>
+    <h2>Terminologia</h2>
+    In IDRA 2 si fa riferimento alle avventure come "Applicazioni".
+    Questo per evidenziare che IDRA pu&ograve; essere usato per creare
+    giochi di tipi differenti e applicazioni di altro genere. Il primo
+    obiettivo rimane comunque quello di avere un buon framework per le
+    avventure ipertestuali.<br>
+    <h2>"Chiamare" le Applicazioni</h2>
+    Nella versione originale di IDRA, ogni installazione poteva far
+    girare una sola avventura contenuta nel file dati/gioco.js.<br>
+    Con IDRA 2 si possono chiamare diverse Applicazioni. Ogni
+    Applicazione deve trovarsi nella directory data e deve avere
+    l'estensione .js. La prima parte del nome del file viene invece
+    specificata nell'URL quando si chiama il file racconto.html.
+    Supponendo di voler chiamare un'Applicazione scritta nel file
+    "mia_applicazione.js", l'URL sar&agrave;:<br>
+    racconto.htm?mia_applicazione<br>
+    <h3>Opzioni di applicazione</h3>
+    E' possibile passare delle opzioni all'Applicazione nell'URL. Queste
+    opzioni possono essere switch, che si attivano semplicemente
+    specificandone il nome; oppure chiavi alle quali viene associato un
+    valore.<br>
+    Supponiamo di voler specificare due variabili: una &egrave; "debug",
+    che potrebbe servire ad attivare il debug; l'altra &egrave;
+    "livello", e le assegneremo il valore "facile":<br>
+    racconto.htm?mio_gioco/debug&amp;livello=facile<br>
+    <br>
+    L'ordine in cui vengono specificate non ha alcuna importanza,
+    perci&ograve; possiamo specificarle in questo modo:<br>
+    racconto.htm?mio_gioco/livello=facile&amp;debug<br>
+    <br>
+    Le opzioni di Applicazione (o alcune di esse) possono avere dei
+    valori predefiniti. In questo caso, nel file di configurazione (vedi
+    prossimo paragrafo) specificarli in questo modo:<br>
+    <br>
+    var defaultOptions =<br>
+    {<br>
+    &nbsp;&nbsp;&nbsp; level : "easy"<br>
+    };<br>
+    <br>
+    Se non si desidera assegnare alcun valore predefinito, o se non si
+    utilizzano le opzioni:<br>
+    <br>
+    var defaultOptions = { };<br>
+    <br>
+    Per leggere il valore di un'opzione:<br>
+    <br>
+    options.get("nome_opzione");<br>
+    <br>
+    Questo metodo restituisce il metodo passato tramite l'URL o, se non
+    &egrave; stato specificato, il valore predefinito. Gli switch
+    avranno il valore booleano true.<br>
+    <h2>Informazioni sull'Applicazione</h2>
+    Ogni Applicazione deve avere un file di configurazione. Questo file
+    ha il suffisso "conf"; ad esempio, mia_applicazione avr&agrave; un
+    file chiamato: "mia_applicazione_conf.js" nella directory data.<br>
+    <br>
+    Nel file deve essere presente un oggetto info che include
+    informazioni sull'Applicazione. Ecco un esempio:<br>
+    <br>
+    this.info =<br>
+    {<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "Ercole contro King
+    Kong",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    url&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    version&nbsp;&nbsp;&nbsp;&nbsp; : "0.3",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; maturity&nbsp;&nbsp;&nbsp; :
+    "Release Candidate",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "2011",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    license&nbsp;&nbsp;&nbsp;&nbsp; : "GPLv3",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; licenseUrl&nbsp; : "",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    author&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "Jack the Ripper",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; contacts&nbsp;&nbsp;&nbsp; :
+    "",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; copyright&nbsp;&nbsp; : "2011
+    Jack the Ripper",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    descr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "Riuscir&agrave; Ercole
+    a sposare la fidanzata di King Kong?",<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+    notes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : "Ci sono 3 finali
+    alternativi"<br>
+    }<br>
+    <h2>Includere le estensioni</h2>
+    Nel file di configurazione deve essere presente l'oggetto
+    extensions. Nel caso in cui non si voglia utilizzare alcuna
+    Estensione, l'oggetto sar&agrave; vuoto:<br>
+    <br>
+    var extensions = { };<br>
+    <br>
+    Se invece si desidera includere una o pi&ugrave; Estensioni
+    nell'Applicazione, devono essere elencate come propriet&agrave; di
+    extensions, e a loro volta saranno degli oggetti:<br>
+    <br>
+    var extensions =<br>
+    {<br>
+    &nbsp;&nbsp;&nbsp; extObjects : { },<br>
+    &nbsp;&nbsp;&nbsp; extSaveMe : { }<br>
+    };<br>
+    <br>
+    Quando si includono delle estensioni, &egrave; possibile passare
+    loro delle opzioni. Ecco perch&egrave; le opzioni sono a loro volta
+    oggetti. Esempio:<br>
+    <br>
+    var extensions =<br>
+    {<br>
+    &nbsp;&nbsp;&nbsp; extObjects :<br>
+    &nbsp;&nbsp;&nbsp; {<br>
+    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; title&nbsp; : "Inventario",<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; backgroundColor: "yellow"<br>
+    &nbsp;&nbsp;&nbsp; }<br>
+    };<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </body>
+</html>

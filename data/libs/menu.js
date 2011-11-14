@@ -12,9 +12,9 @@ function menuHandler(idMenu)
 	 *    Methods
 	 */
 	
-	this.addSection = function(id, title, position)
+	this.addSection = function(id, title, tooltip, position)
 	{
-		var sec = new section(id, title);
+		var sec = new section(id, title, tooltip);
 		insert(this.sections, sec, position);
 		return this.sections[this.sections.length - 1];
 	}
@@ -59,7 +59,7 @@ function menuHandler(idMenu)
 }
 
 
-function section(id, title)
+function section(id, title, tooltip)
 {
 	this.addButton = function(id, event, position, text, desc, CSSClass)
 	{
@@ -97,7 +97,8 @@ function section(id, title)
 		// title
 		if (this.title) {
 			tTag = document.createElement("span");
-			tTag.innerHTML = '<span class="sectionTitle">' + this.title + "</span>";
+			tTag.innerHTML = '<span class="sectionTitle" title="' + this.tooltip + '">' +
+			                 this.title + "</span>";
 			sTag.appendChild(tTag);
 		}
 		
@@ -113,6 +114,7 @@ function section(id, title)
 	this.DOM       = new Object();
 	this.id        = id;
 	this.title     = title;
+	this.tooltip   = tooltip;
 	this.elements  = new Array;
 }
 
