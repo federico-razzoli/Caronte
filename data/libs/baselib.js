@@ -8,11 +8,17 @@
 
 // error handler
 window.onerror = function(err, url, line, stop)
- {
+{
 	var                out  =        "Error: "  + err.toString();
 	if (url)           out += "\n" + "URL: "    + url;
 	if (line != null)  out += "\n" + "Line: "   + line;
-	alert(out);
+	if (typeof modal != "undefined") {
+		// if modal is there, show error gracefully
+		var mErr = new modal();
+		mErr.bad(out);
+	} else {
+		alert(out);
+	}
 }
 var issue = window.onerror;
 
@@ -122,6 +128,8 @@ function init()
 	// default css
 	link("css", "data/themes/default/main");
 	
+	// messages
+	queue.add("link('js', 'data/libs/tinybox')");
 	// event handler
 	queue.add("link('js', 'data/libs/events')");
 	queue.add("defineEvents()", ["events"]);

@@ -12,10 +12,11 @@ var SW = new Object()
 
 SW.info =
 {
-	name        : "IDRA - Ipertesto Dinamico per Racconti d'Avventura",
+	name        : "IDRA",
 	url         : ["https://github.com/santec/IDRA Progetto su GitHub",
 	               "http://www.erix.it/idra.html Il vecchio sito ufficiale"],
 	version     : "2.0.1",
+	APIVersion  : "2.0",
 	maturity    : "Sviluppo",
 	date        : "2011",
 	license     : "GPLv2",
@@ -358,43 +359,44 @@ function infoMenu()
 function showInfo(infoSet)
 {
 	var out = '<table border="0">\n';
-	if (infoSet["name"]) {
-		out += "  <tr>\n" +
-		       "    <td>Name</td>\n"
-			   "    <td>" + infoSet["name"] + "</td>\n"
-			   "  </tr>\n";
-	}
+	out += "<p><strong>Info su " + infoSet["name"] + "</strong></p>";
 	if (infoSet["version"]) {
 		var version = (infoSet["maturity"]) ?
 			infoSet["version"] + " (" + infoSet["version"] + ")" :
 			infoSet["version"];
 		out += "  <tr>\n" +
-		       "    <td>Version</td>\n"
-			   "    <td>" + version + "</td>\n"
+		       "    <td>Version</td>\n" +
+			   "    <td>" + version + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["date"]) {
 		out += "  <tr>\n" +
-		       "    <td>Date</td>\n"
-			   "    <td>" + infoSet["date"] + "</td>\n"
+		       "    <td>Date</td>\n" +
+			   "    <td>" + infoSet["date"] + "</td>\n" +
+			   "  </tr>\n";
+	}
+	if (infoSet["APIVersion"]) {
+		out += "  <tr>\n" +
+		       "    <td><nobr>API Version</nobr></td>\n" +
+			   "    <td>" + infoSet["APIVersion"] + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["author"]) {
 		out += "  <tr>\n" +
-		       "    <td>Author</td>\n"
-			   "    <td>" + infoSet["author"] + "</td>\n"
+		       "    <td>Author</td>\n" +
+			   "    <td>" + infoSet["author"] + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["contacts"]) {
 		out += "  <tr>\n" +
-		       "    <td>Contacts</td>\n"
-			   "    <td>" + infoSet["contacts"] + "</td>\n"
+		       "    <td>Contacts</td>\n" +
+			   "    <td>" + infoSet["contacts"] + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["copyright"]) {
 		out += "  <tr>\n" +
-		       "    <td>Copyright</td>\n"
-			   "    <td>" + infoSet["copyright"].replace("\n", "<br>") + "</td>\n"
+		       "    <td>Copyright</td>\n" +
+			   "    <td>" + infoSet["copyright"].replace("\n", "<br>") + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["license"] || infoSet["licenseURL"]) {
@@ -406,23 +408,25 @@ function showInfo(infoSet)
 		else
 			license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["licenseURL"] + "</a>";
 		out += "  <tr>\n" +
-		       "    <td>License</td>\n"
-			   "    <td>" + infoSet["license"] + "</td>\n"
+		       "    <td>License</td>\n" +
+			   "    <td>" + infoSet["license"] + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["descr"]) {
 		out += "  <tr>\n" +
-		       "    <td>Description</td>\n"
-			   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n"
+		       "    <td>Description</td>\n" +
+			   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["notes"]) {
 		out += "  <tr>\n" +
-		       "    <td>Notes</td>\n"
-			   "    <td>" + infoSet["notes"].replace("\n", "<br>") + "</td>\n"
+		       "    <td>Notes</td>\n" +
+			   "    <td>" + infoSet["notes"].replace("\n", "<br>") + "</td>\n" +
 			   "  </tr>\n";
 	}
 	out += "</table>\n";
+	var win = new modal();
+	win.info(out);
 }
 
 function prepare()
@@ -440,13 +444,13 @@ function prepare()
 		parent.document.title = gioco.titolo;
 	
 	var sound = menu.addSection("secSound");
-	sound.addButton("bttMusic",  "playstop",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
-	sound.addButton("bttFx",     "fx",        null,  "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
+	sound.addButton("bttMusic",  "playstop()",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
+	sound.addButton("bttFx",     "fx()",        null,  "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
 	
 	var saveMe = menu.addSection("secSaveMe");
-	saveMe.addButton("bttSave",     "save",     null,  "Salva",       "Salva la situazione corrente");
-	saveMe.addButton("bttLoad",     "load",     null,  "Carica",      "Riprendi una situazione salvata");
-	saveMe.addButton("bttRestart",  "restart",  null,  "Ricomincia",  "Ricomincia l'avventura");
+	saveMe.addButton("bttSave",     "save()",     null,  "Salva",       "Salva la situazione corrente");
+	saveMe.addButton("bttLoad",     "load()",     null,  "Carica",      "Riprendi una situazione salvata");
+	saveMe.addButton("bttRestart",  "restart()",  null,  "Ricomincia",  "Ricomincia l'avventura");
 	
 	infoMenu();
 	

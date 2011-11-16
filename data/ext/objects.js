@@ -177,6 +177,7 @@ function extObjects()
 		name        : "Objects",
 		url         : "",
 		version     : "0.1",
+		APIVersion  : "2.0",
 		maturity    : "Release Candidate",
 		date        : "2011",
 		license     : "GPLv2",

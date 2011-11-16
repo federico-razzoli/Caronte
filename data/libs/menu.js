@@ -125,7 +125,7 @@ function ctrlButton(id, event, text, desc, CSSClass)
 	{
 		aTag = document.createElement("a");
 		aTag.setAttribute("id", this.id);
-		aTag.setAttribute("href", "javascript:" + this.event + "()");
+		aTag.setAttribute("href", "javascript:" + this.event);
 		if (this.desc != null)
 			aTag.setAttribute("title", this.desc);
 		if (this.CSSClass != null)
@@ -139,6 +139,7 @@ function ctrlButton(id, event, text, desc, CSSClass)
 	 */
 	
 	this.id         = id;
+	event = (typeof event == "function") ? event.name + "()" : this.event = event;
 	this.event      = event;
 	this.text       = text;
 	this.desc       = desc;
