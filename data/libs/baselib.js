@@ -1,4 +1,20 @@
 /*
+    This file is part of IDRA.
+	
+    IDRA is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 2 of the License.
+	
+    IDRA is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+	
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*
  *    Base Lib
  *
  *    These functions are used by all classes.
@@ -15,7 +31,7 @@ window.onerror = function(err, url, line, stop)
 	if (typeof modal != "undefined") {
 		// if modal is there, show error gracefully
 		var mErr = new modal();
-		mErr.bad(out);
+		mErr.bad(out.replace("\n", "<br>\n"));
 	} else {
 		alert(out);
 	}
@@ -24,7 +40,8 @@ var issue = window.onerror;
 
 
 // application options will be loaded later
-var options = new Array;
+var options    = new Object();
+var SWOptions  = new Object();
 
 // wait all passed objects are loaded, then execute func
 var queue = new function()
@@ -160,7 +177,11 @@ function init()
 				var temp  = params[x].split("=");
 				var key   = temp[0];
 				var val   = temp[1] ? temp[1] : true;
-				options[key] = val;
+				if (key.charAt(0) == "_") {
+					SWOptions[key.substr(1)] = val;
+				} else {
+					options[key] = val;
+				}
 			}
 			// free memory
 			delete params;
@@ -234,7 +255,7 @@ function unlink(type, file)
 // object which contains options
 //     @userOptions     : Object    : options specified by user / extension
 //     @defaultOptions  : Object    : default values, only used for unspecified options
-function opt(userOptions, defaultOptions)
+opt = function(userOptions, defaultOptions)
 {
 	// accessor
 	this.get = function(o)
@@ -245,16 +266,16 @@ function opt(userOptions, defaultOptions)
 	// Constructor
 	// set default values
 	this.list = new Object();
+	
 	if (defaultOptions != null) {
 		for (var o in defaultOptions) {
-			list[o] = defaultOptions[o];
+			this.list[o] = defaultOptions[o];
 		}
 	}
 	// overwrite defaults
 	for (var o in userOptions) {
-		list[o] = userOptions[o];
+		this.list[o] = userOptions[o];
 	}
-	return this;
 }
 
 

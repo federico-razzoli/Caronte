@@ -1,37 +1,10 @@
-﻿// ===== Informazioni =======================================================
-
-
-// Mostra informazioni sul gioco
-
-function Informazioni() {
-	apriPagina();
-	testo("<h1 style=\"text-align:center\">In fuga da Torturina</h1>");
-	testo('<p align="center">');
-	testo("Racconto-gioco di Federico Razzoli, basato su<br>");
-	testo("<strong><a href=\"http://blogofthedead.blogs.it/\" title=\"Leggi la serie Life Of The Dead\" target=\"_parent\">Life Of The Dead</a></strong>");
-	testo("<br><br>");
-	rinvio("Continua", "ridisegna()");
-	testo("</p>");
-	chiudiPagina();
-}
-
-
-// ===== Funzioni chiamate dall'interprete ==================================
-
-
-// Imposta alcune informazioni sul gioco
-
-function GiocoInfo(pag) {
-	gioco.titolo = "In fuga da Torturina";
-	gioco.versione = "0.1";
-	gioco.copyright = "Federico Razzoli 2011";
-	gioco.contatti = "santec@riseup.net";
-	gioco.licenza = "AGPL 3";
-	gioco.note = "";
-	gioco.suoniDir = "suoni";  // cartella dei suoni, partendo da dati
-	gioco.colonnaSonora = "sleepwalk.mp3";  // file colonna sonora, in suoni
-}
-
+﻿/*
+	(C) 2011 Federico Razzoli
+	
+	La presente opera è distribuita secondo i termini della licenza
+	Creative Commons Attribution-NonCommercial 3.0 Unported:
+	http://creativecommons.org/licenses/by-nc/3.0/us/
+*/
 
 // Inizia una nuova lettura: azzera le variabili di gioco e va alla prima pagina
 
@@ -40,8 +13,7 @@ function Inizia() {
 	v.spostato     = 0;  // no spada, no uscito da sala torture
 	v.vecchietta   = 0;
 	v.portaAperta  = 0;
-	// eventi
-	//while (eventi==undefined) ; // wait eventi is defined
+	
 	eventi.frasi = new Array(
 			"Un alito di vento gelido ti entra fin nelle ossa.",
 			"Qualcosa di viscido ti sfiora, facendoti rabbrividire; ma per fortuna è solo un verme.",
@@ -74,13 +46,11 @@ function Inizia() {
 }
 
 
-function header(pag) {
-  testo("<h1>In fuga da Torturina</h1>")
+function Intestazione(pag) {
+  testo("<h1>" + info.title + "</h1>")
 }
 
-function footer(pag) {
-	//plugins.get("extObjects").mostraOggetti("");
-}
+function PiePagina(pag) {  }
 
 
 // === Pagine del racconto ==================================================

@@ -1,26 +1,43 @@
-﻿// IDRA: Ipertesto Dinamico per Racconti d'Avventura
-// (C) 2000 Enrico Colombini
-// (C) 2011 Federico Razzoli
-// Idra e' free software sotto la licenza GNU GPL versione 2, vedi COPYING.html
-
+﻿/*
+	IDRA: Ipertesto Dinamico per Racconti d'Avventura, Version 2
+	(C) 2000 Enrico Colombini
+	(C) 2011 Federico Razzoli
+	
+	IDRA is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, version 2 of the License.
+	
+	IDRA is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with IDRA.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /*
  *    MetaInfo
  */
 
-var SW = new Object()
+var SW = new Object();
+
+SWDefaultOptions =
+{
+	showInfo     : true
+};
 
 SW.info =
 {
 	name        : "IDRA",
-	url         : ["https://github.com/santec/IDRA Progetto su GitHub",
+	URL         : ["https://github.com/santec/IDRA Progetto su GitHub",
 	               "http://www.erix.it/idra.html Il vecchio sito ufficiale"],
 	version     : "2.0.1",
 	APIVersion  : "2.0",
 	maturity    : "Sviluppo",
 	date        : "2011",
-	license     : "GPLv2",
-	licenseURL  : "https://www.gnu.org/licenses/gpl-2.0.html",
+	license     : "GNU GPL 2",
+	licenseURL  : "COPYING.txt",
 	author      : "Federico Razzoli",
 	contacts    : "santec [At) riseup [Dot' net",
 	copyright   : "2000 Enrico Colombini\n2011 Federico Razzoli",
@@ -38,7 +55,6 @@ var nscelte            = 0;
 var qui                = null;         // pagina corrente
 var statoPrecedente    = null;         // situazione prima dell'esecuzione della pagina corrente
 var situazioneSalvata  = null;         // usata per salvare se non funzionano i cookie
-//var idPagina           = 0;            // identificatore univoco (progressivo) di pagina
 var nomeCookie         = "game";       // per il salvataggio su disco
 var durataCookie       = 365;          // giorni
 
@@ -85,15 +101,27 @@ function vai(pag)
 	statoPrecedente = creaStringaStato(); //situazione prima di eseguire la pagina
 	apriPagina();
 	events.exec("PageBegin");
-	if (window.header) header(pag);
-	pag(); //scrive la pagina
-	if (window.footer) footer(pag);
+	if (window.Intestazione)  Intestazione(pag.name);
+	pag(); // write page
+	if (window.PiePagina)     PiePagina(pag.name);
 	events.exec("PageEnd");
 	chiudiPagina();
 }
 
+// check if user-defined function exist before calling
+function callUserFunc(strFunc)
+{
+	if (eval("typeof strFunc != 'function'")) {
+		eval(strFunc + "()");
+		return true;
+	} else {
+		issue("Undefined function: " + strFunc);
+		return false;
+	}
+}
 
-function messaggioPrima(pag) {
+function messaggioPrima(pag)
+{
 	statoPrecedente = creaStringaStato(); //situazione prima di eseguire la pagina
 	apriPagina();
 	if (window.Intestazione) Intestazione(pag);
@@ -300,7 +328,7 @@ function opzioniCookie(nome, giorni) {
 // Ritorna la pagina corrente (evita accesso diretto alle variabili del programma)
 
 function pagina() {
-  return qui
+	return qui;
 }
 
 
@@ -349,7 +377,8 @@ function levaSpaziAttorno(s) {
 function infoMenu()
 {
 	var secInfo = menu.addSection("secInfo", "Info su...", "Informazioni sui software in uso");
-	secInfo.addButton("bttInfoApp",  "showInfo(info)",  null,  "Questa Applicazione",  "Informazioni su questa Applicazione");
+	if (typeof info != "undefined") 
+		secInfo.addButton("bttInfoApp",  "showInfo(info)",  null,  "Questa Applicazione",  "Informazioni su questa Applicazione");
 	secInfo.addButton("bttInfoSW",  "showInfo(SW.info)",  null,  "IDRA",  "Informazioni su IDRA");
 	for (var p in plugins.get()) {
 		secInfo.addButton("bttInfoPlugin" + p,  "showInfo(plugins.get('" + p + "').info)",  null,  p,  "Informazioni sull'Estensione " + p);
@@ -358,21 +387,53 @@ function infoMenu()
 
 function showInfo(infoSet)
 {
-	var out = '<table border="0">\n';
-	out += "<p><strong>Info su " + infoSet["name"] + "</strong></p>";
+	var out = "";
+	if (infoSet["name"] || infoSet["title"])
+		out += "<p><strong>Info su " + 
+		       infoSet["name"] ? infoSet["name"] : infoSet["title"] + 
+			   "</strong></p>\n";
+	out += '<table border="0">\n';
 	if (infoSet["version"]) {
 		var version = (infoSet["maturity"]) ?
-			infoSet["version"] + " (" + infoSet["version"] + ")" :
+			infoSet["version"] + " (" + infoSet["maturity"] + ")" :
 			infoSet["version"];
 		out += "  <tr>\n" +
 		       "    <td>Version</td>\n" +
 			   "    <td>" + version + "</td>\n" +
 			   "  </tr>\n";
 	}
-	if (infoSet["date"]) {
+	if (infoSet["URL"]) {
+		var URL = "";
+		if (isArray(infoSet["URL"])) {
+			for (var u in infoSet["URL"]) {
+				// split url from text?
+				var p = infoSet["URL"][u].indexOf(" ");
+				if (p > 0) {
+					var linkURL   = infoSet["URL"][u].substr(0, p);
+					var linkText  = infoSet["URL"][u].substr(p);
+				} else {
+					// there's no text
+					var linkURL   = infoSet["URL"][u];
+					var linkText  = linkURL;
+				}
+				if (URL) URL += "<br>";
+				URL += '<a href="' + linkURL + '">' + linkText + "</a>";
+			}
+		} else {
+			var p = infoSet["URL"].indexOf(" ");
+			if (p > 0) {
+				var linkURL   = infoSet["URL"].substr(0, p);
+				var linkText  = infoSet["URL"].substr(p);
+			} else {
+				// there's no text
+				var linkURL   = infoSet["URL"];
+				var linkText  = linkURL;
+			}
+			URL += '<a href="' + linkURL + '">' + linkText + "</a>";
+		}
 		out += "  <tr>\n" +
-		       "    <td>Date</td>\n" +
-			   "    <td>" + infoSet["date"] + "</td>\n" +
+		       "    <td>URL</td>\n" +
+			   "    <td>" + URL + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["APIVersion"]) {
@@ -399,17 +460,23 @@ function showInfo(infoSet)
 			   "    <td>" + infoSet["copyright"].replace("\n", "<br>") + "</td>\n" +
 			   "  </tr>\n";
 	}
+	if (infoSet["URL"]) {
+		out += "  <tr>\n" +
+		       "    <td>Description</td>\n" +
+			   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n" +
+			   "  </tr>\n";
+	}
 	if (infoSet["license"] || infoSet["licenseURL"]) {
 		var license;
 		if (infoSet["license"] && infoSet["licenseURL"])
 			license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["license"] + "</a>";
 		else if (infoSet["license"])
-			license = infoSet["license"];
+			license = ""+infoSet["license"];
 		else
 			license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["licenseURL"] + "</a>";
 		out += "  <tr>\n" +
 		       "    <td>License</td>\n" +
-			   "    <td>" + infoSet["license"] + "</td>\n" +
+			   "    <td>" + license + "</td>\n" +
 			   "  </tr>\n";
 	}
 	if (infoSet["descr"]) {
@@ -431,17 +498,22 @@ function showInfo(infoSet)
 
 function prepare()
 {
-	// assign application options
+	// assign Application options
 	if (typeof defaultOptions == "undefined")
 		defaultOptions = null;
-	options = opt(options, defaultOptions);
+	options      = new opt(options,    defaultOptions);
+	
+	// assign SW options
+	SW.options   = new opt(SWOptions,  SWDefaultOptions);
+	delete SWOptions;
+	delete SWDefaultOptions;
 	
 	qui = null; // no page open
 	v = new Object(); // re-alloc to clean garbage
 	gioco = new Object();
-	if (window.GiocoInfo) GiocoInfo();
-	if (gioco.titolo)
-		parent.document.title = gioco.titolo;
+	
+	if (info.name || info.title)
+		parent.document.title = info.title ? info.title : info.name;
 	
 	var sound = menu.addSection("secSound");
 	sound.addButton("bttMusic",  "playstop()",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
@@ -452,13 +524,14 @@ function prepare()
 	saveMe.addButton("bttLoad",     "load()",     null,  "Carica",      "Riprendi una situazione salvata");
 	saveMe.addButton("bttRestart",  "restart()",  null,  "Ricomincia",  "Ricomincia l'avventura");
 	
-	infoMenu();
+	if (SW.options.get("showInfo") != "0") infoMenu();
 	
 	menu.draw();
 	
 	events.exec("ApplicationBegin");
 	
-	Inizia(); //azzera variabili e va alla prima pagina
+	// initialize start Application
+	callUserFunc("Inizia");
 }
 
 // Mostra pagina di informazioni, copyright e licenza di Idra

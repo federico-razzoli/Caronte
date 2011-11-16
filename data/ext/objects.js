@@ -1,6 +1,7 @@
 // Estensioni oggetti e inventario per Idra
 // (C) 2000 Enrico Colombini
-// Free software sotto la licenza GNU GPL
+// (C) 2011 Federico Razzoli
+// Free software sotto la licenza GNU GPL 2
 
 // Realizzato su suggerimento di Tommaso Percivale con un'interfaccia simile a
 // quella del sistema ILES (Interactive Literature Editing System) creato da 
@@ -8,7 +9,7 @@
 
 // Questo file estende Idra: le parti di programmazione HTML 
 // e JavaScript qui contenute sono soggette alla medesima licenza GNU GPL
-// di Idra stesso, vedi i file idra.js e Licenza.html per i dettagli.
+// di Idra stesso.
 
 
 function extObjects()
@@ -175,7 +176,7 @@ function extObjects()
 	this.info =
 	{
 		name        : "Objects",
-		url         : "",
+		URL         : "",
 		version     : "0.1",
 		APIVersion  : "2.0",
 		maturity    : "Release Candidate",

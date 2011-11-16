@@ -5,7 +5,8 @@
 var info =
 {
 	name        : "In fuga da Torturina",
-	url         : "",
+	title       : "In fuga da Torturina",
+	URL         : "",
 	version     : "0.1",
 	maturity    : "Non Finito",
 	date        : "2011",

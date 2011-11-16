@@ -1,6 +1,21 @@
 ﻿/*
- *    Frame Principale
- *    ================
+    This stylesheet is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 of the License.
+	
+    This stylesheet is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+	
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/*
+ *    Main Box
+ *    ========
  */
 
 /*    >> BOX <<
@@ -196,24 +211,24 @@ P {
 }
 #winInfo
 {
-	padding:10px 14px 11px;
-	background:#fff;
-	color:#000;
+	padding: 10px 14px 11px;
+	background: #fff;
+	color: #000;
 	text-align: center;
-	border-right:1px solid #000;
-	border-bottom:1px solid #000;
-	-moz-border-radius:0;
-	-khtml-border-radius:0;
-	-webkit-border-radius:0;
-	-icab-border-radius:0;
-	border-radius:0
+	border-right: 1px solid #000;
+	border-bottom: 1px solid #000;
+	-moz-border-radius: 0;
+	-khtml-border-radius: 0;
+	-webkit-border-radius: 0;
+	-icab-border-radius: 0;
+	border-radius: 0
 }
 #winInfo td
 {
 	padding:0 10px 0 10px;
 	text-align: left;
 	border:1px solid #000;
-
+}
 #bluemask {background:#4195aa}
 #frameless {padding:0}
 #frameless .tclose {left:6px}
