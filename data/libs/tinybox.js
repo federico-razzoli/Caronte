@@ -1,4 +1,4 @@
-TINY={};
+﻿TINY={};
 
 TINY.box=function(){
 	var j,m,b,g,v,p=0;
