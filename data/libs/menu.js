@@ -162,3 +162,30 @@ function ctrlButton(id, event, text, desc, CSSClass)
 	this.desc       = desc;
 	this.CSSClass   = CSSClass;
 }
+
+function ctrlSwitch(id, event, textOn, textOff, initialState, desc, CSSClass)
+{
+	this.draw = function(DOMParent)
+	{
+		aTag = document.createElement("a");
+		aTag.setAttribute("id", this.id);
+		aTag.setAttribute("href", "javascript:" + this.event);
+		if (this.desc != null)
+			aTag.setAttribute("title", this.desc);
+		if (this.CSSClass != null)
+			aTag.setAttribute("class", this.CSSClass);
+		aTag.innerHTML = text;
+		DOMParent.appendChild(aTag);
+	}
+	
+	/*
+	 *    Constructor
+	 */
+	
+	this.id         = id;
+	event = (typeof event == "function") ? event.name + "()" : this.event = event;
+	this.event      = event;
+	this.text       = text;
+	this.desc       = desc;
+	this.CSSClass   = CSSClass;
+}

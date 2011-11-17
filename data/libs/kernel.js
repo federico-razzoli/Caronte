@@ -512,8 +512,12 @@ function prepare()
 	v = new Object(); // re-alloc to clean garbage
 	gioco = new Object();
 	
-	if (info.name || info.title)
-		parent.document.title = info.title ? info.title : info.name;
+	if (typeof info != "undefined") {
+		if (typeof info.title != "undefined")
+			parent.document.title = info.title;
+		else if (typeof info.name != "undefined")
+			parent.document.title = info.name;
+	}
 	
 	var sound = menu.addSection("secSound");
 	sound.addButton("bttMusic",  "playstop()",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
