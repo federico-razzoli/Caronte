@@ -29,9 +29,8 @@ window.onerror = function(err, url, line, stop)
 	if (url)           out += "\n" + "URL: "    + url;
 	if (line != null)  out += "\n" + "Line: "   + line;
 	if (typeof modal != "undefined") {
-		// if modal is there, show error gracefully
-		var mErr = new modal();
-		mErr.bad(out.replace("\n", "<br>\n"));
+		// if modal is ready, show error gracefully
+		modal.bad(out.replace("\n", "<br>\n"));
 	} else {
 		alert(out);
 	}

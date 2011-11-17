@@ -52,7 +52,8 @@ SW.info =
 
 var scelte             = new Array();  // scelte valide (stringhe contenenti codice o funzioni)
 var nscelte            = 0;
-var qui                = null;         // pagina corrente
+var qui                = null;         // current page function
+var lastArgs           = null;         // current page arguments
 var statoPrecedente    = null;         // situazione prima dell'esecuzione della pagina corrente
 var situazioneSalvata  = null;         // usata per salvare se non funzionano i cookie
 var nomeCookie         = "game";       // per il salvataggio su disco
@@ -95,15 +96,16 @@ var eventi = new Object;
 // Intestazione(pag) se esiste, pag(), PiePagina(pag) se esiste,
 // prima di mostrare la pagina salva la situazione in statoPrecedente
 
-function vai(pag)
+function vai(pag, args)
 {
 	qui = pag; // ricorda la pagina
 	statoPrecedente = creaStringaStato(); //situazione prima di eseguire la pagina
 	apriPagina();
 	events.exec("PageBegin");
-	if (window.Intestazione)  Intestazione(pag.name);
-	pag(); // write page
-	if (window.PiePagina)     PiePagina(pag.name);
+	if (typeof args == "undefined") args = null;
+	if (window.Intestazione)  Intestazione(pag.name, args);
+	pag(args); // write page
+	if (window.PiePagina)     PiePagina(pag.name, args);
 	events.exec("PageEnd");
 	chiudiPagina();
 }
@@ -150,7 +152,7 @@ function mostra(pag, opzioni)
 
 function aggiorna()
 {
-	vai(qui);
+	vai(qui, lastArgs);
 }
 
 
@@ -492,8 +494,7 @@ function showInfo(infoSet)
 			   "  </tr>\n";
 	}
 	out += "</table>\n";
-	var win = new modal();
-	win.info(out);
+	modal.info(out);
 }
 
 function prepare()
@@ -551,11 +552,11 @@ function infoIdra() {
 // - una stringa da eseguire, ad esempio "vai(P1)"
 // - una funzione (pagina) a cui andare, ad esempio P1
 
-function esegui(act)
+function esegui(act, args)
 {
 	act = scelte[act];
 	if (typeof(act) == "function") { //se e' una funzione (pagina)
-		vai(act);
+		vai(act, args);
 	} else if (typeof(act) == "string") { //se e' una stringa
 		eval(act);
 	}

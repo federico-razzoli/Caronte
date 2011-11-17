@@ -86,7 +86,8 @@ function Spiegazione() {
   continua(Introduzione);
 }
 
-function Introduzione() {
+function Introduzione()
+{
   suono("intro.wav");
   titolo("Un terribile risveglio");
   testoNl(

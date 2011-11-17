@@ -158,7 +158,7 @@ TINY.box=function(){
 	}
 }();
 
-function modal()
+var modal = new function()
 {
 	this.setButton = function(id, label, value)
 	{
