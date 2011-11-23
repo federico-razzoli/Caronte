@@ -57,18 +57,15 @@ function PiePagina(pag) {  }
 
 
 // Visualizza un messaggio e il link per tornare alla pagina precedente
-// Non può chiamare Messaggio()
-function Inutile() {
-  var txt = "";
-  var num = 0;
-  num = dado(3);
-  if      (num==1) txt = "E' tutto inutile.";
-  else if (num==2) txt = "Qualunque cosa tu stia cercando di fare... non ci riesci.";
-  else if (num==3) txt = "Fare una cosa simile non ti servirebbe a nulla.";
-  apriPagina();
-  testoNl(txt);
-  scelta("Continua", "ridisegna()");
-  chiudiPagina();
+// Non può chiamare messaggio()
+function Inutile()
+{
+	var txt = "";
+	var num = SW.dado(3);
+	if      (num == 1) txt = "E' tutto inutile.";
+	else if (num == 2) txt = "Qualunque cosa tu stia cercando di fare... non ci riesci.";
+	else if (num == 3) txt = "Fare una cosa simile non ti servirebbe a nulla.";
+	messaggio(txt);
 }
 
 function Spiegazione() {
@@ -88,9 +85,9 @@ function Spiegazione() {
 
 function Introduzione()
 {
-  suono("intro.wav");
-  titolo("Un terribile risveglio");
-  testoNl(
+	//suono("intro.wav");
+	titolo("Un terribile risveglio");
+	testoNl(
 		"Ti svegli in una stanza buia.",
 		"La testa ti duole. Non solo quella per la verità, ma anche il collo e le braccia.",
 		"Il resto del corpo non lo senti più.",
@@ -104,8 +101,8 @@ function Introduzione()
 		"Si è presentata come <span class=\"evidParola\">Torturina</span>. Ti ha tramortito, e quando ti sei svegliato eri in questa stanza. ",
 		"Ricordi che, appena hai aperto gli occhi, ti ha trafitto con degli spilloni roventi... poi, più niente."
 	);
-  scelta("Continua", SalaTorture);
-  scelta("Dove diavolo sono!? + Istruzioni", Spiegazione);
+	scelta("Continua", SalaTorture);
+	scelta("Dove diavolo sono!? + Istruzioni", Spiegazione);
 }
 
 function SalaTorture() {
@@ -124,9 +121,9 @@ function SalaTorture() {
   if (!v.torcia) {
 	  testo("<p>Su di una parete vedi ");
 	  plugins.get("extObjects").rinvioOgg(
-			"una torcia", "v.torcia=1; aggiorna()",
-			"spada", "Messaggio(\"Fare a pezzi la torcia non sarebbe una buona idea.\")",
-			"spillone", "Messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
+			"una torcia", "v.torcia=1; SW.aggiorna()",
+			"spada", "messaggio(\"Fare a pezzi la torcia non sarebbe una buona idea.\")",
+			"spillone", "messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
 			"+", "Inutile"
 		);
 	  testo(".</p>");
@@ -152,43 +149,42 @@ function Bara() {
 	testo("Dentro c'è uno ");
 	plugins.get("extObjects").rinvioOgg(
 			"scheletro", "vai(Scheletro)",
-			"torcia", "Messaggio(\"Vuoi piantarla di fare il piromane?!\")",
-			"spada", "Messaggio(\"Gliela renderai più tardi.\")",
-			"spiedino", "Messaggio(\"Lo scheletro non ha fame.\")",
+			"torcia", "messaggio(\"Vuoi piantarla di fare il piromane?!\")",
+			"spada", "messaggio(\"Gliela renderai più tardi.\")",
+			"spiedino", "messaggio(\"Lo scheletro non ha fame.\")",
 			"+", "Inutile()"
 			);
 	testo(" con ");
 	plugins.get("extObjects").rinvioOgg(
 			"una spada", "v.spada=1; v.spostato=1; vai(SalaTorture);",
-			"torcia", "Messaggio(\"Arroventi la spada e te la infili nella carne. Ahhhh, che bello!\")",
+			"torcia", "messaggio(\"Arroventi la spada e te la infili nella carne. Ahhhh, che bello!\")",
 			"+", "Inutile()"
 		);
 	testo(".</p>");
   } else if (v.spostato==2) {
-	suono("horror.mp3");
+	//suono("horror.mp3");
 	testo("Lo scheletro non c'è più... <span class=\"evidParola\">dove diavolo è andato!?</span></p>");
 	if (!(v.spillone || v.spiedino)) {
 		testo("<p>Noti ");
 		plugins.get("extObjects").rinvioOgg(
-			"uno spillone", "v.spillone=1; aggiorna()",
-			"torcia", "Messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
+			"uno spillone", "v.spillone=1; SW.aggiorna()",
+			"torcia", "messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
 			"+", "Inutile()"
 			);
 		testo(" in un angolo della bara.</p>");
 	}
-	scelta("Allontanati dalla bara", SalaTorture);
   } else {
 	testo("Lo ");
 	plugins.get("extObjects").rinvioOgg(
 			"scheletro", "vai(Scheletro)",
-			"torcia", "Messaggio(\"Vuoi piantarla di fare il piromane?!\")",
-			"spada", "Messaggio(\"Gliela renderai più tardi.\")",
-			"spiedino", "Messaggio(\"Lo scheletro non ha fame.\")",
+			"torcia", "messaggio(\"Vuoi piantarla di fare il piromane?!\")",
+			"spada", "messaggio(\"Gliela renderai più tardi.\")",
+			"spiedino", "messaggio(\"Lo scheletro non ha fame.\")",
 			"+", "Inutile()"
 			);
 	testo(" è ancora al suo posto.</p>");
-	scelta("Allontanati dalla bara", SalaTorture);
   }
+  scelta("Allontanati dalla bara", SalaTorture);
 }
 
 function SgabuzzinoDita() {
@@ -215,7 +211,7 @@ function SgabuzzinoDita() {
 		);
 	if (v.spostato==1) {
 		v.spostato = 2;
-		suono("passi.mp3");
+		//suono("passi.mp3");
 		testoNlCSS("evidFrase", "Senti dei passi provenienti dalla stanza delle torture.");
 	} else Eventi();
 	scelta("Premi il bottone rosso", PremiQui)
@@ -230,19 +226,19 @@ function Dita() {
 }
 
 function DitaSpada() {
-	suono('splat.mp3');
+	//suono('splat.mp3');
 	testoNl("Fai a pezzettini alcune dita.");
 	continua(SgabuzzinoDita);
 }
 
 function DitaBrucia() {
-	suono('burn.mp3');
+	//suono('burn.mp3');
 	testoNl("Ti diverti a carbonizzare alcune dita.");
 	continua(SgabuzzinoDita);
 }
 
 function Spiedino() {
-	suono("spiedino.mp3");
+	//suono("spiedino.mp3");
 	titolo("Lo sgabuzzino delle dita");
 	testoNl("Infilzi le dita nello spillone, creando un appetitoso spiedino.");
 	v.spillone = 0;
@@ -271,7 +267,7 @@ function CorridoioSotterraneo() {
 	if (!v.portaAperta) {
 		plugins.get("extObjects").sceltaOgg("Porta rossa", PortaRossaChiusa,
 				"chiaveRossa", PortaRossaApri,
-				"torcia", "Messaggio(\"Una vecchietta si affaccia dalla cucina e ti informa che se ti azzardi a bruciare le sue amate porte ti farà a pezzettini.\")",
+				"torcia", "messaggio(\"Una vecchietta si affaccia dalla cucina e ti informa che se ti azzardi a bruciare le sue amate porte ti farà a pezzettini.\")",
 				"+", "Inutile()"
 			);
 	} else {
@@ -283,7 +279,7 @@ function CorridoioSotterraneo() {
 }
 
 function PremiQui() {
-	suono("risata.mp3");
+	//suono("risata.mp3");
 	titolo("La trappola")
 	testoNl(
 		"Ecco. Se c'era una cosa cretina che potevi fare era proprio questa. Ma se io ti dico di buttarti dalla finestra, tu ti butti?!?",
@@ -306,7 +302,7 @@ function Buio() {
 }
 
 function TrappolaMortale() {
-	suono('risata.mp3');
+	//suono('risata.mp3');
 	titolo("La trappola mortale")
 	testoNl(
 		"Sai, a volte penso che tu lo faccia apposta.",
@@ -358,9 +354,9 @@ function Vecchietta() {
 	  if (dado(2)>1)
 		testoNl("Nel raccontarti tutto questo si distrae e si taglia un dito; con una scrollata di spalle, lo raccatta e se lo mangia in un boccone.")
 	  testo("<p>Ti chiede se per favore hai un oggetto che faccia al caso suo; tende ");
-	  plugins.get("extObjects").rinvioOgg("la mano", "Messaggio(\"La vecchietta ti grida:<br/><strong>Non voglio che tu mi dia la mano, idiota, voglio che tu mi dia quello che ti ho chiesto!!</strong><br>Che scorbutica!\");",
+	  plugins.get("extObjects").rinvioOgg("la mano", "messaggio(\"La vecchietta ti grida:<br/><strong>Non voglio che tu mi dia la mano, idiota, voglio che tu mi dia quello che ti ho chiesto!!</strong><br>Che scorbutica!\");",
 			"spada", VecchiettaSpada,
-			"spiedino", "Messaggio(\"La vecchietta ti ringrazia, ma non ha fame. Ti chiede di nuovo qualcosa per tagliare la carne.\")",
+			"spiedino", "messaggio(\"La vecchietta ti ringrazia, ma non ha fame. Ti chiede di nuovo qualcosa per tagliare la carne.\")",
 			"+", VecchiettaNo
 		);
 	  testo(" e resta in attesa.</p>");
@@ -369,7 +365,7 @@ function Vecchietta() {
 }
 
 function VecchiettaNo() {
-	suono("risata.mp3");
+	//suono("risata.mp3");
 	titolo("La cucina");
 	testoNl("La vecchietta osserva indispettita il tuo dono e ti urla:",
 		"\"Cos'è questa roba!? Cosa dovrei farmene!? Mi stai prendendo in giro!? Ora ti faccio passare la voglia di prenderti gioco delle persone anziane!!\"",
@@ -379,7 +375,7 @@ function VecchiettaNo() {
 }
 
 function VecchiettaNiente() {
-	suono("risata.mp3");
+	//suono("risata.mp3");
 	titolo("La cucina")
 	testoNl("La vecchietta ti osserva indispettita e ti urla:",
 		"\"Come sarebbe a dire che non hai niente per me!? Non ci pensi alla fatica che faccio, usando strumenti non adatti!? Ma adesso ti insegno io l'educazione, giovane debosciato!!\"",

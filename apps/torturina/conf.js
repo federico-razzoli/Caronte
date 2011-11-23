@@ -1,7 +1,7 @@
-﻿// Some application-related global variables need to be assigned here.
+﻿// Configurazione dell'Applicazione
 
 
-// application info
+// info sull'Applicazione (opzionale)
 var info =
 {
 	name        : "In fuga da Torturina",
@@ -19,17 +19,20 @@ var info =
 	notes       : ""
 };
 
-// required extensions
+// estensioni da usare
 var extensions =
 {
-	extObjects :
-	{
-		title  : "Inventario",
-		size   : 15
+	extSaveMe :                  // estensione per il salvataggio delle avventure
+	{ },                         // nessuna opzione
+	
+	extObjects :                 // estensione per usare gli oggetti nell'avventura
+	{                            // opzioni:
+		title  : "Inventario",      // titolo del riquadro
+		size   : 15                 // altezza del riquadro in percentuale
 	}
 };
 
-// default values for application options
+// opzioni di default per l'avventura (opzionale)
 var defaultOptions =
 {
 	level : "easy"

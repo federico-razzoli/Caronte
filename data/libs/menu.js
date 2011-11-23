@@ -23,6 +23,8 @@
 //   * menu.getSection().dropControl()
 
 
+"use strict";
+
 function menuHandler(idMenu)
 {
 	/*
@@ -46,17 +48,20 @@ function menuHandler(idMenu)
 		return getById(this.sections, id);
 	}
 	
-	this.draw = function()
+	// if menu has been drawn, erase it
+	this.erase = function()
 	{
-		// cancel menu and children
 		if (this.drawn) {
 			for (var i in this.sections)
 				this.sections[i].erase();
+			this.sections = new Array;
 			removeFromDOM(this.id);
 		}
-		
-		// re-draw menu DIV
-		DOMMenu = document.createElement("div");
+	}
+	
+	this.draw = function()
+	{
+		var DOMMenu = document.createElement("div");
 		DOMMenu.setAttribute("id", this.id);
 		document.body.insertBefore(DOMMenu, document.body.firstChild);
 		
@@ -64,6 +69,8 @@ function menuHandler(idMenu)
 		for (var i = 0; i < this.sections.length; i++) {
 			this.sections[i].draw(DOMMenu);
 		}
+		
+		this.drawn = true;
 	}
 	
 	/*
@@ -71,7 +78,7 @@ function menuHandler(idMenu)
 	 */
 	
 	this.id        = idMenu;
-	this.sections  = new Array();
+	this.sections  = new Array;
 	this.drawn     = false;
 }
 
@@ -100,6 +107,7 @@ function section(id, title, tooltip)
 		// remove controls
 		for (var i in this.elements)
 			removeFromDOM(this.elements[i].id);
+		this.elements = new Array;
 		// remove section
 		removeFromDOM(this.id);
 	}
@@ -107,14 +115,15 @@ function section(id, title, tooltip)
 	this.draw = function(DOMParent)
 	{
 		// section DIV
-		sTag = document.createElement("div");
+		var sTag = document.createElement("div");
 		sTag.setAttribute("id", this.id);
+		sTag.setAttribute("class", "menuSectionBody");
 		DOMParent.appendChild(sTag);
 		
 		// title
 		if (this.title) {
-			tTag = document.createElement("span");
-			tTag.innerHTML = '<span class="sectionTitle" title="' + this.tooltip + '">' +
+			var tTag = document.createElement("span");
+			tTag.innerHTML = '<span class="menuSectionTitle" title="' + this.tooltip + '">' +
 			                 this.title + "</span>";
 			sTag.appendChild(tTag);
 		}
@@ -140,7 +149,7 @@ function ctrlButton(id, event, text, desc, CSSClass)
 {
 	this.draw = function(DOMParent)
 	{
-		aTag = document.createElement("a");
+		var aTag = document.createElement("a");
 		aTag.setAttribute("id", this.id);
 		aTag.setAttribute("href", "javascript:" + this.event);
 		if (this.desc != null)

@@ -22,6 +22,8 @@
  */
 
 
+"use strict";
+
 // error handler
 window.onerror = function(err, url, line, stop)
 {
@@ -46,9 +48,9 @@ var SWOptions  = new Object();
 var queue = new function()
 {
 	// adds new item to queue
-	this.add = function(func, objects)
+	this.add = function(func, objects, id)
 	{
-		this.list.push([func, objects]);
+		this.list.push([func, objects, id]);
 		if (this.list.length == 1) this.tryToExec();
 	}
 	
@@ -71,6 +73,7 @@ var queue = new function()
 				var item     = this.list[x];
 				var func     = item[0];
 				var objects  = item[1];
+				var id       = item[2];
 				
 				// check objects validity
 				if (objects == null) objects = [];
@@ -89,7 +92,8 @@ var queue = new function()
 					// item is ready! exec & drop it
 					eval(func);
 					this.list.splice(x, 1);
-					itemExecuted = true;
+					this.done[id]  = true;
+					itemExecuted   = true;
 				}
 			}
 			// nothin more to do or nothin done
@@ -107,6 +111,10 @@ var queue = new function()
 			// starts with '?' - it's boolean condition
 			cond = cond.substr(1);
 			return !(eval(cond) === false);
+		} else if (cond.charAt(0) == '@') {
+			// starts with '@' - id of another task, is it done already?
+			cond = cond.substr(1);
+			return (typeof this.done[cond] != "undefined");
 		} else {
 			// no suffix: object
 			return eval("typeof " + cond + " != 'undefined';");
@@ -121,7 +129,8 @@ var queue = new function()
 	
 	// constructor
 	this.millisec  = 50;
-	this.list      = new Array();
+	this.list      = new Array;
+	this.done      = new Array;
 	this.lock      = false;  // prevents conflicts
 }
 
@@ -142,7 +151,7 @@ function defineEvents()
 function init()
 {
 	// default css
-	link("css", "data/themes/default/main");
+	link("css", "data/themes/classic/main");
 	
 	// messages
 	queue.add("link('js', 'data/libs/tinybox')");
@@ -182,26 +191,21 @@ function init()
 					options[key] = val;
 				}
 			}
-			// free memory
-			delete params;
 		}
-		// free memory
-		delete qs;
-		delete separatorPos;
 	}
 	
 	if (appName == null) {
 		// application configuration
-		link("js", "apps/gioco_conf");
-		link("js", "apps/gioco");
+		queue.add('link("js", "apps/gioco_conf")', [], "conf");
+		queue.add('link("js", "apps/gioco")', ["plugins", "@conf"]);
 	} else {
 		// application configuration
-		link("js", "apps/" + appName + "/conf");
+		queue.add("link('js', 'apps/" + appName + "/conf')", [], "conf");
 		// application code
-		queue.add("link('js', 'apps/" + appName + "/main')", ["plugins"]);
+		queue.add("link('js', 'apps/" + appName + "/main')", ["plugins", "@conf"]);
 	}
-	queue.add("plugins.loadAll()",  ["plugins", "SW", "Inizia", "extensions", "gui", "getSupportedProperty", "eventi", "menuHandler"]);
-	queue.add("prepare()",          ["Inizia", "prepare", "?typeof plugins != 'undefined' && plugins.ready"]);
+	
+	queue.add("SW.prepare('" + appName + "')", ["plugins", "SW", "Inizia", "gui", "getSupportedProperty", "eventi", "menuHandler"]);
 }
 
 // given filetype and filename, returns id
@@ -229,12 +233,12 @@ function link(type, file)
 {
 	// define tag
 	if (type == "js") {
-		tag        = document.createElement("script");
+		var tag = document.createElement("script");
 		tag.setAttribute("type",    "text/javascript");
 		tag.setAttribute("src",     file + ".js");
 		//tag.setAttribute("onload",  "loaded = 1");
 	} else {
-		tag        = document.createElement("link");
+		var tag = document.createElement("link");
 		tag.setAttribute("rel", "stylesheet");
 		tag.setAttribute("type", "text/css");
 		tag.setAttribute("href", file + ".css");
@@ -254,7 +258,7 @@ function unlink(type, file)
 // object which contains options
 //     @userOptions     : Object    : options specified by user / extension
 //     @defaultOptions  : Object    : default values, only used for unspecified options
-opt = function(userOptions, defaultOptions)
+var opt = function(userOptions, defaultOptions)
 {
 	// accessor
 	this.get = function(o)
@@ -283,7 +287,6 @@ opt = function(userOptions, defaultOptions)
  *
  *    These methods need that items have an id
  */
-
 
 // drop an item from Array and shift left next elements.
 // return true (if item is found & removed) or false

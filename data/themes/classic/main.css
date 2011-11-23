@@ -34,11 +34,11 @@ div[id]
 {
 	overflow: auto;
 	clear:right;
-	width: 82%;
+	width: 83%;
 }
 
 /* menu */
-div#boxMenu
+#boxMenu
 {
 	float: left;
 	width: 15%;
@@ -48,15 +48,17 @@ div#boxMenu
 }
 
 /* main box */
-div#boxMain
+#boxMain
 {
 	float: left;
 	display: block;
 	padding-left: 1%;
+	padding-right: 1%;
+	width: 81%;
 }
 
 /* auxiliary box titles */
-div.boxAux h1
+.boxAux > h1
 {
 	color:black;
 	text-align: center;
@@ -69,18 +71,18 @@ div.boxAux h1
 /*    >> MENU <<
 */
 
-div#boxMenu A:link, div#boxMenu A:visited
+#boxMenu A:link, #boxMenu A:visited
 {
 	color: #330000;
 }
 
-div#boxMenu A:hover, div#boxMenu A:active
+#boxMenu A:hover, #boxMenu A:active
 {
 	color: white;
 	background-color: black;
 }
 
-div#boxMenu A
+#boxMenu A
 {
 	display:block;
 	font-size: 14px;
@@ -88,15 +90,8 @@ div#boxMenu A
 	font-family: "Times New Roman", Times, Serif;
 }
 
-div#boxMenu HR
-{
-	width:50%;
-	margin:0 auto;
-	padding:0;
-}
-
 /* menu section */
-div#boxMenu DIV
+div.menuSectionBody
 {
 	width:100%;
 	height:auto;
@@ -104,7 +99,7 @@ div#boxMenu DIV
 }
 
 /* menu section title */
-div#boxMenu .sectionTitle
+.menuSectionTitle
 {
 	color:#000000;
 	display:block;
@@ -144,8 +139,10 @@ H1 {
 	text-align: center;
 	font-family: "Times New Roman", freeSerif, BitstreamVera;
 	font-size: 32px;
-	/*color: #2222FF;*/
+	line-height:100%;
 	color: green;
+	padding-top:0;
+	margin-top:0;
 	margin-bottom:10px;
 }
 

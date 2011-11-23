@@ -27,6 +27,9 @@
 	#REQUIRES: none
 */
 
+
+"use strict";
+
 function hooks()
 {
 	// add a hook
@@ -78,7 +81,7 @@ var events = new function()
 		// will not be filled this way
 		// (extensions developers should know this)
 		if (typeof plugins != "undefined") {
-			pluginList = plugins.get();
+			var pluginList = plugins.get();
 			for (var o in pluginList) {
 				if (typeof pluginList[o][handlerName] != "undefined") {
 					var hookId = o + "." + handlerName;
@@ -107,8 +110,7 @@ var events = new function()
 	{
 		// is eventId defined?
 		if (typeof this.list[eventId] == "undefined") {
-			issue("Event " + eventId + "was not defined\n" +
-				"(caller: " + arguments.callee.caller.name + ")");
+			issue("Event " + eventId + " was not defined");
 			return false;
 		}
 		

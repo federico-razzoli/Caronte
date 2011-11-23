@@ -1,4 +1,4 @@
-/*
+﻿/*
     This file is a plugin of IDRA.
 	
     extSaveMe is free software; you can redistribute it and/or modify
@@ -15,21 +15,116 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-function extSaveMe()
+
+//"use strict";
+
+var extSaveMe = function()
 {
-	this.begin = function()
-	{
-		
+	this.load = function()
+	{ 
+		var saveMe = menu.addSection("secSaveMe");
+		saveMe.addButton("bttSave",     "appSave()",     null,  "Salva",       "Salva la situazione corrente");
+		saveMe.addButton("bttLoad",     "appLoad()",     null,  "Carica",      "Riprendi una situazione salvata");
+		saveMe.addButton("bttRestart",  "SW.prepare()",  null,  "Ricomincia",  "Ricomincia l'avventura");
 	}
 	
-	this.restart = function() {
-		mostra(m_confermaRiparti);
+	// save current situation (SW.v)
+	this.appSave = function()
+	{
+		var statoPrecedente = SW.v;
+		// does a saved state exist?
+		var cookie = this.leggiCookie(this.nomeCookie);
+		if (cookie == null || modal.confirm("I salvataggi precedenti salvare eliminati.<br>Desideri salvare?")) {
+			var result = registraCookie(this.nomeCookie, statoPrecedente, durataCookie);
+			if (cookie == statoPrecedente) { //verifica se ha salvato
+				this.situazioneSalvata = null; //elimina eventuale situazione dalla variabile
+				modal.info("Salvataggio riuscito.<br>La situazione è stata registrata su disco in un &quot;cookie&quot;.<br>Sar&agrave; rileggibile per " + durataCookie + " giorni, a meno che non venga eliminata prima dal browser per eccessivo affollamento.");
+			} else {
+				this.situazioneSalvata = statoPrecedente; //non puo' usare i cookie, salva in una variabile
+				if (!result)
+					modal.info("I dati da salvare sono troppi. Dimensione massima: 4000 byte)");
+				else
+					modal.info("Impossibile salvare. Controllare che i cookie siano abilitati.");
+			}
+		}
 	}
 	
-	this.m_confermaRiparti = function()
+	// ask confirm and load situation
+	this.appLoad = function()
 	{
-		scriviMessaggio("Ricomincio?", "Abbandono la situazione corrente e ricomincio il gioco dall'inizio?")
-		scelta("S&igrave;, ricomincia dall'inizio", "gioca()")
-		scelta("No, torna al gioco", "ridisegna()")
+		var cookie = this.leggiCookie(nomeCookie);
+		if (cookie == null) {
+			modal.bad("Nessun salvataggio disponibile");
+		} else if (modal.confirm("Desideri caricare la situazione salvata?")) {
+			if (cookie) { //ricontrolla se ha riletto (tanto per sicurezza)
+				ripristinaStato(cookie);
+				aggiorna(); //avendo ripristinato lo statoPrecedente, ricostruisce quello attuale
+			} else {
+				modal.bad("Nessun salvataggio disponibile");
+			}
+		}
 	}
+	
+	// Registra un cookie contenente i dati, con la durata specificata
+	this.registraCookie = function(nome, dati, giorni)
+	{
+		var expires = new Date();
+		expires.setTime(expires.getTime() + giorni * 1000 * 86400);
+		var cookie = nome + "=" + escape(dati) +"; expires=" + expires.toGMTString();
+		if (cookie.length <= 4000) { // some browser may be 409x or 5000, but 4000 is cross-browser
+			document.cookie = cookie;
+			return true;
+		}
+		return false;
+	}
+	
+	// Legge un cookie, ritorna i dati o null se non lo trova
+	this.leggiCookie = function(nome)
+	{
+		var dati = null;
+		var ck = document.cookie;
+		var id = this.nomeCookie + "=";
+		var p = ck.indexOf(id, 0); //cerca cookie con quel nome
+		if (p != -1) { //se lo ha trovato
+			p += id.length; //salta nome e '='
+			var sep = ck.indexOf(";", p); //cerca il separatore a fine dati
+			if (sep == -1) sep = ck.length;
+			dati = unescape(ck.substring(p, sep));
+		}
+		return dati;
+	}
+	
+	this.opzioniCookie = function(nome, giorni)
+	{
+		this.nomeCookie    = nome;
+		this.durataCookie  = giorni;
+	}
+	
+	// return a string representing v's properties + SW.qui
+	this.creaStringaStato = function()
+	{
+		var listKeys     = "";
+		var listValues   = "";
+		for (var key in v) {
+			var value = v[key];
+			if (typeof(value) == "string") { //se e' una stringa e non un numero
+				value = '"' + value.replace('"', '\"') + '"';
+			}
+			// add key & value to separated lists
+			listKeys    += ",";
+			listKeys    += key;
+			listValues  += ",";
+			listValues  += value;
+		}
+		// drop initial ","
+		listKeys    = listKeys.substr(1);
+		listValues  = listValues.substr(1);
+		// key1,key2,...|value1,value2,...|qui
+		return listKeys + "|" + listValues + "|" + SW.nomePagina(SW.qui);
+	}
+	
+	this.nomeCookie         = "app";
+	this.durataCookie       = 365;
+	this.situazioneSalvata  = null;   // null if empty
 }
+

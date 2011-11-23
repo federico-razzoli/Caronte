@@ -15,6 +15,9 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
+"use strict";
+
 // user interface handler
 var gui = new function ()
 {
@@ -45,6 +48,19 @@ var gui = new function ()
 			this.mainSize  = 100;
 		}
 		return newArea;
+	}
+	
+	// erase all boxes
+	this.erase = function()
+	{
+		// remove from DOM
+		for (var i in this.arrArea) {
+			removeFromDOM(this.arrArea[i].id);
+		}
+		// re-init vars
+		this.arrArea   = new Array;
+		this.first     = null;
+		this.mainSize  = null;
 	}
 	
 	// draw all boxes
@@ -79,7 +95,7 @@ var gui = new function ()
 	 *    Members
 	 */
 	
-	this.arrArea   = new Array();  // all document's area objects
+	this.arrArea   = new Array;    // all document's area objects
 	this.first     = null;         // id of first area (will be resized when creating more elems)
 	this.mainSize  = null;
 }
@@ -103,7 +119,7 @@ function area(id, type, title, size)
 			removeFromDOM(this.id);
 		}
 		this.type = "box";
-		tag = document.createElement("div");
+		var tag = document.createElement("div");
 		tag.setAttribute("id", this.id);
 		if (this.id != "boxMain") tag.setAttribute("class", "boxAux");
 		tag.style.height = this.size + "%";
@@ -122,7 +138,7 @@ function area(id, type, title, size)
 	// create <h1> tag
 	this.printBoxTitle = function()
 	{
-		tag = document.createElement("h1");
+		var tag = document.createElement("h1");
 		tag.innerHTML = this.title;
 		this.elmArea.appendChild(tag);
 	}
@@ -135,7 +151,7 @@ function area(id, type, title, size)
 	this.setCSSProperty = function(value)
 	{
 		var args = new Array();
-		for (i = 1; i < arguments.length; i++) args[i - 1] = arguments[i];
+		for (var i = 1; i < arguments.length; i++) args[i - 1] = arguments[i];
 		var prop = getSupportedProperty(this.elmArea, args);
 		if (!prop) return false;
 		value.replace("'", "\'");

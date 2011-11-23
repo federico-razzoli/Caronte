@@ -15,18 +15,22 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+
+"use strict";
+
 var plugins = new function()
 {
 	// link & load all extensions
 	this.loadAll = function()
 	{
+		this.plugins = new Object;
 		for (var name in extensions) {
 			// link js file
 			var fileName = "data/ext/" + name.substr(3).toLowerCase();
 			link("js", fileName);
 			
-			// extensions items could be an array of options
-			var params = window.extensions[name] ? extensions[name] : [] ;
+			// extensions items could be an object of options
+			var params = (typeof window.extensions[name] != "undefined") ? extensions[name] : new Object;
 			
 			// load single extension when link operation is done
 			queue.add("plugins.add('" + name + "', new " + name + "());", [name]);
@@ -57,7 +61,10 @@ var plugins = new function()
 		// plugins object is ready?
 		this.toLoad--;
 		if (this.toLoad == 0) {
+			// all ext loaded
 			this.ready = true;
+			
+			// define standard events
 			defineEvents();
 			events.exec("PluginsReady");
 		}

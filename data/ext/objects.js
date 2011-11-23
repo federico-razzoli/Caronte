@@ -12,6 +12,8 @@
 // di Idra stesso.
 
 
+"use strict";
+
 function extObjects()
 {
 	this.load = function()
@@ -24,11 +26,11 @@ function extObjects()
 		
 		// ===== Variabili ==========================================================
 		
-		this.selez       = "";           //nessun oggetto attualmente selezionato
+		this.selez       = "";           // nessun oggetto attualmente selezionato
 		this.datiOgg     = "";           // conterra' l'array con la lista di oggetti e descrizioni
-		this.scelte      = new Array();  //ogni elemento conterra' una tavola di scelte
-		this.nscelte     = 0;            //non usa nscelte di Idra per pulizia del codice
-		this.preRinvio   = "";           //per evidenziare i rinvii su cui si puo' agire con oggetti
+		this.scelte      = new Array();  // ogni elemento conterra' una tavola di scelte
+		this.nscelte     = 0;            // non usa nscelte di Idra per pulizia del codice
+		this.preRinvio   = "";           // per evidenziare i rinvii su cui si puo' agire con oggetti
 		this.postRinvio  = "";
 	}
 	
@@ -87,7 +89,7 @@ function extObjects()
 				var desc = this.datiOgg[i + 1]; //descrizione oggetto da mostrare
 				// separator
 				if (i > 0) {
-					this.boxObjects.write(repeat("&nbsp;", 5))
+					this.boxObjects.write("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				}
 				this.boxObjects.write("<a href=\"javascript:plugins.get('extObjects').mostraOggetti('" + ogg + "')\">");
 				var selez = (ogg == this.selez); //vera se l'oggetto e' selezionato
