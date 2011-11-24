@@ -61,7 +61,7 @@ function PiePagina(pag) {  }
 function Inutile()
 {
 	var txt = "";
-	var num = SW.dado(3);
+	var num = dado(3);
 	if      (num == 1) txt = "E' tutto inutile.";
 	else if (num == 2) txt = "Qualunque cosa tu stia cercando di fare... non ci riesci.";
 	else if (num == 3) txt = "Fare una cosa simile non ti servirebbe a nulla.";

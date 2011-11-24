@@ -99,15 +99,15 @@ var SW = new function()
 	// Va alla pagina pag, che viene ricordata nella proprietà qui
 	// come pagina corrente, chiama:
 	// Intestazione(pag) se esiste, pag(), PiePagina(pag) se esiste
-	this.vai = function(pag, args)
+	this.goTo = function(pag, args)
 	{
 		this.qui = pag; // ricorda la pagina
 		this.apriPagina();
 		events.exec("PageBegin");
 		if (typeof args == "undefined") args = null;
-		if (window.Intestazione)  Intestazione(pag.name, args);
+		if (window._header)  _header(pag.name, args);
 		pag(args); // write page
-		if (window.PiePagina)     PiePagina(pag.name, args);
+		if (window._footer)  _footer(pag.name, args);
 		events.exec("PageEnd");
 		this.chiudiPagina();
 	}
@@ -127,37 +127,37 @@ var SW = new function()
 	// Esegue nuovamente la pagina corrente, cioe' quella ricordata nella variabile qui
 	this.aggiorna = function()
 	{
-		this.vai(this.qui, this.lastArgs);
+		this.goTo(this.qui, this.lastArgs);
 	}
 		
 	// ===== Funzioni di creazione pagina =======================================
 	
 	// Scrive l'eventuale titolo della pagina
-	this.titolo = function(tit)
+	this.title = function(tit)
 	{
-		this.testo('<h2>' + tit + "</h2>");
+		this.say('<h2>' + tit + "</h2>");
 	}
 	
 	// Scrive (parte del) testo della pagina, inclusi eventuali comandi HTML,
 	// accetta un numero variabile di argomenti e li stampa di seguito
-	this.testo = function()
+	this.say = function()
 	{
 		for (var i = 0; i < arguments.length; i++) {
 			this.boxMain.write(arguments[i]);
 		}
 	}
 	
-	// Come testo(), ma dopo ogni parametro scrive un a capo (<br>);
+	// Come say(), ma dopo ogni parametro scrive un a capo (<br>);
 	// il tutto inoltre è incluso nei tag <p>...</p>
 	// Utile per non scrivere i tag manualmente
-	this.testoNl = function()
+	this.sayNl = function()
 	{
 		var out = "\n<p>\n";
 		for (var i = 0; i < arguments.length; i++) {
 			out += arguments[i] + "<br>\n";
 		}
 		out += "\n</p>\n";
-		this.testo(out);
+		this.say(out);
 	}
 	
 	// stampa una riga vuota
@@ -169,14 +169,14 @@ var SW = new function()
 			out = "\n<br>&nbsp;<br>\n";
 			n--;
 		}
-		this.testo(out);
+		this.say(out);
 	}
 	
-	// Come testo(), ma dopo ogni parametro scrive un a capo (<br>);
+	// Come say(), ma dopo ogni parametro scrive un a capo (<br>);
 	// il tutto inoltre è incluso nei tag <p>...</p>
 	// classeCSS, se non è vuoto/null, è lo stile CSS (attributo HTML class)
 	// Utile per non scrivere i tag manualmente
-	this.testoNlCSS = function(classeCSS)
+	this.sayNlCSS = function(classeCSS)
 	{
 		var out;
 		if (classeCSS) out = "\n<p class=\"" + classeCSS + "\">\n";
@@ -185,18 +185,18 @@ var SW = new function()
 			out += arguments[i] + "<br>\n";
 		}
 		out += "\n</p>\n";
-		this.testo(out);
+		this.say(out);
 	}
 	
 	// Show a message and a link to prev location or another action
 	//    @txt      : String     : Message
 	//    @action   : mixed      : Function or string to execute; default: this.qui
-	this.messaggio = function(txt, action)
+	this.message = function(txt, action)
 	{
 		this.apriPagina();
-		this.testoNl(txt);
+		this.say("<p>" + txt + "</p>\n");
 		if (action == null) action = this.qui;
-		this.scelta("Continua", action);
+		this.option("Continua", action);
 		this.chiudiPagina();
 		//modal.info(txt);
 	}
@@ -204,41 +204,41 @@ var SW = new function()
 	// Aggiunge una scelta al menu della pagina se la condizione cond e' vera,
 	// desc e' il testo da mostrare, act e' l'azione da compiere in caso di clic
 	// Se chiamata con due soli argomenti, sono desc e act (la condizione e' sempre vera).
-	// scelta(cond, desc, act)
-	// scelta(desc, act)
-	this.scelta = function(p1, p2, p3)
+	// SW.option(cond, desc, act)
+	// SW.option(desc, act)
+	this.option = function(p1, p2, p3)
 	{
 	  var cond = p1; var desc = p2; var act = p3 //3 argomenti
 	  if (arguments.length == 2) { cond = 1; desc = p1; act = p2 } //2 argomenti
 	  if (cond) {
-		this.testo("<ul><li>") //usa stile 'lista' mettendo la scelta in una lista a se' stante
-		this.rinvio(desc, act) //aggiunge scelta nel testo
-		this.testo("</li></ul>")
+		this.say("<ul><li>") //usa stile 'lista' mettendo la scelta in una lista a se' stante
+		this.link(desc, act) //aggiunge scelta nel testo
+		this.say("</li></ul>")
 	  }
 	} 
 	
 	// Aggiunge una scelta nel testo, ricorda l'azione in scelte[], il link e'
 	// preceduto da idPagina per evitare problemi con la navigazione del browser
-	this.rinvio = function(desc, act)
+	this.link = function(desc, act)
 	{
-		this.testo("<a href=\"javascript:SW.esegui('" + this.nscelte + "');\">");
-		this.testo(desc, "</a>");
+		this.say("<a href=\"javascript:SW.esegui('" + this.nscelte + "');\">");
+		this.say(desc, "</a>");
 		this.scelte[this.nscelte] = act;
 		this.nscelte++;
 	}
 	
 	// Aggiunge la scelta "Continua"; se cond e' vera usa act1, altrimenti act2
 	// Se chiamata con un solo argomento, aggiunge la scelta in ogni caso
-	// SW.continua(cond, act1, act2)
-	// SW.continua(act)
-	this.continua = function(p1, p2, p3)
+	// SW.more(cond, act1, act2)
+	// SW.more(act)
+	this.more = function(p1, p2, p3)
 	{
 	  var cond = p1; var act1 = p2; var act2 = p3 //3 argomenti
 	  if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argomento
 	  if (cond) {
-		this.scelta(cond, "Continua", act1)
+		this.option(cond, "Continua", act1)
 	  } else if (act2) {
-		this.scelta(!cond, "Continua", act2) 
+		this.option(!cond, "Continua", act2) 
 	  }
 	}
 	
@@ -268,7 +268,7 @@ var SW = new function()
 	}
 	
 	// Tira un dado a n facce (6 se non indicate), ritorna un intero tra 1 e n
-	this.dado = function(num)
+	this.dice = function(num)
 	{
 		if (num == null) num = 6; // default: 6 facce
 		return(Math.floor(Math.random() * (num - 1)) + 1); 
@@ -422,6 +422,11 @@ var SW = new function()
 	// (re)start the App. Call plugins.loadAll() + start
 	this.prepare = function()
 	{
+		// load dictionary
+		if (typeof dictionary == "undefined") window.dictionary = "it";
+		if (dictionary != "") link("js", "data/dict/" + dictionary);
+		else var dictOk = true;
+		
 		if (typeof extensions == "undefined") window.extensions = new Object;
 		
 		// assign Application options
@@ -447,7 +452,7 @@ var SW = new function()
 		// load extensions
 		plugins.loadAll();
 		
-		queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready"]);
+		queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready", "dictOk"]);
 	}
 	
 	this.start = function()
@@ -475,13 +480,13 @@ var SW = new function()
 	}
 	
 	// Esegue l'azione act, che puo' essere:
-	// - una stringa da eseguire, ad esempio "vai(P1)"
+	// - una stringa da eseguire, ad esempio "goTo(P1)"
 	// - una funzione (pagina) a cui andare, ad esempio P1
 	this.esegui = function(act, args)
 	{
 		act = this.scelte[act];
 		if (typeof(act) == "function") { //se e' una funzione (pagina)
-			this.vai(act, args);
+			this.goTo(act, args);
 		} else if (typeof(act) == "string") { //se e' una stringa
 			eval(act);
 		}
@@ -507,7 +512,7 @@ var SW = new function()
 
 function FraseCasuale()
 {
-	var num = SW.dado(arguments.length);
+	var num = SW.dice(arguments.length);
 	return arguments[num];
 }
 
@@ -516,37 +521,9 @@ function FraseCasuale()
 function Eventi()
 {
 	var eTesto;
-	if (SW.dado(100) <= eventi.probabilita) {
-		eTesto = eventi.frasi[SW.dado(eventi.frasi.length)];
-		SW.testoNlCSS("evidFrase", eTesto);
+	if (SW.dice(100) <= eventi.probabilita) {
+		eTesto = eventi.frasi[SW.dice(eventi.frasi.length)];
+		SW.sayNlCSS("evidFrase", eTesto);
 	}
 }
-
-// BRIDGE
-
-/*
-var vai         = SW.vai.bind(SW);
-var titolo      = SW.titolo.bind(SW);
-var testo       = SW.testo.bind(SW);
-var testoNl     = SW.testoNl.bind(SW);
-var testoNlCSS  = SW.testoNlCSS.bind(SW);
-var nl          = SW.nl.bind(SW);
-var rinvio      = SW.rinvio.bind(SW);
-var scelta      = SW.scelta.bind(SW);
-var continua    = SW.continua.bind(SW);
-var messaggio   = SW.messaggio.bind(SW);
-var dado        = SW.dado.bind(SW);
-*/
-
-var vai         = function()  { SW.vai.apply(SW, arguments); }
-var titolo      = function()  { SW.titolo.apply(SW, arguments); }
-var testo       = function()  { SW.testo.apply(SW, arguments); }
-var testoNl     = function()  { SW.testoNl.apply(SW, arguments); }
-var testoNlCSS  = function()  { SW.testoNlCSS.apply(SW, arguments); }
-var nl          = function()  { SW.nl.apply(SW, arguments); }
-var rinvio      = function()  { SW.rinvio.apply(SW, arguments); }
-var scelta      = function()  { SW.scelta.apply(SW, arguments); }
-var continua    = function()  { SW.continua.apply(SW, arguments); }
-var messaggio   = function()  { SW.messaggio.apply(SW, arguments); }
-var dado        = function()  { SW.dado.apply(SW, arguments); }
 
