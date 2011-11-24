@@ -236,7 +236,6 @@ function link(type, file)
 		var tag = document.createElement("script");
 		tag.setAttribute("type",    "text/javascript");
 		tag.setAttribute("src",     file + ".js");
-		//tag.setAttribute("onload",  "loaded = 1");
 	} else {
 		var tag = document.createElement("link");
 		tag.setAttribute("rel", "stylesheet");

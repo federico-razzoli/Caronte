@@ -37,9 +37,10 @@ var SW = new function()
 	
 	this.defaultOptions =
 	{
-		showInfo      : true,
-		light         : false,
-		defaultTheme  : "classic"
+		showInfo           : true,
+		light              : false,
+		defaultTheme       : "classic",
+		defaultDictionary  : "it"
 	};
 	
 	/*
@@ -295,13 +296,17 @@ var SW = new function()
 	this.infoMenu = function()
 	{
 		var secInfo = menu.addSection("secInfo", "Info su...", "Informazioni sui software in uso");
-		if (typeof info != "undefined") 
+		if (typeof info != "undefined") {
 			secInfo.addButton("bttInfoApp",  "SW.showInfo(info)",  null,  "Questa Applicazione",  "Informazioni su questa Applicazione");
+		}
 		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  "IDRA",  "Informazioni su IDRA");
 		for (var p in plugins.get()) {
 			if (typeof plugins.get(p).info != "undefined") {
 				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  "Informazioni sull'Estensione " + p);
 			}
+		}
+		if (typeof dictInfo != "undefined") {
+			secInfo.addButton("bttInfoDict",  "SW.showInfo(dictInfo)",  null,  "Dizionario",  "Dizionario usato in questa Applicazione");
 		}
 	}
 	
@@ -422,13 +427,6 @@ var SW = new function()
 	// (re)start the App. Call plugins.loadAll() + start
 	this.prepare = function()
 	{
-		// load dictionary
-		if (typeof dictionary == "undefined") window.dictionary = "it";
-		if (dictionary != "") link("js", "data/dict/" + dictionary);
-		else var dictOk = true;
-		
-		if (typeof extensions == "undefined") window.extensions = new Object;
-		
 		// assign Application options
 		if (typeof this.defaultOptions == "undefined")
 			this.defaultOptions = null;
@@ -438,6 +436,13 @@ var SW = new function()
 		SW.options   = new opt(SWOptions,  this.defaultOptions);
 		window.SWOptions = undefined; // cant delete globals in strict mode
 		delete this.defaultOptions;
+		
+		// load dictionary
+		if (typeof dictionary == "undefined") window.dictionary = this.options.get("defaultDictionary");
+		if (dictionary != "") link("js", "data/dict/" + dictionary);
+		else var dictOk = true;
+		
+		if (typeof extensions == "undefined") window.extensions = new Object;
 		
 		// erase if exists
 		menu.erase();

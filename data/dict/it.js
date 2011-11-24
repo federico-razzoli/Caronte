@@ -22,6 +22,21 @@ if (typeof PiePagina     != "undefined")
 	var _footer     = function()  { PiePagina.apply(null, arguments);; }
 
 
+
+// info sull'Applicazione (opzionale)
+var dictInfo =
+{
+	name        : "it",
+	version     : "0.1",
+	license     : "AGPLv3",
+	licenseURL  : "https://www.gnu.org/licenses/agpl.html",
+	author      : "Federico Razzoli",
+	contacts    : "santec [At) riseup [Dot' net",
+	copyright   : "2011 Federico Razzoli",
+	notes       : "Compatibile con IDRA1. No plugin, per ora."
+};
+
+
 // -- FINE DEL DIZIONARIO
 var dictOk = true
 
