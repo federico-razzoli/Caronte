@@ -21,18 +21,19 @@ function extObjects()
 		// box
 		
 		this.boxObjects = gui.createArea("boxObjects", "box", this.options.get("title"), false, this.options.get("size"));
-		gui.draw();
-		this.boxObjects.setCSSProperty(this.options.get("backgroundColor"), 'backgroundColor');
+		this.boxObjects.setCSSProperty(this.options.get("backgroundColor"), "backgroundColor");
 		
 		// ===== Variabili ==========================================================
 		
 		this.selez       = "";           // nessun oggetto attualmente selezionato
 		this.datiOgg     = "";           // conterra' l'array con la lista di oggetti e descrizioni
-		this.scelte      = new Array();  // ogni elemento conterra' una tavola di scelte
+		this.scelte      = new Array;    // ogni elemento conterra' una tavola di scelte
 		this.nscelte     = 0;            // non usa nscelte di Idra per pulizia del codice
 		this.preRinvio   = "";           // per evidenziare i rinvii su cui si puo' agire con oggetti
 		this.postRinvio  = "";
 	}
+	
+	this.unload = function() { }
 	
 	/*
 	 *    Public Methods
@@ -129,7 +130,8 @@ function extObjects()
 	}
 	
 	// Identica a rinvioOgg, ma mostra l'opzione come una scelta
-	this.sceltaOgg = function(desc, defaultAct) { //seguono argomenti opzionali, vedi sopra
+	this.sceltaOgg = function(desc, defaultAct)
+	{ //seguono argomenti opzionali, vedi sopra
 		var tavola = new Object() //hash table con coppie oggetto-azione
 		tavola["-"] = defaultAct
 		for (var i = 1; i < arguments.length; i++) {
@@ -146,7 +148,8 @@ function extObjects()
 	 */
 	
 	// when page ends, update boxObjects
-	this.onPageEnd = function() { //seguono argomenti opzionali, vedi sopra
+	this.onPageEnd = function()
+	{ //seguono argomenti opzionali, vedi sopra
 		this.mostraOggetti("");
 	}
 	
@@ -156,7 +159,8 @@ function extObjects()
 	
 	// Effetto del clic su un rinvioOgg (rimandato da Idra): esegue l'azione associata 
 	// all'oggetto correntemente selezionato se c'e', altrimenti quella di default
-	this.eseguiRinvioOgg = function(indice) {
+	this.eseguiRinvioOgg = function(indice)
+	{
 		var lista = this.scelte[indice]
 		var act = null //azione da eseguire
 		if (this.selez) { //se c'e' un oggetto selezionato

@@ -124,7 +124,8 @@ function area(id, type, title, size)
 		if (this.id != "boxMain") tag.setAttribute("class", "boxAux");
 		tag.style.height = this.size + "%";
 		document.body.appendChild(tag);
-		this.elmArea  = document.getElementById(this.id);
+		this.elmArea = document.getElementById(this.id);
+		this.applyCSS();
 		if (this.title) this.printBoxTitle();
 	}
 	
@@ -143,21 +144,27 @@ function area(id, type, title, size)
 		this.elmArea.appendChild(tag);
 	}
 	
+	// apply CSS props defined in arrStyles
+	this.applyCSS = function()
+	{
+		for (var i = 0; i < this.arrStyles.length; i++) {
+			var prop = getSupportedProperty(this.elmArea, this.arrStyles[i]["names"]);
+			if (!prop) return false;
+			this.elmArea.style[prop] = this.arrStyles[i]["value"];
+		}
+	}
+	
 	// sets 1st supported CSS property
-	// first argument is value;
-	// latter, are the possible property name
+	// first argument is value, latter is an array of property names.
 	// properties names must be specified in javascript style: text-align => textAlign.
 	// if a property has been set returns true, else false
-	this.setCSSProperty = function(value)
+	this.setCSSProperty = function(value, names)
 	{
-		var args = new Array();
-		for (var i = 1; i < arguments.length; i++) args[i - 1] = arguments[i];
-		var prop = getSupportedProperty(this.elmArea, args);
-		if (!prop) return false;
-		value.replace("'", "\'");
-		var stmt = "this.elmArea.style." + prop + " = '" + value + "';";
-		eval(stmt);
-		return true;
+		if (!isArray(names)) names = [names];
+		var i = this.arrStyles.length;
+		this.arrStyles[i]           = new Object;
+		this.arrStyles[i]["value"]  = value.replace("'", "\'");;
+		this.arrStyles[i]["names"]  = names;
 	}
 	
 	// get 1st defined CSS class or null
@@ -239,11 +246,12 @@ function area(id, type, title, size)
 	
 	// set members
 	this.buffer         = "";
-	this.elmArea        = new Object();
+	this.elmArea        = new Object;
 	this.id             = id;
 	this.type           = type;
 	this.title          = title;
 	this.size           = size;
+	this.arrStyles      = new Array;
 }
 
 // return 1st CSS property supported by specified element (with current useragent)

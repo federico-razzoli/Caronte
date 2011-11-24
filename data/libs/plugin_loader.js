@@ -74,8 +74,9 @@ var plugins = new function()
 	this.unload = function(name)
 	{
 		unlink("js", "ext/" + name);
-		this.plugins[name].end();
-		this.plugins[name] = null;
+		if (typeof this.plugins[name].unload != "undefined")
+			this.plugins[name].unload();
+		delete this.plugins[name];
 	}
 	
 	// return true if loaded, else false

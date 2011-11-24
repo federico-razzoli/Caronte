@@ -422,7 +422,7 @@ var SW = new function()
 	// (re)start the App. Call plugins.loadAll() + start
 	this.prepare = function()
 	{
-		if (typeof extensions == "undefined") window.extensions = new Object();
+		if (typeof extensions == "undefined") window.extensions = new Object;
 		
 		// assign Application options
 		if (typeof this.defaultOptions == "undefined")
@@ -443,7 +443,6 @@ var SW = new function()
 		
 		gui.erase();
 		this.boxMain = gui.createArea("boxMain", "box");
-		gui.draw();
 		
 		// load extensions
 		plugins.loadAll();
@@ -453,6 +452,8 @@ var SW = new function()
 	
 	this.start = function()
 	{
+		gui.draw();
+		
 		// add info section + draw() menu
 		if (SW.options.get("showInfo") != "0") SW.infoMenu();
 		menu.draw();

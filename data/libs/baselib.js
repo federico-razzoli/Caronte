@@ -251,7 +251,7 @@ function link(type, file)
 // removes <script> or <link> pointing to specified file
 function unlink(type, file)
 {
-	id = libId(type, file);
+	var id = libId(type, file);
 	removeFromDOM(id);
 }
 
