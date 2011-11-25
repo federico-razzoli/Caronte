@@ -153,17 +153,19 @@ function init()
 	// default css
 	link("css", "data/themes/classic/main");
 	
+	// localization
+	queue.add("link('js', 'data/libs/locale')");
 	// messages
-	queue.add("link('js', 'data/libs/tinybox')");
+	queue.add("link('js', 'data/libs/tinybox')", ["locale"]);
 	// event handler
-	queue.add("link('js', 'data/libs/events')");
+	queue.add("link('js', 'data/libs/events')", ["locale"]);
 	queue.add("defineEvents()", ["events"]);
 	// output system
 	queue.add("link('js', 'data/libs/ui')", ["events", "?events.isDefined('PageEnd')"]);
 	// game system
 	queue.add("link('js', 'data/libs/kernel')", ["gui"]);
 	// menu handler
-	queue.add("link('js', 'data/libs/menu')");
+	queue.add("link('js', 'data/libs/menu')", ["locale"]);
 	// load / config extensions
 	queue.add("link('js', 'data/libs/plugin_loader')", ["gui", "menuHandler", "events"]);
 	
@@ -196,8 +198,8 @@ function init()
 	
 	if (appName == null) {
 		// application configuration
-		queue.add('link("js", "apps/gioco_conf")', [], "conf");
-		queue.add('link("js", "apps/gioco")', ["plugins", "@conf"]);
+		queue.add('link("js", "apps/gioco_conf")',  [], "conf");
+		queue.add('link("js", "apps/gioco")',       ["plugins", "@conf"]);
 	} else {
 		// application configuration
 		queue.add("link('js', 'apps/" + appName + "/conf')", [], "conf");

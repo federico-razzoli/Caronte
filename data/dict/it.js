@@ -4,6 +4,7 @@
 
 // funzioni base
 var vai         = function()  { SW.goTo.apply(SW, arguments); }
+var aggiorna    = function()  { SW.refresh.apply(SW, arguments); }
 var titolo      = function()  { SW.title.apply(SW, arguments); }
 var testo       = function()  { SW.say.apply(SW, arguments); }
 var testoNl     = function()  { SW.sayNl.apply(SW, arguments); }

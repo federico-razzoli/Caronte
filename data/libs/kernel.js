@@ -19,8 +19,7 @@
 
 "use strict";
 
-	// Eventi
-
+	// ### eventi needs to be moved to an extension!!! ###
 	var eventi = new Object;
 		eventi.frasi        = new Array();  // array di frasi che si alternano
 		eventi.probabilita  = 5;            // probabilità che una frase sia visualizzata
@@ -40,7 +39,8 @@ var SW = new function()
 		showInfo           : true,
 		light              : false,
 		defaultTheme       : "classic",
-		defaultDictionary  : "it"
+		defaultDictionary  : "it",
+		defaultLang        : "it"
 	};
 	
 	/*
@@ -103,14 +103,14 @@ var SW = new function()
 	this.goTo = function(pag, args)
 	{
 		this.qui = pag; // ricorda la pagina
-		this.apriPagina();
+		this.pageBegin();
 		events.exec("PageBegin");
 		if (typeof args == "undefined") args = null;
 		if (window._header)  _header(pag.name, args);
 		pag(args); // write page
 		if (window._footer)  _footer(pag.name, args);
 		events.exec("PageEnd");
-		this.chiudiPagina();
+		this.pageEnd();
 	}
 
 	// check if user-defined function exist before calling
@@ -126,11 +126,11 @@ var SW = new function()
 	}
 	
 	// Esegue nuovamente la pagina corrente, cioe' quella ricordata nella variabile qui
-	this.aggiorna = function()
+	this.refresh = function()
 	{
 		this.goTo(this.qui, this.lastArgs);
 	}
-		
+	
 	// ===== Funzioni di creazione pagina =======================================
 	
 	// Scrive l'eventuale titolo della pagina
@@ -194,11 +194,11 @@ var SW = new function()
 	//    @action   : mixed      : Function or string to execute; default: this.qui
 	this.message = function(txt, action)
 	{
-		this.apriPagina();
+		this.pageBegin();
 		this.say("<p>" + txt + "</p>\n");
 		if (action == null) action = this.qui;
 		this.option("Continua", action);
-		this.chiudiPagina();
+		this.pageEnd();
 		//modal.info(txt);
 	}
 	
@@ -222,7 +222,7 @@ var SW = new function()
 	// preceduto da idPagina per evitare problemi con la navigazione del browser
 	this.link = function(desc, act)
 	{
-		this.say("<a href=\"javascript:SW.esegui('" + this.nscelte + "');\">");
+		this.say("<a href=\"javascript:SW.exec('" + this.nscelte + "');\">");
 		this.say(desc, "</a>");
 		this.scelte[this.nscelte] = act;
 		this.nscelte++;
@@ -247,13 +247,13 @@ var SW = new function()
 	
 	// assegna un identificatore univoco per rilevare problemi causati dai comandi 
 	// di navigazione del browser, azzera il contatore delle scelte
-	this.apriPagina = function(opzioni, stylesheet)
+	this.pageBegin = function(opzioni, stylesheet)
 	{
 		this.nscelte = 0; // reset contatore scelte
 	}
 	
 	// Termina la scrittura di una pagina
-	this.chiudiPagina = function()
+	this.pageEnd = function()
 	{
 		this.boxMain.send();
 	}
@@ -261,9 +261,9 @@ var SW = new function()
 	// ===== Funzioni ausiliarie ================================================
 	
 	// Ritorna il nome di una pagina (funzione)
-	this.nomePagina = function(p)
+	this.pageName = function(p)
 	{
-		var s = p.toString(); //lista la funzione corrispondente alla pagina
+		var s = p.toString();
 		// salta "function" e uno spazio, tiene fino alla parentesi esclusa
 		return this.trim(s.substring(9, s.indexOf("(", 0)));
 	}
@@ -295,18 +295,18 @@ var SW = new function()
 	
 	this.infoMenu = function()
 	{
-		var secInfo = menu.addSection("secInfo", "Info su...", "Informazioni sui software in uso");
+		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle"));
 		if (typeof info != "undefined") {
-			secInfo.addButton("bttInfoApp",  "SW.showInfo(info)",  null,  "Questa Applicazione",  "Informazioni su questa Applicazione");
+			secInfo.addButton("bttInfoApp",  "SW.showInfo(info)",  null,  locale.get("infoApp"),  locale.get("infoAppTitle"));
 		}
-		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  "IDRA",  "Informazioni su IDRA");
+		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  this.info.name, locale.get("infoAbout", this.info.name));
 		for (var p in plugins.get()) {
 			if (typeof plugins.get(p).info != "undefined") {
-				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  "Informazioni sull'Estensione " + p);
+				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  locale.get("infoAboutExt", p));
 			}
 		}
 		if (typeof dictInfo != "undefined") {
-			secInfo.addButton("bttInfoDict",  "SW.showInfo(dictInfo)",  null,  "Dizionario",  "Dizionario usato in questa Applicazione");
+			secInfo.addButton("bttInfoDict",  "SW.showInfo(dictInfo)",  null,  locale.get("dictionary"),  locale.get("currentDictionary"));
 		}
 	}
 	
@@ -315,8 +315,8 @@ var SW = new function()
 		if (typeof infoSet != "undefined") {
 			var out = "";
 			if (infoSet["name"] || infoSet["title"])
-				out += "<p><strong>Info su " + 
-					   infoSet["name"] ? infoSet["name"] : infoSet["title"] + 
+				out += "<p><strong>" + 
+					   locale.get("infoAbout", infoSet["name"] ? infoSet["name"] : infoSet["title"]) + 
 					   "</strong></p>\n";
 			out += '<table border="0">\n';
 			if (infoSet["version"]) {
@@ -324,7 +324,7 @@ var SW = new function()
 					infoSet["version"] + " (" + infoSet["maturity"] + ")" :
 					infoSet["version"];
 				out += "  <tr>\n" +
-					   "    <td>Version</td>\n" +
+					   "    <td>" + locale.get("version") + "</td>\n" +
 					   "    <td>" + version + "</td>\n" +
 					   "  </tr>\n";
 			}
@@ -358,38 +358,32 @@ var SW = new function()
 					URL += '<a href="' + linkURL + '">' + linkText + "</a>";
 				}
 				out += "  <tr>\n" +
-					   "    <td>URL</td>\n" +
+					   "    <td>" + locale.get("URL") + "</td>\n" +
 					   "    <td>" + URL + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["APIVersion"]) {
 				out += "  <tr>\n" +
-					   "    <td><nobr>API Version</nobr></td>\n" +
+					   "    <td>" + locale.get("APIVersion") + "</td>\n" +
 					   "    <td>" + infoSet["APIVersion"] + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["author"]) {
 				out += "  <tr>\n" +
-					   "    <td>Author</td>\n" +
+					   "    <td>" + locale.get("author") + "</td>\n" +
 					   "    <td>" + infoSet["author"] + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["contacts"]) {
 				out += "  <tr>\n" +
 					   "    <td>Contacts</td>\n" +
-					   "    <td>" + infoSet["contacts"] + "</td>\n" +
+					   "    <td>" + locale.get("contacts") + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["copyright"]) {
 				out += "  <tr>\n" +
-					   "    <td>Copyright</td>\n" +
+					   "    <td>" + locale.get("copyright") + "</td>\n" +
 					   "    <td>" + infoSet["copyright"].replace("\n", "<br>") + "</td>\n" +
-					   "  </tr>\n";
-			}
-			if (infoSet["URL"]) {
-				out += "  <tr>\n" +
-					   "    <td>Description</td>\n" +
-					   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["license"] || infoSet["licenseURL"]) {
@@ -401,26 +395,26 @@ var SW = new function()
 				else
 					license = '<a href="' + infoSet["licenseURL"] + '">' + infoSet["licenseURL"] + "</a>";
 				out += "  <tr>\n" +
-					   "    <td>License</td>\n" +
+					   "    <td>" + locale.get("license") + "</td>\n" +
 					   "    <td>" + license + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["descr"]) {
 				out += "  <tr>\n" +
-					   "    <td>Description</td>\n" +
+					   "    <td>" + locale.get("description") + "</td>\n" +
 					   "    <td>" + infoSet["descr"].replace("\n", "<br>") + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["notes"]) {
 				out += "  <tr>\n" +
-					   "    <td>Notes</td>\n" +
+					   "    <td>" + locale.get("notes") + "</td>\n" +
 					   "    <td>" + infoSet["notes"].replace("\n", "<br>") + "</td>\n" +
 					   "  </tr>\n";
 			}
 			out += "</table>\n";
 			modal.info(out);
 		} else {
-			modal.info("No information avaible for requested module");
+			modal.info(local.get("noInfo"));
 		}
 	}
 	
@@ -428,14 +422,17 @@ var SW = new function()
 	this.prepare = function()
 	{
 		// assign Application options
-		if (typeof this.defaultOptions == "undefined")
-			this.defaultOptions = null;
-		options      = new opt(options,    this.defaultOptions);
+		options = new opt(options, defaultOptions);
 		
 		// assign SW options
-		SW.options   = new opt(SWOptions,  this.defaultOptions);
+		if (typeof this.defaultOptions == "undefined")
+			this.defaultOptions = null;
+		SW.options = new opt(SWOptions, this.defaultOptions);
 		window.SWOptions = undefined; // cant delete globals in strict mode
 		delete this.defaultOptions;
+		
+		// load localization file
+		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", ["@conf"], "locale");
 		
 		// load dictionary
 		if (typeof dictionary == "undefined") window.dictionary = this.options.get("defaultDictionary");
@@ -457,7 +454,7 @@ var SW = new function()
 		// load extensions
 		plugins.loadAll();
 		
-		queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready", "dictOk"]);
+		queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready",  "dictOk"]);
 	}
 	
 	this.start = function()
@@ -487,7 +484,7 @@ var SW = new function()
 	// Esegue l'azione act, che puo' essere:
 	// - una stringa da eseguire, ad esempio "goTo(P1)"
 	// - una funzione (pagina) a cui andare, ad esempio P1
-	this.esegui = function(act, args)
+	this.exec = function(act, args)
 	{
 		act = this.scelte[act];
 		if (typeof(act) == "function") { //se e' una funzione (pagina)

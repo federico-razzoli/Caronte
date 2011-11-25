@@ -58,7 +58,7 @@ var extSaveMe = function()
 		} else if (modal.confirm("Desideri caricare la situazione salvata?")) {
 			if (cookie) { //ricontrolla se ha riletto (tanto per sicurezza)
 				ripristinaStato(cookie);
-				aggiorna(); //avendo ripristinato lo statoPrecedente, ricostruisce quello attuale
+				SW.refresh(); //avendo ripristinato lo statoPrecedente, ricostruisce quello attuale
 			} else {
 				modal.bad("Nessun salvataggio disponibile");
 			}
@@ -120,7 +120,7 @@ var extSaveMe = function()
 		listKeys    = listKeys.substr(1);
 		listValues  = listValues.substr(1);
 		// key1,key2,...|value1,value2,...|qui
-		return listKeys + "|" + listValues + "|" + SW.nomePagina(SW.qui);
+		return listKeys + "|" + listValues + "|" + SW.pageName(SW.qui);
 	}
 	
 	this.nomeCookie         = "app";

@@ -218,7 +218,7 @@ var modal = new function()
 	
 	this.info = function(msg, txtButton)
 	{
-		msg += '<br>\n<input type="button" id="butClose" value="Chiudi" onclick="TINY.box.hide()">';
+		msg += '<br>\n<input type="button" id="butClose" value="' + locale.get("close") + '" onclick="TINY.box.hide()">';
 		
 		TINY.box.show(
 			{

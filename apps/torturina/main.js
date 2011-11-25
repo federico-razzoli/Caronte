@@ -121,7 +121,7 @@ function SalaTorture() {
   if (!v.torcia) {
 	  testo("<p>Su di una parete vedi ");
 	  plugins.get("extObjects").rinvioOgg(
-			"una torcia", "v.torcia=1; SW.aggiorna()",
+			"una torcia", "v.torcia=1; aggiorna()",
 			"spada", "messaggio(\"Fare a pezzi la torcia non sarebbe una buona idea.\")",
 			"spillone", "messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
 			"+", "Inutile"
@@ -167,7 +167,7 @@ function Bara() {
 	if (!(v.spillone || v.spiedino)) {
 		testo("<p>Noti ");
 		plugins.get("extObjects").rinvioOgg(
-			"uno spillone", "v.spillone=1; SW.aggiorna()",
+			"uno spillone", "v.spillone=1; aggiorna()",
 			"torcia", "messaggio(\"Arroventi lo spillone e te lo ficchi in un occhio. Ahhhh, che bello!\")",
 			"+", "Inutile()"
 			);
