@@ -26,7 +26,7 @@ var plugins = new function()
 		this.plugins = new Object;
 		for (var name in extensions) {
 			// link js file
-			var fileName = "data/ext/" + name.substr(3).toLowerCase();
+			var fileName = "data/ext/" + name.substr(3).toLowerCase() + "/main";
 			link("js", fileName);
 			
 			// extensions items could be an object of options
@@ -58,7 +58,22 @@ var plugins = new function()
 		obj.load();
 		events.exec("PluginLoaded");
 		
-		// plugins object is ready?
+		// plugin-specific dictionary/locale file to load?
+		if (obj.dictionary === true) {
+			this.toLoad++;
+			queue.add("link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/dict/" + SW.options.get("defaultDictionary") + "');");
+		}
+		if (obj.locale === true) {
+			this.toLoad++;
+			queue.add("link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/locale/" + this.options.get("defaultLocale") + "');");
+		}
+		
+		this.fileLoaded();
+	}
+	
+	// verify if plugins are ready
+	this.fileLoaded = function()
+	{
 		this.toLoad--;
 		if (this.toLoad == 0) {
 			// all ext loaded

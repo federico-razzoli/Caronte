@@ -70,18 +70,9 @@ var SW = new function()
 	 *    Properties
 	 */
 	
-	this.scelte             = new Array();  // scelte valide (stringhe contenenti codice o funzioni)
-	this.nscelte            = 0;
-	this.qui                = null;         // current page function
-	this.lastArgs           = null;         // current page arguments
-	
-	
-	/*
-	 *    User Interface
-	 */
-	
-	//this.boxMain = gui.createArea("boxMain", "box");
-	//gui.draw();
+	var links            = new Array();   // links created by SW
+	var numLinks         = 0;
+	var here             = null;         // current page function
 	
 	
 	/*
@@ -97,12 +88,12 @@ var SW = new function()
 	
 	// ===== Funzioni di cambio pagina ==========================================
 	
-	// Va alla pagina pag, che viene ricordata nella proprietà qui
+	// Va alla pagina pag, che viene ricordata nella proprietà here
 	// come pagina corrente, chiama:
 	// Intestazione(pag) se esiste, pag(), PiePagina(pag) se esiste
 	this.goTo = function(pag, args)
 	{
-		this.qui = pag; // ricorda la pagina
+		here = pag; // ricorda la pagina
 		this.pageBegin();
 		events.exec("PageBegin");
 		if (typeof args == "undefined") args = null;
@@ -125,10 +116,10 @@ var SW = new function()
 		}
 	}
 	
-	// Esegue nuovamente la pagina corrente, cioe' quella ricordata nella variabile qui
+	// Esegue nuovamente la pagina corrente, cioe' quella ricordata nella variabile here
 	this.refresh = function()
 	{
-		this.goTo(this.qui, this.lastArgs);
+		this.goTo(here);
 	}
 	
 	// ===== Funzioni di creazione pagina =======================================
@@ -143,8 +134,12 @@ var SW = new function()
 	// accetta un numero variabile di argomenti e li stampa di seguito
 	this.say = function()
 	{
-		for (var i = 0; i < arguments.length; i++) {
-			this.boxMain.write(arguments[i]);
+		if (typeof appLocale == "string") {
+			locale.getp(arguments);
+		} else {
+			for (var i = 0; i < arguments.length; i++) {
+				this.boxMain.write(arguments[i]);
+			}
 		}
 	}
 	
@@ -191,12 +186,12 @@ var SW = new function()
 	
 	// Show a message and a link to prev location or another action
 	//    @txt      : String     : Message
-	//    @action   : mixed      : Function or string to execute; default: this.qui
+	//    @action   : mixed      : Function or string to execute; default: here
 	this.message = function(txt, action)
 	{
 		this.pageBegin();
 		this.say("<p>" + txt + "</p>\n");
-		if (action == null) action = this.qui;
+		if (action == null) action = here;
 		this.option("Continua", action);
 		this.pageEnd();
 		//modal.info(txt);
@@ -218,14 +213,14 @@ var SW = new function()
 	  }
 	} 
 	
-	// Aggiunge una scelta nel testo, ricorda l'azione in scelte[], il link e'
+	// Aggiunge una scelta nel testo, ricorda l'azione in links[], il link e'
 	// preceduto da idPagina per evitare problemi con la navigazione del browser
 	this.link = function(desc, act)
 	{
-		this.say("<a href=\"javascript:SW.exec('" + this.nscelte + "');\">");
+		this.say("<a href=\"javascript:SW.exec('" + numLinks + "');\">");
 		this.say(desc, "</a>");
-		this.scelte[this.nscelte] = act;
-		this.nscelte++;
+		links[numLinks] = act;
+		numLinks++;
 	}
 	
 	// Aggiunge la scelta "Continua"; se cond e' vera usa act1, altrimenti act2
@@ -249,7 +244,7 @@ var SW = new function()
 	// di navigazione del browser, azzera il contatore delle scelte
 	this.pageBegin = function(opzioni, stylesheet)
 	{
-		this.nscelte = 0; // reset contatore scelte
+		numLinks = 0; // reset contatore scelte
 	}
 	
 	// Termina la scrittura di una pagina
@@ -422,12 +417,15 @@ var SW = new function()
 	this.prepare = function()
 	{
 		// assign Application options
+		if (typeof defaultOptions == "undefined")
+			window.defaultOptions = null;
 		options = new opt(options, defaultOptions);
+		window.defaultOptions = undefined;
 		
 		// assign SW options
 		if (typeof this.defaultOptions == "undefined")
 			this.defaultOptions = null;
-		SW.options = new opt(SWOptions, this.defaultOptions);
+		this.options = new opt(SWOptions, this.defaultOptions);
 		window.SWOptions = undefined; // cant delete globals in strict mode
 		delete this.defaultOptions;
 		
@@ -454,7 +452,8 @@ var SW = new function()
 		// load extensions
 		plugins.loadAll();
 		
-		queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready",  "dictOk"]);
+		if (this.options.get("no_exec") !== true)
+			queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready",  "dictOk"]);
 	}
 	
 	this.start = function()
@@ -465,7 +464,7 @@ var SW = new function()
 		if (SW.options.get("showInfo") != "0") SW.infoMenu();
 		menu.draw();
 		
-		this.qui = null; // no page open
+		here = null; // no page open
 		v = new Object(); // re-alloc to clean garbage
 		
 		if (typeof info != "undefined") {
@@ -486,7 +485,7 @@ var SW = new function()
 	// - una funzione (pagina) a cui andare, ad esempio P1
 	this.exec = function(act, args)
 	{
-		act = this.scelte[act];
+		act = links[act];
 		if (typeof(act) == "function") { //se e' una funzione (pagina)
 			this.goTo(act, args);
 		} else if (typeof(act) == "string") { //se e' una stringa
@@ -506,7 +505,7 @@ var SW = new function()
 			
 		}
 		// get & redraw current page
-		this.qui = state[2];
+		here = state[2];
 	}
 }
 

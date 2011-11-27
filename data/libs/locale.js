@@ -27,7 +27,14 @@
 	locale.set("stupid", "Error: you are too stupid to %1 and %2!");
 	
 	Get a message passing parameters:
-	locale.get("stupid", "climb a wall", "survive");
+	locale.getp("stupid", "climb a wall", "survive");
+	
+	Writing the "%" character:
+	locale.set("100%%");
+	
+	NOTES
+	
+	locale.getp() can be used in place of get(), but get() is a little faster.
 */
 
 "use strict";
@@ -39,10 +46,16 @@ var locale = new function()
 		arrMsg[id] = txt;
 	}
 	
-	this.get = function()
+	this.get = function(id)
+	{
+		return arrMsg[id];
+	}
+	
+	this.getp = function()
 	{
 		var msg = arrMsg[arguments[0]];
 		if (arguments.length > 0) {
+			msg = msg.replace("%%", "&#37;");
 			for (var i = 1; i < arguments.length; i++) {
 				msg = msg.replace("%" + i, arguments[i]);
 			}

@@ -50,17 +50,15 @@ var queue = new function()
 	// adds new item to queue
 	this.add = function(func, objects, id)
 	{
-		this.list.push([func, objects, id]);
-		if (this.list.length == 1) this.tryToExec();
+		list.push([func, objects, id]);
+		if (list.length == 1) this.tryToExec();
 	}
 	
 	// exec next item
 	this.tryToExec = function()
 	{
-		if (this.lock) return false;
-		this.lock = true;
-		
-		//for (var o in this.list) alert(o + " " + this.list[o]);
+		if (lock) return false;
+		lock = true;
 		
 		// repeat loop on items until an item exist or a loop was useless
 		while (true) {
@@ -68,9 +66,9 @@ var queue = new function()
 			var itemExecuted = false;  // at least 1 item ecexuted?
 			
 			// loop on items
-			for (var x in this.list) {
+			for (var x in list) {
 				// get item
-				var item     = this.list[x];
+				var item     = list[x];
 				var func     = item[0];
 				var objects  = item[1];
 				var id       = item[2];
@@ -91,16 +89,16 @@ var queue = new function()
 				if (!itemLazy) {
 					// item is ready! exec & drop it
 					eval(func);
-					this.list.splice(x, 1);
-					this.done[id]  = true;
+					list.splice(x, 1);
+					done[id]  = true;
 					itemExecuted   = true;
 				}
 			}
 			// nothin more to do or nothin done
-			if (this.list.length == 0 || !itemExecuted) break;
+			if (list.length == 0 || !itemExecuted) break;
 		}
-		this.lock = false;
-		if (this.list.length > 0) this.defer();
+		lock = false;
+		if (list.length > 0) this.defer();
 	}
 	
 	// condition is (alreay) satisfied?
@@ -114,7 +112,7 @@ var queue = new function()
 		} else if (cond.charAt(0) == '@') {
 			// starts with '@' - id of another task, is it done already?
 			cond = cond.substr(1);
-			return (typeof this.done[cond] != "undefined");
+			return (typeof done[cond] != "undefined");
 		} else {
 			// no suffix: object
 			return eval("typeof " + cond + " != 'undefined';");
@@ -124,14 +122,14 @@ var queue = new function()
 	// set new timeout
 	this.defer = function()
 	{
-		window.setTimeout(function(queue){queue.tryToExec()}, this.millisec, queue);
+		window.setTimeout(function(queue){queue.tryToExec()}, millisec, queue);
 	}
 	
 	// constructor
-	this.millisec  = 50;
-	this.list      = new Array;
-	this.done      = new Array;
-	this.lock      = false;  // prevents conflicts
+	var millisec  = 50;
+	var list      = new Array;
+	var done      = new Array;
+	var lock      = false;  // prevents conflicts
 }
 
 // defines all IDRA events
@@ -171,8 +169,15 @@ function init()
 	
 	var appName = null;
 	
-	if (document.URL.indexOf("?") > 0) {
-		var qs = document.URL.substring(document.URL.indexOf("?") + 1);
+	if (typeof document.URL != "undefined")
+		var URL = document.URL;
+	else if (typeof window.location != "undefined")
+		var URL = window.location;
+	else
+		var URL = document.location.href;
+	
+	if (URL.indexOf("?") > 0 && URL.indexOf("?") < (URL.length - 1)) { // not last char
+		var qs = URL.substring(document.URL.indexOf("?") + 1);
 		var separatorPos = qs.indexOf("/");
 		if (separatorPos == -1) {
 			// only appName

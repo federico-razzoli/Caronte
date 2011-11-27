@@ -24,7 +24,7 @@ if (typeof PiePagina     != "undefined")
 
 
 
-// info sull'Applicazione (opzionale)
+// info sul Dizionario (opzionale)
 var dictInfo =
 {
 	name        : "it",

@@ -35,16 +35,16 @@ var gui = new function ()
 		if (before) {
 			for (var i in this.arrArea) {
 				this.arrArea[parseInt(i + 1)] = this.arrArea[i];
-				this.first++;
+				first++;
 			}
 			this.arrArea[0] = newArea;
 		} else
 			this.arrArea[this.arrArea.length] = newArea;
 		
 		// if this elem is box, resize other elems
-		if (type == "box" && this.first == null) {
+		if (type == "box" && first == null) {
 			// remember 1st id (main box)
-			this.first     = 0;
+			first     = 0;
 			this.mainSize  = 100;
 		}
 		return newArea;
@@ -59,7 +59,7 @@ var gui = new function ()
 		}
 		// re-init vars
 		this.arrArea   = new Array;
-		this.first     = null;
+		first     = null;
 		this.mainSize  = null;
 	}
 	
@@ -88,7 +88,7 @@ var gui = new function ()
 		}
 		
 		// resize main box
-		this.arrArea[this.first].resizeBox(newSize);
+		this.arrArea[first].resizeBox(newSize);
 	}
 	
 	/*
@@ -96,7 +96,7 @@ var gui = new function ()
 	 */
 	
 	this.arrArea   = new Array;    // all document's area objects
-	this.first     = null;         // id of first area (will be resized when creating more elems)
+	var first     = null;         // id of first area (will be resized when creating more elems)
 	this.mainSize  = null;
 }
 
@@ -147,10 +147,10 @@ function area(id, type, title, size)
 	// apply CSS props defined in arrStyles
 	this.applyCSS = function()
 	{
-		for (var i = 0; i < this.arrStyles.length; i++) {
-			var prop = getSupportedProperty(this.elmArea, this.arrStyles[i]["names"]);
+		for (var i = 0; i < arrStyles.length; i++) {
+			var prop = getSupportedProperty(this.elmArea, arrStyles[i]["names"]);
 			if (!prop) return false;
-			this.elmArea.style[prop] = this.arrStyles[i]["value"];
+			this.elmArea.style[prop] = arrStyles[i]["value"];
 		}
 	}
 	
@@ -161,10 +161,10 @@ function area(id, type, title, size)
 	this.setCSSProperty = function(value, names)
 	{
 		if (!isArray(names)) names = [names];
-		var i = this.arrStyles.length;
-		this.arrStyles[i]           = new Object;
-		this.arrStyles[i]["value"]  = value.replace("'", "\'");;
-		this.arrStyles[i]["names"]  = names;
+		var i = arrStyles.length;
+		arrStyles[i]           = new Object;
+		arrStyles[i]["value"]  = value.replace("'", "\'");;
+		arrStyles[i]["names"]  = names;
 	}
 	
 	// get 1st defined CSS class or null
@@ -205,13 +205,13 @@ function area(id, type, title, size)
 	// add text to the buffer
 	this.write = function(text)
 	{
-		this.buffer += text;
+		buffer += text;
 	}
 	
 	// empty buffer
 	this.empty = function()
 	{
-		this.buffer = "";
+		buffer = "";
 	}
 	
 	// clear element's content
@@ -225,14 +225,14 @@ function area(id, type, title, size)
 	{
 		this.clear();
 		this.printBoxTitle();
-		this.elmArea.innerHTML += this.buffer;
+		this.elmArea.innerHTML += buffer;
 		this.empty();
 	}
 	
 	// append buffer to old text and empty()
 	this.append = function()
 	{
-		this.elmArea.innerHTML += this.buffer;
+		this.elmArea.innerHTML += buffer;
 		this.empty();
 	}
 	
@@ -245,13 +245,13 @@ function area(id, type, title, size)
 	if (title == null)   title   = "";
 	
 	// set members
-	this.buffer         = "";
+	var buffer         = "";
 	this.elmArea        = new Object;
 	this.id             = id;
 	this.type           = type;
 	this.title          = title;
 	this.size           = size;
-	this.arrStyles      = new Array;
+	var arrStyles      = new Array;
 }
 
 // return 1st CSS property supported by specified element (with current useragent)

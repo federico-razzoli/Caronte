@@ -75,7 +75,7 @@ function extObjects()
 	// per deselezionare passare un nome non valido, ad esempio "";
 	// per descrivere l'oggetto chiama la funzione utente DescriviOggetto,
 	// se esiste, passando il nome, la descrizione e se l'oggetto e' selezionato
-	this.mostraOggetti = function(ogg)
+	this.show = function(ogg)
 	{
 		// select/unselect object
 		if (this.selez == ogg)
@@ -92,7 +92,7 @@ function extObjects()
 				if (i > 0) {
 					this.boxObjects.write("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 				}
-				this.boxObjects.write("<a href=\"javascript:plugins.get('extObjects').mostraOggetti('" + ogg + "')\">");
+				this.boxObjects.write("<a href=\"javascript:plugins.get('extObjects').show('" + ogg + "')\">");
 				var selez = (ogg == this.selez); //vera se l'oggetto e' selezionato
 				if (window.DescriviOggetto) {
 					//chiama funzione utente per scrivere o disegnare
@@ -100,7 +100,7 @@ function extObjects()
 				} else {
 					//default: usa <b> per evidenziare oggetto selezionato
 					if (selez) {
-						this.boxObjects.write("<b>" + desc + "</b>");
+						this.boxObjects.write("<strong>" + desc + "</strong>");
 					} else {
 						this.boxObjects.write(desc);
 					}
@@ -150,7 +150,7 @@ function extObjects()
 	// when page ends, update boxObjects
 	this.onPageEnd = function()
 	{ //seguono argomenti opzionali, vedi sopra
-		this.mostraOggetti("");
+		this.show("");
 	}
 	
 	/*
@@ -202,4 +202,6 @@ function extObjects()
 		size             : 20,
 		backgroundColor  : "#DDDDDD"
 	}
+	
+	this.dictionary = true;
 }

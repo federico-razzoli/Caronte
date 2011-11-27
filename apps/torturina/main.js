@@ -105,7 +105,8 @@ function Introduzione()
 	scelta("Dove diavolo sono!? + Istruzioni", Spiegazione);
 }
 
-function SalaTorture() {
+function SalaTorture()
+{
   titolo("La sala delle torture")
   testo("<p>Sei in una sala grande e umida.<br>",
 		"Le pareti e il pavimento sono intagliate rozzamente nella pietra.<br>",

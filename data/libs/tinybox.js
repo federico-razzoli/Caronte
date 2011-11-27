@@ -179,15 +179,17 @@ var modal = new function()
 {
 	this.setButton = function(id, label, value)
 	{
-		this.buttons[this.buttons.length].id     = id;
-		this.buttons[this.buttons.length].label  = label;
-		this.buttons[this.buttons.length].value  = value;
+		buttons[buttons.length].id     = id;
+		buttons[buttons.length].label  = label;
+		buttons[buttons.length].value  = value;
 	}
 	
 	// SW.options is ready?
+	// (always true for netscape)
 	this.light = function(msg)
 	{
-		return (typeof SW == "undefined" || SW.options.get("light")) ? true : false;
+		if (navigator.userAgent.indexOf("Navigator") != -1) return true;
+		return ((typeof SW == "undefined") || (SW.options.get("light"))) ? true : false;
 	}
 	
 	this.bad = function(msg)
@@ -231,7 +233,7 @@ var modal = new function()
 		);
 	}
 	
-	this.buttons  = new Array();
-	this.msg      = "";
+	var buttons  = new Array();
+	var msg      = "";
 }
 

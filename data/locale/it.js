@@ -12,7 +12,7 @@ locale.set("infoAppTitle",         "Informazioni su questa Applicazione");
 locale.set("infoAbout",            "Informazioni su %1");
 locale.set("infoAboutExt",         "Informazioni sull'Estensione %1");
 locale.set("dictionary",           "Dizionario");
-locale.set("currentDictionary",    "Dizionario in uso");
+locale.set("currentDictionary",    "Informazioni sul Dizionario in uso");
 
 // finestra informazioni
 locale.set("version",              "Versione");
@@ -25,6 +25,20 @@ locale.set("license",              "Licenza");
 locale.set("description",          "Descrizione");
 locale.set("notes",                "Note");
 locale.set("noInfo",               "Nessuna informazione disponibile su questo modulo");
+
+
+// info sulla Localizzazione (opzionale)
+var dictInfo =
+{
+	name        : "it",
+	version     : "0.1.1",
+	license     : "AGPLv3",
+	licenseURL  : "https://www.gnu.org/licenses/agpl.html",
+	author      : "Federico Razzoli",
+	contacts    : "santec [At) riseup [Dot' net",
+	copyright   : "2011 Federico Razzoli",
+	notes       : "Compatibile con IDRA1"
+};
 
 
 // FINE DEL FILE
