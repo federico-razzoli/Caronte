@@ -1,4 +1,4 @@
-// ITALIANO
+﻿// ITALIANO
 // File di localizzazione per IDRA
 
 // finestre modali
@@ -25,6 +25,9 @@ locale.set("license",              "Licenza");
 locale.set("description",          "Descrizione");
 locale.set("notes",                "Note");
 locale.set("noInfo",               "Nessuna informazione disponibile su questo modulo");
+
+// errori
+locale.set("pluginUndefined",      "Il plugin %1 non esiste o non è attualmente caricato");
 
 
 // info sulla Localizzazione (opzionale)

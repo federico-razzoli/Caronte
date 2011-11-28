@@ -18,7 +18,7 @@
 
 //"use strict";
 
-var extSaveMe = function()
+funcExts["extSaveMe"] = function()
 {
 	this.load = function()
 	{ 

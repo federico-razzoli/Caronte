@@ -97,13 +97,11 @@ var SW = new function()
 		this.pageBegin();
 		events.exec("PageBegin");
 		if (typeof args == "undefined") args = null;
-		if (window._header)  _header(pag.name, args);
 		pag(args); // write page
-		if (window._footer)  _footer(pag.name, args);
 		events.exec("PageEnd");
 		this.pageEnd();
 	}
-
+	
 	// check if user-defined function exist before calling
 	this.callUserFunc = function(strFunc)
 	{
@@ -311,7 +309,7 @@ var SW = new function()
 			var out = "";
 			if (infoSet["name"] || infoSet["title"])
 				out += "<p><strong>" + 
-					   locale.get("infoAbout", infoSet["name"] ? infoSet["name"] : infoSet["title"]) + 
+					   locale.getp("infoAbout", infoSet["name"] ? infoSet["name"] : infoSet["title"]) + 
 					   "</strong></p>\n";
 			out += '<table border="0">\n';
 			if (infoSet["version"]) {
@@ -417,13 +415,13 @@ var SW = new function()
 	this.prepare = function()
 	{
 		// assign Application options
-		if (typeof defaultOptions == "undefined")
+		if (typeof defaultOptions === "undefined")
 			window.defaultOptions = null;
 		options = new opt(options, defaultOptions);
 		window.defaultOptions = undefined;
 		
 		// assign SW options
-		if (typeof this.defaultOptions == "undefined")
+		if (typeof this.defaultOptions === "undefined")
 			this.defaultOptions = null;
 		this.options = new opt(SWOptions, this.defaultOptions);
 		window.SWOptions = undefined; // cant delete globals in strict mode
@@ -433,11 +431,11 @@ var SW = new function()
 		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", ["@conf"], "locale");
 		
 		// load dictionary
-		if (typeof dictionary == "undefined") window.dictionary = this.options.get("defaultDictionary");
+		if (typeof dictionary === "undefined") window.dictionary = this.options.get("defaultDictionary");
 		if (dictionary != "") link("js", "data/dict/" + dictionary);
 		else var dictOk = true;
 		
-		if (typeof extensions == "undefined") window.extensions = new Object;
+		if (typeof extensions === "undefined") window.extensions = new Object;
 		
 		// erase if exists
 		menu.erase();
@@ -453,7 +451,7 @@ var SW = new function()
 		plugins.loadAll();
 		
 		if (this.options.get("no_exec") !== true)
-			queue.add("SW.start()",            ["?typeof plugins != 'undefined' && plugins.ready",  "dictOk"]);
+			queue.add("SW.start()",            ["?typeof plugins !== 'undefined' && plugins.ready",  "dictOk"]);
 	}
 	
 	this.start = function()

@@ -17,10 +17,10 @@ var messaggio   = function()  { SW.message.apply(SW, arguments); }
 var dado        = function()  { SW.dice.apply(SW, arguments); }
 
 // luoghi speciali
-if (typeof Intestazione  != "undefined")
-	var _header     = function()  { Intestazione.apply(null, arguments); }
-if (typeof PiePagina     != "undefined")
-	var _footer     = function()  { PiePagina.apply(null, arguments);; }
+if (typeof Intestazione  !== "undefined")
+	window.onPageBegin   = function()  { Intestazione.apply(null, arguments); }
+if (typeof PiePagina     !== "undefined")
+	window.onPageEnd     = function()  { PiePagina.apply(null, arguments);; }
 
 
 

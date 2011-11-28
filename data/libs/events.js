@@ -42,7 +42,7 @@ function hooks()
 		this.list[hookId].func  = func;
 	}
 	
-	// exec hooked func
+	// exec hooked funcs
 	this.exec = function(args)
 	{
 		for (var hook in this.list) {
@@ -66,6 +66,7 @@ var events = new function()
 {
 	// define an event and associate existing handlers
 	//     @eventId      : String   : event unique id
+	//     @force        : Bool     : if already defined, re-define
 	this.define = function(eventId, force)
 	{
 		// check for error but dont stop execution
@@ -77,7 +78,7 @@ var events = new function()
 		this.list[eventId] = new hooks();
 		var handlerName = "on" + eventId;
 		
-		// low-level plugins which are defined before plugins
+		// low-level events which are defined before plugins
 		// will not be filled this way
 		// (extensions developers should know this)
 		if (typeof plugins != "undefined") {
@@ -109,7 +110,7 @@ var events = new function()
 	this.exec = function(eventId, args)
 	{
 		// is eventId defined?
-		if (typeof this.list[eventId] == "undefined") {
+		if (typeof this.list[eventId] === "undefined") {
 			issue("Event " + eventId + " was not defined");
 			return false;
 		}

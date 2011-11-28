@@ -27,6 +27,7 @@
 // error handler
 window.onerror = function(err, url, line, stop)
 {
+	console.trace();
 	var                out  =        "Error: "  + err.toString();
 	if (url)           out += "\n" + "URL: "    + url;
 	if (line != null)  out += "\n" + "Line: "   + line;
@@ -43,6 +44,9 @@ var issue = window.onerror;
 // application options will be loaded later
 var options    = new Object();
 var SWOptions  = new Object();
+
+// functions constructors
+var funcExts   = [];
 
 // wait all passed objects are loaded, then execute func
 var queue = new function()
@@ -81,7 +85,7 @@ var queue = new function()
 				itemLazy = false;
 				for (var y in objects) {
 					// check current condition
-					if (!this.checkCondition(objects[y])) itemLazy = true;
+					if (!checkCondition(objects[y])) itemLazy = true;
 					if (itemLazy) break;
 					//else alert("lazy " + objects[y]);
 				}
@@ -98,11 +102,11 @@ var queue = new function()
 			if (list.length == 0 || !itemExecuted) break;
 		}
 		lock = false;
-		if (list.length > 0) this.defer();
+		if (list.length > 0) defer();
 	}
 	
 	// condition is (alreay) satisfied?
-	this.checkCondition = function(cond)
+	var checkCondition = function(cond)
 	{
 		// check condition type
 		if (cond.charAt(0) == '?') {
@@ -120,7 +124,7 @@ var queue = new function()
 	}
 	
 	// set new timeout
-	this.defer = function()
+	var defer = function()
 	{
 		window.setTimeout(function(queue){queue.tryToExec()}, millisec, queue);
 	}
@@ -148,30 +152,33 @@ function defineEvents()
 // includes js libs and calls adventure
 function init()
 {
-	// default css
-	link("css", "data/themes/classic/main");
-	
-	// localization
-	queue.add("link('js', 'data/libs/locale')");
-	// messages
-	queue.add("link('js', 'data/libs/tinybox')", ["locale"]);
-	// event handler
-	queue.add("link('js', 'data/libs/events')", ["locale"]);
-	queue.add("defineEvents()", ["events"]);
-	// output system
-	queue.add("link('js', 'data/libs/ui')", ["events", "?events.isDefined('PageEnd')"]);
-	// game system
-	queue.add("link('js', 'data/libs/kernel')", ["gui"]);
-	// menu handler
-	queue.add("link('js', 'data/libs/menu')", ["locale"]);
-	// load / config extensions
-	queue.add("link('js', 'data/libs/plugin_loader')", ["gui", "menuHandler", "events"]);
+	// load libs, if not already loaded (restart)
+	if (typeof SW === "undefined") {
+		// default css
+		link("css", "data/themes/classic/main");
+		
+		// localization
+		queue.add("link('js', 'data/libs/locale')");
+		// messages
+		queue.add("link('js', 'data/libs/tinybox')", ["locale"]);
+		// event handler
+		queue.add("link('js', 'data/libs/events')", ["locale"]);
+		queue.add("defineEvents()", ["events"]);
+		// output system
+		queue.add("link('js', 'data/libs/ui')", ["events", "?events.isDefined('PageEnd')"]);
+		// game system
+		queue.add("link('js', 'data/libs/kernel')", ["gui"]);
+		// menu handler
+		queue.add("link('js', 'data/libs/menu')", ["locale"]);
+		// load / config extensions
+		queue.add("link('js', 'data/libs/plugin_loader')", ["gui", "menuHandler", "events"]);
+	}
 	
 	var appName = null;
 	
-	if (typeof document.URL != "undefined")
+	if (typeof document.URL !== "undefined")
 		var URL = document.URL;
-	else if (typeof window.location != "undefined")
+	else if (typeof window.location !== "undefined")
 		var URL = window.location;
 	else
 		var URL = document.location.href;
@@ -179,7 +186,7 @@ function init()
 	if (URL.indexOf("?") > 0 && URL.indexOf("?") < (URL.length - 1)) { // not last char
 		var qs = URL.substring(document.URL.indexOf("?") + 1);
 		var separatorPos = qs.indexOf("/");
-		if (separatorPos == -1) {
+		if (separatorPos === -1) {
 			// only appName
 			appName = qs;
 		} else {
@@ -192,7 +199,7 @@ function init()
 				var temp  = params[x].split("=");
 				var key   = temp[0];
 				var val   = temp[1] ? temp[1] : true;
-				if (key.charAt(0) == "_") {
+				if (key.charAt(0) === "_") {
 					SWOptions[key.substr(1)] = val;
 				} else {
 					options[key] = val;
@@ -201,7 +208,7 @@ function init()
 		}
 	}
 	
-	if (appName == null) {
+	if (appName === null) {
 		// application configuration
 		queue.add('link("js", "apps/gioco_conf")',  [], "conf");
 		queue.add('link("js", "apps/gioco")',       ["plugins", "@conf"]);
@@ -318,8 +325,8 @@ function drop(arr, item)
 // return true if input is an Array, else false
 function isArray(input)
 {
-	if (typeof input == 'undefined') return false;
-	return input.constructor == Array;
+	if (typeof input === 'undefined') return false;
+	return input.constructor === Array;
 }
 
 // insert an item into Array and shift right next elements

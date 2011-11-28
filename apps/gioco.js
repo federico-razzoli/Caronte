@@ -5,11 +5,13 @@
 	with any license; there is no condition.
 */
 
-function Inizia() {
+function Inizia()
+{
 	vai(Introduzione);
 }
 
-function Introduzione() {
+function Introduzione()
+{
   titolo("Non è un gioco...");
   testoNl(
 		"Questo file serve solo a testare che per default venga caricato gioco.js.",

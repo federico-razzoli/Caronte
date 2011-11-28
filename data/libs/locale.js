@@ -41,6 +41,8 @@
 
 var locale = new function()
 {
+	var arrMsg = [];
+	
 	this.set = function(id, txt)
 	{
 		arrMsg[id] = txt;
@@ -54,6 +56,7 @@ var locale = new function()
 	this.getp = function()
 	{
 		var msg = arrMsg[arguments[0]];
+		if (typeof msg === "undefined") return false; // missing
 		if (arguments.length > 0) {
 			msg = msg.replace("%%", "&#37;");
 			for (var i = 1; i < arguments.length; i++) {
@@ -62,7 +65,5 @@ var locale = new function()
 		}
 		return msg;
 	}
-	
-	var arrMsg = new Array;
 }
 
