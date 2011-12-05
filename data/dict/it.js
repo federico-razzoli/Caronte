@@ -31,9 +31,9 @@ if (typeof appLocaleInfo !== "undefined") {
 
 // luoghi speciali
 if (typeof Intestazione  !== "undefined")
-	window.onPageBegin   = function()  { Intestazione.apply(null, arguments); }
+	window.onPageBegin   = function()  { Intestazione.apply(window, arguments); }
 if (typeof PiePagina     !== "undefined")
-	window.onPageEnd     = function()  { PiePagina.apply(null, arguments);; }
+	window.onPageEnd     = function()  { PiePagina.apply(window, arguments);; }
 
 
 

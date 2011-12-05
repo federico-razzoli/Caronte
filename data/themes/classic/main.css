@@ -22,7 +22,7 @@
 */
 
 /* page = window */
-div[id], body, html
+body, html
 {
 	margin: 0;
 	padding: 0;
@@ -30,8 +30,10 @@ div[id], body, html
 }
 
 /* main & auxiliary boxes */
-div[id]
+body div
 {
+	margin: 0;
+	padding: 0;
 	overflow: auto;
 	clear:right;
 	width: 83%;
@@ -45,6 +47,7 @@ div[id]
 	padding-left: 1%;
 	padding-right: 1%;
 	background-color: #cccc88;
+	height:100%;
 }
 
 /* main box */
@@ -58,7 +61,7 @@ div[id]
 }
 
 /* auxiliary box titles */
-.boxAux > h1
+.auxTitle
 {
 	color:black;
 	text-align: center;
@@ -91,10 +94,9 @@ div[id]
 }
 
 /* menu section */
-div.menuSectionBody
+.menuSectionBody
 {
 	width:100%;
-	height:auto;
 	margin-top:16px; /* equal to buttons line-height */
 }
 
@@ -135,7 +137,8 @@ LI {
 	margin-left: 0;
 }
 
-H1 {
+#mainTitle
+{
 	text-align: center;
 	font-family: "Times New Roman", freeSerif, BitstreamVera;
 	font-size: 32px;
@@ -146,7 +149,8 @@ H1 {
 	margin-bottom:10px;
 }
 
-H2 {
+H2
+{
 	text-align: center;
 	font-family : Verdana, "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
 	font-size: 18px;
@@ -156,7 +160,8 @@ H2 {
 	margin-bottom:0px;
 }
 
-P {
+P
+{
 	font-family: "Times New Roman", freeSerif, BitstreamVera;
 	font-size: 15px;
 	color: black;
@@ -234,7 +239,8 @@ P {
 */
 
 /* Evidenzia un paragrafo intero */
-.evidFrase {
+.evidFrase
+{
 	font-size: 18px;
 	font-style: italic;
 	color: green;
@@ -242,7 +248,8 @@ P {
 }
 
 /* Evidenzia una singola parola all'interno di un paragrafo */
-.evidParola {
+.evidParola
+{
 	font-weight: bold;
 	color: red;
 }

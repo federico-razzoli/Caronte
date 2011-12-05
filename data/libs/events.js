@@ -48,7 +48,10 @@ function hooks()
 		for (var hook in this.list) {
 			var obj   = this.list[hook].obj;
 			var func  = this.list[hook].func;
-			func.apply(obj, args);
+			if (typeof args === "undefined") // IE7 bug
+				func.apply(obj);
+			else
+				func.apply(obj, args);
 		}
 	}
 	

@@ -58,6 +58,7 @@ function area(id, type, title, size)
 	this.printBoxTitle = function()
 	{
 		var tag = document.createElement("h1");
+		tag.setAttribute("class", "auxTitle");
 		tag.innerHTML = this.title;
 		this.elmArea.appendChild(tag);
 	}

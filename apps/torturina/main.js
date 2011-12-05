@@ -45,9 +45,9 @@ function Inizia() {
 	vai(Introduzione);
 }
 
-
-function Intestazione(pag) {
-  testo("<h1>" + info.title + "</h1>")
+function Intestazione(pag)
+{
+  testo("<h1 id=\"mainTitle\">" + info.title + "</h1>");
 }
 
 function PiePagina(pag) {  }
