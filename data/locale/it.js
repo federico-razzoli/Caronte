@@ -1,9 +1,6 @@
 ﻿// ITALIANO
 // File di localizzazione per IDRA
 
-// finestre modali
-locale.set("close",                "Chiudi");
-
 // menu informazioni
 locale.set("about",                "Info su...");
 locale.set("aboutTitle",           "Informazioni sui software in uso");
@@ -25,13 +22,18 @@ locale.set("license",              "Licenza");
 locale.set("description",          "Descrizione");
 locale.set("notes",                "Note");
 locale.set("noInfo",               "Nessuna informazione disponibile su questo modulo");
+locale.set("infoAppLocaleShow",    "Informazioni sulla localizzazione");
 
 // errori
 locale.set("pluginUndefined",      "Il plugin %1 non esiste o non è attualmente caricato");
 
+// varie
+locale.set("SW.close",                "Chiudi");
+locale.set("SW.more",                 "Continua");
+
 
 // info sulla Localizzazione (opzionale)
-var dictInfo =
+var localeInfo =
 {
 	name        : "it",
 	version     : "0.1.1",

@@ -31,11 +31,13 @@
 	
 	Writing the "%" character:
 	locale.set("100%%");
+	locale.set("You can write it twice: %%%");
 	
 	NOTES
 	
 	locale.getp() can be used in place of get(), but get() is a little faster.
 */
+
 
 "use strict";
 
@@ -50,7 +52,7 @@ var locale = new function()
 	
 	this.get = function(id)
 	{
-		return arrMsg[id];
+		return (typeof arrMsg[id] === "undefined" ? id : arrMsg[id]);
 	}
 	
 	this.getp = function()
@@ -64,6 +66,11 @@ var locale = new function()
 			}
 		}
 		return msg;
+	}
+	
+	this.isSet = function(id)
+	{
+		return (typeof arrMsg[id] !== "undefined");
 	}
 }
 

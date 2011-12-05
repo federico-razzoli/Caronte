@@ -27,14 +27,24 @@
 // error handler
 window.onerror = function(err, url, line, stop)
 {
-	console.trace();
-	var                out  =        "Error: "  + err.toString();
-	if (url)           out += "\n" + "URL: "    + url;
-	if (line != null)  out += "\n" + "Line: "   + line;
+	if (typeof err === "string") {
+		// we have a message to display
+		var out  = "Error: "  + err;
+	} else {
+		var out = "Error: Unknown";
+		if (typeof err.srcElement !== "undefined" && typeof err.srcElement.id !== "undefined")
+			out += "\nFile: " + err.srcElement.id;
+		//for (var x in err) alert(x + ": " + err[x]);
+	}
+	
+	// if we have url and line, display them
+	if (url)           out += "\n" + "File: "    + url;
+	if (line)          out += "\n" + "Line: "   + line;
+	
 	if (typeof modal != "undefined") {
 		// if modal is ready, show error gracefully
 		modal.bad(out.replace("\n", "<br>\n"));
-	} else {
+	} else { // modal is not ready, use nasty alert()
 		alert(out);
 	}
 }
@@ -162,16 +172,16 @@ function init()
 		// messages
 		queue.add("link('js', 'data/libs/tinybox')", ["locale"]);
 		// event handler
-		queue.add("link('js', 'data/libs/events')", ["locale"]);
-		queue.add("defineEvents()", ["events"]);
+		queue.add("link('js', 'data/libs/events')", ["modal"]);
+		queue.add("defineEvents()", ["events"], "defineEvents");
 		// output system
-		queue.add("link('js', 'data/libs/ui')", ["events", "?events.isDefined('PageEnd')"]);
-		// game system
-		queue.add("link('js', 'data/libs/kernel')", ["gui"]);
+		queue.add("link('js', 'data/libs/ui')", ["@defineEvents"]);
 		// menu handler
-		queue.add("link('js', 'data/libs/menu')", ["locale"]);
+		queue.add("link('js', 'data/libs/menu')", ["gui"]);
+		// game system
+		queue.add("link('js', 'data/libs/kernel')", ["menuHandler"]);
 		// load / config extensions
-		queue.add("link('js', 'data/libs/plugin_loader')", ["gui", "menuHandler", "events"]);
+		queue.add("link('js', 'data/libs/plugin_loader')", ["SW"]);
 	}
 	
 	var appName = null;
@@ -218,8 +228,9 @@ function init()
 		// application code
 		queue.add("link('js', 'apps/" + appName + "/main')", ["plugins", "@conf"]);
 	}
+	window.appName = appName;
 	
-	queue.add("SW.prepare('" + appName + "')", ["plugins", "SW", "Inizia", "gui", "getSupportedProperty", "eventi", "menuHandler"]);
+	queue.add("SW.prepare('" + appName + "')", ["Inizia"]);
 }
 
 // given filetype and filename, returns id
@@ -227,7 +238,7 @@ function init()
 //     @file    : string     : file path+name from data/
 function libId(type, file)
 {
-	return "__" + type + "_" + file.replace("/", "_");
+	return "__" + type + "_" + file.replace(/\//g, "_");
 }
 
 // remove a DOM element (cross browser, no exception if element not exist)

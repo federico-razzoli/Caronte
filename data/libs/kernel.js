@@ -122,7 +122,7 @@ var SW = new function()
 	
 	// ===== Funzioni di creazione pagina =======================================
 	
-	// Scrive l'eventuale titolo della pagina
+	// update boxMain title
 	this.title = function(tit)
 	{
 		this.say('<h2>' + tit + "</h2>");
@@ -132,12 +132,8 @@ var SW = new function()
 	// accetta un numero variabile di argomenti e li stampa di seguito
 	this.say = function()
 	{
-		if (typeof appLocale == "string") {
-			locale.getp(arguments);
-		} else {
-			for (var i = 0; i < arguments.length; i++) {
-				this.boxMain.write(arguments[i]);
-			}
+		for (var i = 0; i < arguments.length; i++) {
+			this.boxMain.write(arguments[i]);
 		}
 	}
 	
@@ -154,7 +150,7 @@ var SW = new function()
 		this.say(out);
 	}
 	
-	// stampa una riga vuota
+	// write empty line
 	this.nl = function(n)
 	{
 		var out;
@@ -190,7 +186,7 @@ var SW = new function()
 		this.pageBegin();
 		this.say("<p>" + txt + "</p>\n");
 		if (action == null) action = here;
-		this.option("Continua", action);
+		this.option(locale.get("SW.more"), action);
 		this.pageEnd();
 		//modal.info(txt);
 	}
@@ -221,19 +217,19 @@ var SW = new function()
 		numLinks++;
 	}
 	
-	// Aggiunge la scelta "Continua"; se cond e' vera usa act1, altrimenti act2
+	// Aggiunge la scelta ";ore"; se cond e' vera usa act1, altrimenti act2
 	// Se chiamata con un solo argomento, aggiunge la scelta in ogni caso
 	// SW.more(cond, act1, act2)
 	// SW.more(act)
 	this.more = function(p1, p2, p3)
 	{
-	  var cond = p1; var act1 = p2; var act2 = p3 //3 argomenti
-	  if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argomento
-	  if (cond) {
-		this.option(cond, "Continua", act1)
-	  } else if (act2) {
-		this.option(!cond, "Continua", act2) 
-	  }
+		var cond = p1; var act1 = p2; var act2 = p3 //3 argomenti
+		if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argomento
+		if (cond) {
+			this.option(cond, locale.get("SW.more"), act1)
+		} else if (act2) {
+			this.option(!cond, locale.get("SW.more"), act2) 
+		}
 	}
 	
 	// ===== Funzioni di apertura e chiusura pagina =============================
@@ -290,7 +286,7 @@ var SW = new function()
 	{
 		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle"));
 		if (typeof info != "undefined") {
-			secInfo.addButton("bttInfoApp",  "SW.showInfo(info)",  null,  locale.get("infoApp"),  locale.get("infoAppTitle"));
+			secInfo.addButton("bttInfoApp",  "SW.showInfo(info, 'app')",  null,  locale.get("infoApp"),  locale.get("infoAppTitle"));
 		}
 		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  this.info.name, locale.get("infoAbout", this.info.name));
 		for (var p in plugins.get()) {
@@ -303,7 +299,7 @@ var SW = new function()
 		}
 	}
 	
-	this.showInfo = function(infoSet)
+	this.showInfo = function(infoSet, moduleType)
 	{
 		if (typeof infoSet != "undefined") {
 			var out = "";
@@ -369,8 +365,8 @@ var SW = new function()
 			}
 			if (infoSet["contacts"]) {
 				out += "  <tr>\n" +
-					   "    <td>Contacts</td>\n" +
-					   "    <td>" + locale.get("contacts") + "</td>\n" +
+					   "    <td>" + locale.get("contacts") + "<</td>\n" +
+					   "    <td>" + infoSet["contacts"] + "</td>\n" +
 					   "  </tr>\n";
 			}
 			if (infoSet["copyright"]) {
@@ -405,6 +401,10 @@ var SW = new function()
 					   "  </tr>\n";
 			}
 			out += "</table>\n";
+			if (moduleType == "app" && typeof appLocaleInfo === "object") {
+				out += '<a href="javascript:SW.showInfo(appLocaleInfo)">' +
+				       locale.get("infoAppLocaleShow") + "</a>";
+			}
 			modal.info(out);
 		} else {
 			modal.info(local.get("noInfo"));
@@ -427,15 +427,82 @@ var SW = new function()
 		window.SWOptions = undefined; // cant delete globals in strict mode
 		delete this.defaultOptions;
 		
-		// load localization file
-		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", ["@conf"], "locale");
+		// choose & load Application language
+		if (typeof options.get("lang") !== "undefined" && typeof appLocaleInfo === "undefined") {
+			var appLang = options.get("lang");
+			queue.add("link('js', 'apps/" + window.appName + "/locale/" + appLang + "')");
+			// localized functions (if useless, don't create them)
+			this.sayLocale = function()
+			{
+				var txt = locale.getp.apply(this, arguments);
+				this.say(txt);
+			}
+			this.titleLocale = function(tit)
+			{
+				this.title(locale.get(tit));
+			}
+			this.sayNlLocale = function()
+			{
+				var out = "\n<p>\n";
+				for (var i = 0; i < arguments.length; i++) {
+					out += locale.get(arguments[i]) + "<br>\n";
+				}
+				out += "\n</p>\n";
+				this.say(out);
+			}
+			this.sayNlCSSLocale = function()
+			{
+				var out;
+				if (arguments[0]) out = "\n<p class=\"" + arguments[0] + "\">\n";
+				else out = "\n<p>\n";
+				for (var i = 1; i < arguments.length; i++) {
+					out += locale.get(arguments[i]) + "<br>\n";
+				}
+				out += "\n</p>\n";
+				this.say(out);
+			}
+			this.messageLocale = function(txt, action)
+			{
+				var txt = locale.get(locale, action);
+				this.message(txt);
+			}
+			this.optionLocale = function()
+			{
+				var cond = p1; var desc = p2; var act = p3; //3 arguments
+				if (arguments.length == 2) { cond = 1; desc = p1; act = p2 } //2 arguments
+				desc = locale.get(desc);
+				if (cond) {
+					this.say("<ul><li>") //usa stile 'lista' mettendo la scelta in una lista a se' stante
+					this.link(desc, act) //aggiunge scelta nel testo
+					this.say("</li></ul>")
+				}
+			}
+			this.linkLocale = function(desc, act)
+			{
+				desc = locale.get(desc);
+				this.link(desc, act);
+			}
+			this.moreLocale = function(p1, p2, p3)
+			{
+				var cond = p1; var act1 = p2; var act2 = p3 //3 arguments
+				if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argument
+				if (cond) {
+					this.option(cond, locale.get("SW.more"), act1)
+				} else if (act2) {
+					this.option(!cond, locale.get("SW.more"), act2) 
+				}
+			}
+		} else window.appLocaleInfo = true;
+		
+		// load IDRA localization file
+		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
 		
 		// load dictionary
 		if (typeof dictionary === "undefined") window.dictionary = this.options.get("defaultDictionary");
 		if (dictionary != "") link("js", "data/dict/" + dictionary);
 		else var dictOk = true;
 		
-		if (typeof extensions === "undefined") window.extensions = new Object;
+		if (typeof extensions === "undefined") window.extensions = {};
 		
 		// erase if exists
 		menu.erase();
@@ -451,7 +518,7 @@ var SW = new function()
 		plugins.loadAll();
 		
 		if (this.options.get("no_exec") !== true)
-			queue.add("SW.start()",            ["?typeof plugins !== 'undefined' && plugins.ready",  "dictOk"]);
+			queue.add("SW.start()",            ["?typeof appLocaleInfo !== 'undefined' && typeof plugins !== 'undefined' && plugins.ready",  "dictOk", "localeInfo"]);
 	}
 	
 	this.start = function()
@@ -466,10 +533,10 @@ var SW = new function()
 		v = new Object(); // re-alloc to clean garbage
 		
 		if (typeof info != "undefined") {
-			if (typeof info.title != "undefined")
-				parent.document.title = info.title;
-			else if (typeof info.name != "undefined")
-				parent.document.title = info.name;
+			if (typeof info.title === "string")
+				parent.document.title = locale.get(info.title);
+			else if (typeof info.name === "string")
+				parent.document.title = locale.get(info.name);
 		}
 		
 		events.exec("ApplicationBegin");

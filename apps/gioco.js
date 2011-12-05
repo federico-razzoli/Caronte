@@ -12,9 +12,11 @@ function Inizia()
 
 function Introduzione()
 {
-  titolo("Non è un gioco...");
+  titolo("Benvenuto a IDRA!");
   testoNl(
-		"Questo file serve solo a testare che per default venga caricato gioco.js.",
-		"Vai a <a href=\"?torturina\">In fuga da Torturina</a>"
+		"Questo file serve solo a testare che per default venga caricato gioco.js, e come scorciatoia per le seguenti Applicazioni:",
+		"",
+		"Vai a <strong><a href=\"?torturina\">In fuga da Torturina</a></strong>",
+		"Vai a <strong><a href=\"?ex/lang=it\">Esempio di avventura localizzata</a></strong>"
 	);
 }

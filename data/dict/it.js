@@ -16,6 +16,19 @@ var continua    = function()  { SW.more.apply(SW, arguments); }
 var messaggio   = function()  { SW.message.apply(SW, arguments); }
 var dado        = function()  { SW.dice.apply(SW, arguments); }
 
+// funzioni per la traduzione (utili solo per le Applicazioni localizzate)
+if (typeof appLocaleInfo !== "undefined") {
+	var traduci        = function()  { locale.get.apply(SW, arguments); }
+	var trad           = function()  { SW.sayLocale.apply(SW, arguments); }
+	var tradTitolo     = function()  { SW.titleLocale.apply(SW, arguments); }
+	var tradNl         = function()  { SW.sayNlLocale.apply(SW, arguments); }
+	var tradNlCSS      = function()  { SW.sayNlCSSLocale.apply(SW, arguments); }
+	var tradMessaggio  = function()  { SW.messageLocale.apply(SW, arguments); }
+	var tradRinvio     = function()  { SW.linkLocale.apply(SW, arguments); }
+	var optionLocale   = function()  { SW.optionLocale.apply(SW, arguments); }
+	var moreLocale     = function()  { SW.moreLocale.apply(SW, arguments); }
+}
+
 // luoghi speciali
 if (typeof Intestazione  !== "undefined")
 	window.onPageBegin   = function()  { Intestazione.apply(null, arguments); }
