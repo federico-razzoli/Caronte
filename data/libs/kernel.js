@@ -1,5 +1,5 @@
 ﻿/*
-	Caronte: Ipertesto Dinamico per Racconti d'Avventura, Version 2
+	Caronte: engine for Adventure Games and other Hypertext Applications
 	(C) 2000 Enrico Colombini
 	(C) 2011 Federico Razzoli
 	
@@ -49,19 +49,19 @@ var SW = new function()
 	
 	this.info =
 	{
-		name        : "IDRA",
-		URL         : ["https://github.com/santec/IDRA Progetto su GitHub",
-					   "http://www.erix.it/idra.html Il vecchio sito ufficiale"],
+		name        : "Caronte",
+		URL         : ["https://github.com/santec/Caronte Progetto su GitHub",
+					   "http://www.erix.it/idra.html IDRA, di Enrico Colombini"],
 		version     : "2.0.1",
 		APIVersion  : "2.0",
 		maturity    : "Sviluppo",
 		date        : "2011",
 		license     : "GNU GPL 2",
-		licenseURL  : "COPYING.txt",
+		licenseURL  : "README",
 		author      : "Federico Razzoli",
 		contacts    : "santec [At) riseup [Dot' net",
 		copyright   : "2000 Enrico Colombini\n2011 Federico Razzoli",
-		descr       : "Una versione rivisitata di IDRA, un framework per giochi d'avventura scritto da Enrico Colombini.",
+		descr       : "Motore per giochi d'avventure e altre applicazioni ipertestuali. Deriva da IDRA, di Enrico Colombini.",
 		notes       : ""
 	};
 	
