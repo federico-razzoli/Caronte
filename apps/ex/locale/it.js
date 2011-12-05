@@ -1,5 +1,5 @@
 // ITALIANO
-// File di localizzazione per un'applicazione IDRA
+// File di localizzazione per un'applicazione Caronte
 
 
 // info sull'Applicazione

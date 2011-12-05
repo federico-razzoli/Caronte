@@ -1,5 +1,5 @@
 ﻿/*
-	This is a very simple example of IDRA Application.
+	This is a very simple example of Caronte Application.
 	It has been created for didactical purpose only.
 	You are free to use, copy, modify and / or redistribute this file
 	with any license; there is no condition.

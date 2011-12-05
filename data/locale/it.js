@@ -1,5 +1,5 @@
 ﻿// ITALIANO
-// File di localizzazione per IDRA
+// File di localizzazione per Caronte
 
 // menu informazioni
 locale.set("about",                "Info su...");
@@ -42,7 +42,7 @@ var localeInfo =
 	author      : "Federico Razzoli",
 	contacts    : "santec [At) riseup [Dot' net",
 	copyright   : "2011 Federico Razzoli",
-	notes       : "Compatibile con IDRA1"
+	notes       : "Compatibile con IDRA"
 };
 
 

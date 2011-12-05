@@ -47,7 +47,7 @@ var dictInfo =
 	author      : "Federico Razzoli",
 	contacts    : "santec [At) riseup [Dot' net",
 	copyright   : "2011 Federico Razzoli",
-	notes       : "Compatibile con IDRA1. No plugin, per ora."
+	notes       : "Compatibile con IDRA. No plugin, per ora."
 };
 
 

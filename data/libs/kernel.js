@@ -1,19 +1,19 @@
 ﻿/*
-	IDRA: Ipertesto Dinamico per Racconti d'Avventura, Version 2
+	Caronte: Ipertesto Dinamico per Racconti d'Avventura, Version 2
 	(C) 2000 Enrico Colombini
 	(C) 2011 Federico Razzoli
 	
-	IDRA is free software: you can redistribute it and/or modify
+	Caronte is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, version 2 of the License.
 	
-	IDRA is distributed in the hope that it will be useful,
+	Caronte is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 	
 	You should have received a copy of the GNU General Public License
-	along with IDRA.  If not, see <http://www.gnu.org/licenses/>.
+	along with Caronte.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
@@ -494,7 +494,7 @@ var SW = new function()
 			}
 		} else window.appLocaleInfo = true;
 		
-		// load IDRA localization file
+		// load Caronte localization file
 		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
 		
 		// load dictionary

@@ -1,4 +1,4 @@
-// Estensioni oggetti e inventario per Idra
+// Estensioni oggetti e inventario per Caronte e IDRA
 // (C) 2000 Enrico Colombini
 // (C) 2011 Federico Razzoli
 // Free software sotto la licenza GNU GPL 2
@@ -7,9 +7,8 @@
 // quella del sistema ILES (Interactive Literature Editing System) creato da 
 // Alberto Morena e Tommaso Percivale e impiegato nei libri gioco chiamati "IperLibri"
 
-// Questo file estende Idra: le parti di programmazione HTML 
-// e JavaScript qui contenute sono soggette alla medesima licenza GNU GPL
-// di Idra stesso.
+// Questo file estende Caronte: le parti di programmazione HTML 
+// e JavaScript qui contenute sono soggette alla medesima licenza GNU GPL 2.
 
 
 "use strict";
@@ -159,7 +158,7 @@ funcExts["extObjects"] = function()
 		contacts    : "santec [At) riseup [Dot' net",
 		copyright   : "2000 Enrico Colombini\n2011 Federico Razzoli",
 		descr       : "Support for inventory and objects.",
-		notes       : "Derived from Erix's Oggetti extension for IDRA. Adapted for IDRA2."
+		notes       : "Derived from Erix's Oggetti extension for IDRA. Adapted for Caronte."
 	}
 	
 	this.defaultOptions =
