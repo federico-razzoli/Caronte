@@ -18,12 +18,10 @@
 
 "use strict";
 
-var plugins = new function()
-{
+var plugins = function() {
 	// link & load all extensions
-	this.loadAll = function()
-	{
-		this.plugins = {};
+	function loadAll () {
+		objExtensions = {};
 		for (var name in extensions) {
 			// link js file
 			var fileName = "data/ext/" + name.substr(3).toLowerCase() + "/main";
@@ -33,8 +31,7 @@ var plugins = new function()
 			var params = (typeof window.extensions[name] !== "undefined") ? extensions[name] : {};
 			
 			// load single extension when link operation is done
-			var obj;
-			queue.add("plugins.add('" + name + "', new funcExts['" + name + "']);", ["funcExts['" + name + "']"]);
+			queue.add("plugins.add('" + name + "', funcExts['" + name + "']);", ["funcExts['" + name + "']"]);
 			toLoad++;
 		}
 		if (toLoad === 0) {
@@ -47,17 +44,13 @@ var plugins = new function()
 	// adds plugin to the array and checks if initial loading is finished
 	//     name     : String    : plugin name
 	//     obj      : Object    : instance of plugin
-	this.add = function(name, obj)
-	{
-		// add instance to plugins
-		this.plugins[name] = obj;
-		
+	function add (name, obj) {
 		// options
-		if (typeof this.plugins[name].defaultOptions !== "undefined")
-			var defaults = this.plugins[name].defaultOptions;
+		if (typeof obj.defaultOptions !== "undefined")
+			var defaults = obj.defaultOptions;
 		else
 			var defaults = null;
-		this.plugins[name].options = new opt(extensions[name], defaults);
+		obj.options = new opt(extensions[name], defaults);
 		
 		// now options are set; load plugin
 		obj.load();
@@ -81,12 +74,15 @@ var plugins = new function()
 			queue.add("link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/locale/" + lang + "');");
 		}
 		
+		// add instance to plugins
+		objExtensions[name]  = obj;
+		//funcExts[name]      = undefined;
+		
 		this.fileLoaded();
 	}
 	
-	// verify if plugins are ready
-	this.fileLoaded = function()
-	{
+	// if plugins are ready, update flag and events
+	function fileLoaded() {
 		toLoad--;
 		if (toLoad === 0) {
 			// all ext loaded
@@ -99,38 +95,49 @@ var plugins = new function()
 	}
 	
 	// free memory if the plugin is not needed
-	this.unload = function(name)
+	function unload(name)
 	{
 		unlink("js", "ext/" + name);
-		if (typeof this.plugins[name].unload != "undefined")
-			this.plugins[name].unload();
-		delete this.plugins[name];
+		if (typeof objExtensions[name].unload != "undefined")
+			objExtensions[name].unload();
+		delete objExtensions[name];
 	}
 	
 	// return true if loaded, else false
-	this.isLoaded = function(name)
+	function isLoaded(name)
 	{
-		return (typeof this.plugins[name] !== "undefined") ? true : false;
+		return (typeof objExtensions[name] !== "undefined") ? true : false;
 	}
 	
 	// if name is specified, return matching plugin; 
 	// else return an array of plugin objects
-	this.get = function(name)
+	function get(name)
 	{
-		if (name && typeof this.plugins[name] === "undefined") {
+		if (name && typeof objExtensions[name] === "undefined") {
 			issue(locale.getp("pluginUndefined", name));
 			return false;
 		}
-		return name = name ? this.plugins[name] : this.plugins;
+		return name = name ? objExtensions[name] : objExtensions;
 	}
 	
 	// public props
-	this.plugins   = {};
-	this.ready     = false;
+	var objExtensions   = {};
+	var ready     = false;
 	
 	// private props
 	var toLoad          = 0;  // number of files to load: when 0 we're ready
 	var loadedFiles     = {}; // log of loaded files (won't be reloaded)
 	loadedFiles.dict    = {};
 	loadedFiles.locale  = {};
-}
+	
+	return {
+		loadAll      : loadAll,
+		add          : add,
+		fileLoaded   : fileLoaded,
+		unload       : unload,
+		isLoaded     : isLoaded,
+		get          : get,
+		ready        : ready
+	};
+}();
+

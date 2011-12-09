@@ -13,11 +13,8 @@
 
 "use strict";
 
-funcExts["extObjects"] = function()
-//var extObjects = function()
-{
-	this.load = function()
-	{
+funcExts["extObjects"] = function () {
+	function load() {
 		// box
 		boxObjects = gui.createArea("boxObjects", "box", this.options.get("title"), false, this.options.get("size"));
 		boxObjects.setCSSProperty(this.options.get("backgroundColor"), "backgroundColor");
@@ -27,12 +24,9 @@ funcExts["extObjects"] = function()
 		objects          = "";           // conterra' l'array con la lista di oggetti e descrizioni
 		choises          = [];           // ogni elemento conterra' una tavola di scelte
 		numChoises       = 0;
-		
-		// clean default
-		delete this.defaultOptions;
 	}
 	
-	this.unload = function() { }
+	function unload() { }
 	
 	/*
 	 *    Public Methods
@@ -41,15 +35,13 @@ funcExts["extObjects"] = function()
 	// Definisce gli oggetti: deve passare un array contenente, alternati,
 	// il nome della variabile di oggetto (senza .v) e la descrizione da mostrare;
 	// usa un array invece di un hash table per mantenere l'ordine dell'autore
-	this.definisciOggetti = function(elenco)
-	{
+	function definisciOggetti(elenco) {
 		objects = elenco;
 	}
 	
 	// Scrive/aggiorna area oggetti, selezionando l'oggetto ogg, se indicato;
 	// per deselezionare passare un nome non valido, ad esempio ""
-	this.show = function(ogg)
-	{
+	function show(ogg) {
 		// select/unselect object
 		selected = (selected === ogg) ? "" :  ogg;
 		// fill boxObjects
@@ -81,8 +73,7 @@ funcExts["extObjects"] = function()
 	// la lista degli argomenti va letta come (defaultAct, ogg1, act1, ogg2, act2, ...) 
 	// l'oggetto "+" indica tutti gli oggetti non esplicitamente indicati, l'azione
 	// corrispondente verra' eseguita se c'e' un oggetto selezionato, ma non e' in lista
-	this.rinvioOgg = function(desc, defaultAct) //seguono argomenti opzionali, vedi sopra
-	{
+	function rinvioOgg(desc, defaultAct) {
 		var tavola = {}; //hash table con coppie oggetto-azione
 		tavola["-"] = defaultAct;
 		for (var i = 1; i < arguments.length; i++) {
@@ -95,8 +86,7 @@ funcExts["extObjects"] = function()
 	}
 	
 	// Identica a rinvioOgg, ma mostra l'opzione come una scelta
-	this.sceltaOgg = function(desc, defaultAct)
-	{ //seguono argomenti opzionali, vedi sopra
+	function sceltaOgg(desc, defaultAct) { //seguono argomenti opzionali, vedi sopra
 		var tavola = new Object() //hash table con coppie oggetto-azione
 		tavola["-"] = defaultAct
 		for (var i = 1; i < arguments.length; i++) {
@@ -109,23 +99,12 @@ funcExts["extObjects"] = function()
 	}
 	
 	/*
-	 *    Events
-	 */
-	
-	// when page ends, update boxObjects
-	this.onPageEnd = function()
-	{ //seguono argomenti opzionali, vedi sopra
-		this.show("");
-	}
-	
-	/*
 	 *    Private Methods
 	 */
 	
 	// Effetto del clic su un rinvioOgg (rimandato da Idra): esegue l'azione associata 
 	// all'oggetto correntemente selezionato se c'e', altrimenti quella di default
-	this.eseguiRinvioOgg = function(indice)
-	{
+	function eseguiRinvioOgg(indice) {
 		var lista = choises[indice];
 		var act = null; //azione da eseguire
 		if (selected) { //se c'e' un oggetto selezionato
@@ -144,8 +123,7 @@ funcExts["extObjects"] = function()
 		}
 	}
 	
-	this.info =
-	{
+	var info = {
 		name        : "Objects",
 		URL         : "",
 		version     : "0.1",
@@ -161,14 +139,13 @@ funcExts["extObjects"] = function()
 		notes       : "Derived from Erix's Oggetti extension for IDRA. Adapted for Caronte."
 	}
 	
-	this.defaultOptions =
-	{
+	var defaultOptions = {
 		title            : "",
 		size             : 20,
 		backgroundColor  : "#DDDDDD"
 	}
 	
-	this.dictionary = ["it"];
+	var dictionary = ["it"];
 	
 	// initialize private props
 	var selected     = "";
@@ -176,5 +153,18 @@ funcExts["extObjects"] = function()
 	var choises      = [];
 	var numChoises   = "";
 	var boxObjects;
-}
+	
+	return {
+		load:              load,
+		definisciOggetti:  definisciOggetti,
+		show:              show,
+		rinvioOgg:         rinvioOgg,
+		sceltaOgg:         sceltaOgg,
+		onPageEnd:         show,
+		eseguiRinvioOgg:   eseguiRinvioOgg,
+		info:              info,
+		defaultOptions:    defaultOptions,
+		dictionary:        dictionary
+	}
+}();
 

@@ -18,10 +18,8 @@
 
 //"use strict";
 
-funcExts["extSaveMe"] = function()
-{
-	this.load = function()
-	{ 
+funcExts["extSaveMe"] = function(){
+	function load() { 
 		var saveMe = menu.addSection("secSaveMe");
 		saveMe.addButton("bttSave",     "appSave()",     null,  "Salva",       "Salva la situazione corrente");
 		saveMe.addButton("bttLoad",     "appLoad()",     null,  "Carica",      "Riprendi una situazione salvata");
@@ -29,8 +27,7 @@ funcExts["extSaveMe"] = function()
 	}
 	
 	// save current situation (SW.v)
-	this.appSave = function()
-	{
+	function appSave() {
 		var statoPrecedente = SW.v;
 		// does a saved state exist?
 		var cookie = this.leggiCookie(this.nomeCookie);
@@ -50,8 +47,7 @@ funcExts["extSaveMe"] = function()
 	}
 	
 	// ask confirm and load situation
-	this.appLoad = function()
-	{
+	function appLoad() {
 		var cookie = this.leggiCookie(nomeCookie);
 		if (cookie == null) {
 			modal.bad("Nessun salvataggio disponibile");
@@ -66,8 +62,7 @@ funcExts["extSaveMe"] = function()
 	}
 	
 	// Registra un cookie contenente i dati, con la durata specificata
-	this.registraCookie = function(nome, dati, giorni)
-	{
+	function registraCookie(nome, dati, giorni) {
 		var expires = new Date();
 		expires.setTime(expires.getTime() + giorni * 1000 * 86400);
 		var cookie = nome + "=" + escape(dati) +"; expires=" + expires.toGMTString();
@@ -79,8 +74,7 @@ funcExts["extSaveMe"] = function()
 	}
 	
 	// Legge un cookie, ritorna i dati o null se non lo trova
-	this.leggiCookie = function(nome)
-	{
+	function leggiCookie(nome) {
 		var dati = null;
 		var ck = document.cookie;
 		var id = this.nomeCookie + "=";
@@ -94,15 +88,13 @@ funcExts["extSaveMe"] = function()
 		return dati;
 	}
 	
-	this.opzioniCookie = function(nome, giorni)
-	{
+	function opzioniCookie(nome, giorni) {
 		this.nomeCookie    = nome;
 		this.durataCookie  = giorni;
 	}
 	
 	// return a string representing v's properties + SW.qui
-	this.creaStringaStato = function()
-	{
+	function creaStringaStato() {
 		var listKeys     = "";
 		var listValues   = "";
 		for (var key in v) {
@@ -123,8 +115,14 @@ funcExts["extSaveMe"] = function()
 		return listKeys + "|" + listValues + "|" + SW.pageName(SW.qui);
 	}
 	
-	this.nomeCookie         = "app";
-	this.durataCookie       = 365;
-	this.situazioneSalvata  = null;   // null if empty
-}
+	var nomeCookie         = "app";
+	var durataCookie       = 365;
+	var situazioneSalvata  = null;   // null if empty
+	
+	return {
+		load:load,
+		appSave:appSave,
+		appLoad:appLoad
+	}
+}();
 

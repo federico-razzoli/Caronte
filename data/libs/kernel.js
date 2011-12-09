@@ -276,22 +276,16 @@ var SW = new function()
 		return s.substring(inizio, fine);
 	}
 	
-	// ##########################################################################
-	// ##  Fine area funzioni chiamabili dall'autore                           ##
-	// ##########################################################################
-	
-	// ===== Avvio, riavvio e informazioni  =====================================
-	
 	this.infoMenu = function()
 	{
 		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle"));
 		if (typeof info != "undefined") {
 			secInfo.addButton("bttInfoApp",  "SW.showInfo(info, 'app')",  null,  locale.get("infoApp"),  locale.get("infoAppTitle"));
 		}
-		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  this.info.name, locale.get("infoAbout", this.info.name));
+		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  this.info.name, locale.getp("infoAbout", this.info.name));
 		for (var p in plugins.get()) {
 			if (typeof plugins.get(p).info != "undefined") {
-				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  locale.get("infoAboutExt", p));
+				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  locale.getp("infoAboutExt", p));
 			}
 		}
 		if (typeof dictInfo != "undefined") {
@@ -365,7 +359,7 @@ var SW = new function()
 			}
 			if (infoSet["contacts"]) {
 				out += "  <tr>\n" +
-					   "    <td>" + locale.get("contacts") + "<</td>\n" +
+					   "    <td>" + locale.get("contacts") + "</td>\n" +
 					   "    <td>" + infoSet["contacts"] + "</td>\n" +
 					   "  </tr>\n";
 			}
@@ -495,7 +489,9 @@ var SW = new function()
 		} else window.appLocaleInfo = true;
 		
 		// load Caronte localization file
-		queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
+		if (typeof langOk === "undefined") {
+			queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
+		}
 		
 		// load dictionary
 		if (typeof dictionary === "undefined") window.dictionary = this.options.get("defaultDictionary");

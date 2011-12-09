@@ -50,7 +50,7 @@ function Intestazione(pag)
   testo("<h1 id=\"mainTitle\">" + info.title + "</h1>");
 }
 
-function PiePagina(pag) {  }
+function PiePagina(pag) { }
 
 
 // === Pagine del racconto ==================================================

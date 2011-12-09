@@ -13,11 +13,6 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*
- *    Main Box
- *    ========
- */
-
 /*    >> BOX <<
 */
 
@@ -29,14 +24,10 @@ body, html
 	height: 100%;
 }
 
-/* main & auxiliary boxes */
-body div
+div
 {
 	margin: 0;
 	padding: 0;
-	overflow: auto;
-	clear:right;
-	width: 83%;
 }
 
 /* menu */
@@ -44,10 +35,11 @@ body div
 {
 	float: left;
 	width: 15%;
-	padding-left: 1%;
-	padding-right: 1%;
+	padding: 0 1% 0 1%;
 	background-color: #cccc88;
 	height:100%;
+	overflow: auto;
+	clear:right;
 }
 
 /* main box */
@@ -55,17 +47,29 @@ body div
 {
 	float: left;
 	display: block;
-	padding-left: 1%;
-	padding-right: 1%;
+	margin: 0;
+	padding: 0 1% 0 1%;
 	width: 81%;
+	overflow: auto;
+	clear:right;
 }
 
-/* auxiliary box titles */
+/* auxiliary boxes */
+.boxAux
+{
+	margin: 0;
+	padding: 0;
+	overflow: auto;
+	float:left;
+	clear:right;
+	width: 83%;
+}
+
 .auxTitle
 {
 	color:black;
 	text-align: center;
-	font-family: arial;
+	font-family: "Nimbus Sans L", "Liberation Sans", FreeSans, Sans-serif;
 	font-size: 14px;
 	line-height: 150%;
 }
@@ -90,25 +94,25 @@ body div
 	display:block;
 	font-size: 14px;
 	line-height:16px;
-	font-family: "Times New Roman", Times, Serif;
+	font-family: "Times Roman", freeSerif, BitstreamVera;
 }
 
 /* menu section */
 .menuSectionBody
 {
 	width:100%;
-	margin-top:16px; /* equal to buttons line-height */
+	margin-top:16px; /* same as buttons line-height */
 }
 
 /* menu section title */
 .menuSectionTitle
 {
-	color:#000000;
+	color: black;
 	display:block;
 	font-size: 14px;
 	font-weight:bold;
 	line-height:16px;
-	font-family: Arial;
+	font-family: "Nimbus Sans L", "Liberation Sans", FreeSans, Sans-serif;
 	margin:0 auto;
 	text-align:center;
 }
@@ -140,7 +144,7 @@ LI {
 #mainTitle
 {
 	text-align: center;
-	font-family: "Times New Roman", freeSerif, BitstreamVera;
+	font-family: "Times Roman", freeSerif, BitstreamVera;
 	font-size: 32px;
 	line-height:100%;
 	color: green;
@@ -152,17 +156,17 @@ LI {
 H2
 {
 	text-align: center;
-	font-family : Verdana, "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Geneva, Arial, Sans-serif;
+	font-family : "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Sans-serif;
 	font-size: 18px;
 	font-weight: bold;
 	color: #444444;
-	margin-top:0px;
-	margin-bottom:0px;
+	margin-top:0;
+	margin-bottom:0;
 }
 
 P
 {
-	font-family: "Times New Roman", freeSerif, BitstreamVera;
+	font-family: "Times Roman", freeSerif, BitstreamVera;
 	font-size: 15px;
 	color: black;
 }
@@ -171,11 +175,53 @@ P
 /*    >> tinybox <<
 */
 
-.tbox {position:absolute; display:none; padding:14px 17px; z-index:900}
-.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(images/preload.gif) no-repeat 50% 50%; border-right:1px solid #333; border-bottom:1px solid #333}
-.tmask {position:absolute; display:none; top:0px; left:0px; height:100%; width:100%; background:#000; z-index:800}
-.tclose {position:absolute; top:0px; right:0px; width:30px; height:30px; cursor:pointer; background:url(images/close.png) no-repeat}
-.tclose:hover {background-position:0 -30px}
+.tbox
+{
+	position:absolute;
+	display:none;
+	padding:14px 17px;
+	z-index:900;
+}
+
+.tinner
+{
+	padding:15px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	-khtml-border-radius:5px;
+	border-radius:5px;
+	background:#fff url(images/preload.gif) no-repeat 50% 50%;
+	border-right:1px solid #333;
+	border-bottom:1px solid #333
+}
+
+.tmask
+{
+	position:absolute;
+	display:none;
+	top:0;
+	left:0;
+	height:100%;
+	width:100%;
+	background:#000;
+	z-index:800;
+}
+
+.tclose
+{
+	position:absolute;
+	top:0;
+	right:0;
+	width:30px;
+	height:30px;
+	cursor:pointer;
+	background:url(images/close.png) no-repeat;
+}
+
+.tclose:hover
+{
+	background-position:0 -30px;
+}
 
 #winError {
 	background: #ff4545; /* #ff6969 */

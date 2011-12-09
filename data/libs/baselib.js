@@ -24,6 +24,7 @@
 
 "use strict";
 
+
 // error handler
 window.onerror = function(err, url, line, stop)
 {
@@ -52,24 +53,24 @@ var issue = window.onerror;
 
 
 // application options will be loaded later
-var options    = new Object();
-var SWOptions  = new Object();
+var options    = {};
+var SWOptions  = {};
 
 // functions constructors
 var funcExts   = [];
 
 // wait all passed objects are loaded, then execute func
-var queue = new function()
+var queue = function()
 {
-	// adds new item to queue
-	this.add = function(func, objects, id)
+	// add new item to queue
+	function add(func, objects, id)
 	{
 		list.push([func, objects, id]);
-		if (list.length == 1) this.tryToExec();
+		if (list.length == 1) tryToExec();
 	}
 	
 	// exec next item
-	this.tryToExec = function()
+	function tryToExec()
 	{
 		if (lock) return false;
 		lock = true;
@@ -116,7 +117,7 @@ var queue = new function()
 	}
 	
 	// condition is (alreay) satisfied?
-	var checkCondition = function(cond)
+	function checkCondition(cond)
 	{
 		// check condition type
 		if (cond.charAt(0) == '?') {
@@ -134,17 +135,23 @@ var queue = new function()
 	}
 	
 	// set new timeout
-	var defer = function()
+	function defer()
 	{
 		window.setTimeout(function(queue){queue.tryToExec()}, millisec, queue);
 	}
 	
 	// constructor
 	var millisec  = 50;
-	var list      = new Array;
-	var done      = new Array;
+	var list      = [];
+	var done      = [];
 	var lock      = false;  // prevents conflicts
-}
+	
+	// public properties
+	return {
+		add        : add,
+		tryToExec  : tryToExec
+	};
+}();
 
 // defines all Caronte events
 function defineEvents()
@@ -285,23 +292,30 @@ function unlink(type, file)
 var opt = function(userOptions, defaultOptions)
 {
 	// accessor
-	this.get = function(o)
+	function get(o)
 	{
-		return this.list[o];
+		return list[o];
 	}
+	
+	var list = {};
 	
 	// Constructor
 	// set default values
-	this.list = new Object();
 	
+	// write defaults (if any)
 	if (defaultOptions != null) {
 		for (var o in defaultOptions) {
-			this.list[o] = defaultOptions[o];
+			list[o] = defaultOptions[o];
 		}
 	}
+	
 	// overwrite defaults
 	for (var o in userOptions) {
-		this.list[o] = userOptions[o];
+		list[o] = userOptions[o];
+	}
+	
+	return {
+		get    : get
 	}
 }
 

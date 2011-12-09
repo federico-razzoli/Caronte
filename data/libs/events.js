@@ -35,19 +35,19 @@ function hooks()
 	// add a hook
 	//     @hookId      : String    : hook id
 	//     @func        : function  : function that will be executed
-	this.add = function(hookId, obj, func)
+	function add(hookId, obj, func)
 	{
-		this.list[hookId]       = new Object;
-		this.list[hookId].obj   = obj;
-		this.list[hookId].func  = func;
+		list[hookId]       = {};
+		list[hookId].obj   = obj;
+		list[hookId].func  = func;
 	}
 	
 	// exec hooked funcs
-	this.exec = function(args)
+	function exec(args)
 	{
-		for (var hook in this.list) {
-			var obj   = this.list[hook].obj;
-			var func  = this.list[hook].func;
+		for (var hook in list) {
+			var obj   = list[hook].obj;
+			var func  = list[hook].func;
 			if (typeof args === "undefined") // IE7 bug
 				func.apply(obj);
 			else
@@ -57,28 +57,35 @@ function hooks()
 	
 	// drop a hook
 	//     @hookId      : String    : hook id
-	this.drop = function(hookId)
+	function drop(hookId)
 	{
-		delete this.list[hookId];
+		delete list[hookId];
 	}
 	
-	this.list = new Object;
+	var list = {};
+	
+	return {
+		add     : add,
+		exec    : exec,
+		drop    : drop
+	};
 }
 
-var events = new function()
+
+var events = function ()
 {
 	// define an event and associate existing handlers
 	//     @eventId      : String   : event unique id
 	//     @force        : Bool     : if already defined, re-define
-	this.define = function(eventId, force)
+	function define(eventId, force)
 	{
 		// check for error but dont stop execution
-		if ((typeof this.list[eventId] != "undefined") && !force) {
+		if ((typeof list[eventId] != "undefined") && !force) {
 			issue("Event " + eventId + " was already defined\n" +
 				"(caller: " + arguments.callee.caller.name + ")");
 		}
 		
-		this.list[eventId] = new hooks();
+		list[eventId] = new hooks();
 		var handlerName = "on" + eventId;
 		
 		// low-level events which are defined before plugins
@@ -89,7 +96,7 @@ var events = new function()
 			for (var o in pluginList) {
 				if (typeof pluginList[o][handlerName] != "undefined") {
 					var hookId = o + "." + handlerName;
-					this.list[eventId].add(hookId, pluginList[o], pluginList[o][handlerName]);
+					list[eventId].add(hookId, pluginList[o], pluginList[o][handlerName]);
 				}
 			}
 		}
@@ -97,51 +104,45 @@ var events = new function()
 		// check for global function
 		if (typeof window[handlerName] != "undefined") {
 			var hookId = "window." + handlerName;
-			this.list[eventId].add(hookId, window, window[handlerName]);
+			list[eventId].add(hookId, window, window[handlerName]);
 		}
 	}
 	
 	// return true if event is defined, else false
 	//     @eventId      : String   : event unique id
-	this.isDefined = function(eventId)
+	function isDefined(eventId)
 	{
-		return (typeof this.list[eventId] != "undefined");
+		return (typeof list[eventId] != "undefined");
 	}
 	
 	// execute all hooks in an event
 	//     @eventId      : String   : event id
-	this.exec = function(eventId, args)
+	function exec(eventId, args)
 	{
 		// is eventId defined?
-		if (typeof this.list[eventId] === "undefined") {
+		if (typeof list[eventId] === "undefined") {
 			issue("Event " + eventId + " was not defined");
 			return false;
 		}
 		
 		// exec all hooks
-		this.list[eventId].exec(args);
+		list[eventId].exec(args);
 	}
 	
 	// delete an event and all its hooks
 	//     @eventId      : String   : event id
-	this.undefine = function(eventId)
+	function undefine(eventId)
 	{
-		delete this.list[eventId];
+		delete list[eventId];
 	}
 	
-	// alert dbug info
-	this.debug = function()
-	{
-		for (var e in this.list) {
-			alert(e); // event id
-			for (var h in this.list[e].list) {
-				var hook = this.list[e].list[h];
-				alert("Hook: " + h + "\n" +
-				      "obj: " + hook["obj"] + "\n" +
-					  hook["func"]);
-			}
-		}
-	}
+	var list = {};
 	
-	this.list = new Object;
-}
+	return {
+		define     : define,
+		isDefined  : isDefined,
+		exec       : exec,
+		undefined  : undefined
+	}
+}();
+

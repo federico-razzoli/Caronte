@@ -41,24 +41,29 @@
 
 "use strict";
 
-var locale = new function()
-{
+var locale = function() {
 	var arrMsg = [];
 	
-	this.set = function(id, txt)
-	{
+	// add / replace translated string
+	//    id    : string    : message key
+	//    txt   : string    : message text
+	function set(id, txt) {
 		arrMsg[id] = txt;
 	}
 	
-	this.get = function(id)
-	{
+	// get string, without parameters
+	function get(id) {
 		return (typeof arrMsg[id] === "undefined" ? id : arrMsg[id]);
 	}
 	
-	this.getp = function()
-	{
-		var msg = arrMsg[arguments[0]];
-		if (typeof msg === "undefined") return false; // missing
+	// get string, optionally with parameters
+	// first param is message id, later params (if any) are message params
+	// if message id does not exist, return boolean false
+	function getp(msgId) {
+		var msg = arrMsg[msgId];
+		if (typeof msg === "undefined") { // missing
+			return false;
+		}
 		if (arguments.length > 0) {
 			msg = msg.replace("%%", "&#37;");
 			for (var i = 1; i < arguments.length; i++) {
@@ -68,9 +73,17 @@ var locale = new function()
 		return msg;
 	}
 	
-	this.isSet = function(id)
-	{
+	// return if specified message id exists
+	function isSet(id) {
 		return (typeof arrMsg[id] !== "undefined");
 	}
-}
+	
+	// public methods
+	return {
+		set    : set,
+		get    : get,
+		getp   : getp,
+		isSet  : isSet
+	}
+}();
 

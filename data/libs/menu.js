@@ -31,27 +31,27 @@ function menuHandler(idMenu)
 	 *    Methods
 	 */
 	
-	this.addSection = function(id, title, tooltip, position)
+	function addSection(id, title, tooltip, position)
 	{
 		var sec = new section(id, title, tooltip);
 		insert(this.sections, sec, position);
 		return this.sections[this.sections.length - 1];
 	}
 	
-	this.dropSection = function(id)
+	function dropSection(id)
 	{
 		return drop(this.sections, id);
 	}
 	
-	this.getSection = function(id)
+	function getSection(id)
 	{
 		return getById(this.sections, id);
 	}
 	
 	// if menu has been drawn, erase it
-	this.erase = function()
+	function erase()
 	{
-		if (this.drawn) {
+		if (drawn) {
 			for (var i in this.sections)
 				this.sections[i].erase();
 			this.sections = new Array;
@@ -59,7 +59,7 @@ function menuHandler(idMenu)
 		}
 	}
 	
-	this.draw = function()
+	function draw()
 	{
 		var DOMMenu = document.createElement("div");
 		DOMMenu.setAttribute("id", this.id);
@@ -70,26 +70,37 @@ function menuHandler(idMenu)
 			this.sections[i].draw(DOMMenu);
 		}
 		
-		this.drawn = true;
+		drawn = true;
 	}
 	
 	/*
 	 *    Constructor
 	 */
 	
-	this.id        = idMenu;
-	this.sections  = new Array;
-	this.drawn     = false;
+	var id        = idMenu;
+	var sections  = [];
+	var drawn     = false;
+	
+	// expose public props
+	return {
+		addSection   : addSection,
+		dropSection  : dropSection,
+		getSection   : getSection,
+		erase        : erase,
+		draw         : draw,
+		id           : id,
+		sections     : sections
+	}
 }
 
 
 function section(id, title, tooltip)
 {
-	this.addButton = function(id, event, position, text, desc, CSSClass)
+	function addButton(id, event, position, text, desc, CSSClass)
 	{
 		var button = new ctrlButton(id, event, text, desc, CSSClass);
-		insert(this.elements, button, position);
-		return this.elements[this.elements.length - 1];
+		insert(elements, button, position);
+		return elements[elements.length - 1];
 	}
 	
 //	this.addSelect = function(id, event, position, text, desc, arrOptions, intDefault)
@@ -97,65 +108,73 @@ function section(id, title, tooltip)
 //		
 //	}
 	
-	this.dropControl = function(id)
+	function dropControl(id)
 	{
-		return drop(this.elements, id);
+		return drop(elements, id);
 	}
 	
-	this.erase = function()
+	function erase()
 	{
 		// remove controls
-		for (var i in this.elements)
-			removeFromDOM(this.elements[i].id);
-		this.elements = new Array;
+		for (var i in elements)
+			removeFromDOM(elements[i].id);
+		elements = [];
 		// remove section
-		removeFromDOM(this.id);
+		removeFromDOM(id);
 	}
 	
-	this.draw = function(DOMParent)
+	function draw(DOMParent)
 	{
 		// section DIV
-		var sTag = document.createElement("div");
-		sTag.setAttribute("id", this.id);
-		sTag.setAttribute("class", "menuSectionBody");
-		DOMParent.appendChild(sTag);
+		// (workaround IE7 idiotic bug)
+		DOMParent.innerHTML += '<div id="' + id + '" class="menuSectionBody"></div>';
+		var sTag = document.getElementById(id);
 		
 		// title
-		if (this.title) {
+		if (title) {
 			var tTag = document.createElement("span");
-			tTag.innerHTML = '<span class="menuSectionTitle" title="' + this.tooltip + '">' +
-			                 this.title + "</span>";
+			tTag.innerHTML = '<span class="menuSectionTitle" title="' + tooltip + '">' +
+			                 title + "</span>";
 			sTag.appendChild(tTag);
 		}
 		
 		// controls
-		for (var i in this.elements)
-			this.elements[i].draw(sTag);
+		for (var i in elements)
+			elements[i].draw(sTag);
 	}
 	
 	/*
 	 *    Constructor
 	 */
 	
-	this.DOM       = new Object();
-	this.id        = id;
-	this.title     = title;
-	this.tooltip   = tooltip;
-	this.elements  = new Array;
+	var DOM       = {};
+	var id        = id;
+	var title     = title;
+	var tooltip   = tooltip;
+	var elements  = [];
+	
+	return {
+		addButton    : addButton,
+		dropControl  : dropControl,
+		erase        : erase,
+		draw         : draw,
+		id           : id,
+		elements     : elements
+	}
 }
 
 
 function ctrlButton(id, event, text, desc, CSSClass)
 {
-	this.draw = function(DOMParent)
+	function draw(DOMParent)
 	{
 		var aTag = document.createElement("a");
-		aTag.setAttribute("id", this.id);
-		aTag.setAttribute("href", "javascript:" + this.event);
-		if (this.desc != null)
-			aTag.setAttribute("title", this.desc);
-		if (this.CSSClass != null)
-			aTag.setAttribute("class", this.CSSClass);
+		aTag.setAttribute("id", id);
+		aTag.setAttribute("href", "javascript:" + event);
+		if (desc != null)
+			aTag.setAttribute("title", desc);
+		if (CSSClass != null)
+			aTag.setAttribute("class", CSSClass);
 		aTag.innerHTML = text;
 		DOMParent.appendChild(aTag);
 	}
@@ -164,37 +183,14 @@ function ctrlButton(id, event, text, desc, CSSClass)
 	 *    Constructor
 	 */
 	
-	this.id         = id;
-	event = (typeof event == "function") ? event.name + "()" : this.event = event;
-	this.event      = event;
-	this.text       = text;
-	this.desc       = desc;
-	this.CSSClass   = CSSClass;
+	var id         = id;
+	var event = (typeof event === "function") ? event.name + "()" : event = event;
+	var text       = text;
+	var desc       = desc;
+	var CSSClass   = CSSClass;
+	
+	return {
+		draw      : draw
+	}
 }
 
-function ctrlSwitch(id, event, textOn, textOff, initialState, desc, CSSClass)
-{
-	this.draw = function(DOMParent)
-	{
-		aTag = document.createElement("a");
-		aTag.setAttribute("id", this.id);
-		aTag.setAttribute("href", "javascript:" + this.event);
-		if (this.desc != null)
-			aTag.setAttribute("title", this.desc);
-		if (this.CSSClass != null)
-			aTag.setAttribute("class", this.CSSClass);
-		aTag.innerHTML = text;
-		DOMParent.appendChild(aTag);
-	}
-	
-	/*
-	 *    Constructor
-	 */
-	
-	this.id         = id;
-	event = (typeof event == "function") ? event.name + "()" : this.event = event;
-	this.event      = event;
-	this.text       = text;
-	this.desc       = desc;
-	this.CSSClass   = CSSClass;
-}
