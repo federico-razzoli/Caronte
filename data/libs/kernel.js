@@ -502,7 +502,10 @@ var SW = new function()
 		
 		// erase if exists
 		menu.erase();
-		
+		/*
+		var sound = menu.addSection("secXXX");
+		sound.addSelect(null, "selTest",  [{label : "elem 1", value: "uno"}, {label : "elem 2", value: "due"}],  "modal.info",  "Prova:");
+		*/
 		var sound = menu.addSection("secSound");
 		sound.addButton("bttMusic",  "playstop()",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
 		sound.addButton("bttFx",     "fx()",        null,  "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");

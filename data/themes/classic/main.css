@@ -78,18 +78,21 @@ div
 /*    >> MENU <<
 */
 
-#boxMenu A:link, #boxMenu A:visited
+/*#boxMenu A:link, #boxMenu A:visited*/
+.ctrlButton:link, .ctrlButton:visited
 {
 	color: #330000;
 }
 
-#boxMenu A:hover, #boxMenu A:active
+/*#boxMenu A:hover, #boxMenu A:active*/
+.ctrlButton:hover, .ctrlButton:active
 {
 	color: white;
 	background-color: black;
 }
 
-#boxMenu A
+/*#boxMenu A, #boxMenu LABEL*/
+.ctrlButton, .ctrlLabel
 {
 	display:block;
 	font-size: 14px;
@@ -120,13 +123,16 @@ div
 /*    >> TAG <<
 */
 
-A {
+A
+{
 	text-decoration: none;
 }
-A:link, A:visited {
+A:link, A:visited
+{
 	color: blue;
 }
-A:hover, A:active {
+A:hover, A:active
+{
 	color: red;
 }
 

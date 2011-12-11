@@ -103,10 +103,12 @@ function section(id, title, tooltip)
 		return elements[elements.length - 1];
 	}
 	
-//	this.addSelect = function(id, event, position, text, desc, arrOptions, intDefault)
-//	{
-//		
-//	}
+	function addSelect(position, id, items, globalEvent, text, CSSClass)
+	{
+		var ctrl = new ctrlSelect(id, items, globalEvent, text, CSSClass);
+		insert(elements, ctrl, position);
+		return elements[elements.length - 1];
+	}
 	
 	function dropControl(id)
 	{
@@ -132,10 +134,12 @@ function section(id, title, tooltip)
 		
 		// title
 		if (title) {
-			var tTag = document.createElement("span");
-			tTag.innerHTML = '<span class="menuSectionTitle" title="' + tooltip + '">' +
-			                 title + "</span>";
-			sTag.appendChild(tTag);
+			var tTag = '<span class="menuSectionTitle" title="';
+			tTag += tooltip;
+			tTag += '">';
+			tTag += title;
+			tTag += "</span>\n";
+			sTag.innerHTML += tTag;
 		}
 		
 		// controls
@@ -155,6 +159,7 @@ function section(id, title, tooltip)
 	
 	return {
 		addButton    : addButton,
+		addSelect    : addSelect,
 		dropControl  : dropControl,
 		erase        : erase,
 		draw         : draw,
@@ -168,26 +173,91 @@ function ctrlButton(id, event, text, desc, CSSClass)
 {
 	function draw(DOMParent)
 	{
-		var aTag = document.createElement("a");
-		aTag.setAttribute("id", id);
-		aTag.setAttribute("href", "javascript:" + event);
-		if (desc != null)
-			aTag.setAttribute("title", desc);
-		if (CSSClass != null)
-			aTag.setAttribute("class", CSSClass);
-		aTag.innerHTML = text;
-		DOMParent.appendChild(aTag);
+		// <a id="" href="">
+		var aTag = '<a id="';
+		aTag += id;
+		aTag += '" href="javascript:';
+		aTag += event;
+		aTag += '"';
+		
+		// title attribute
+		if (desc) {
+			aTag += ' title="';
+			aTag += desc;
+			aTag += '"';
+		}
+		
+		// class attribute
+		if (CSSClass) {
+			aTag += ' class="';
+			aTag += CSSClass;
+			aTag += '"';
+		} else {
+			aTag += ' class="ctrlButton"';
+		}
+		
+		// tag value and close
+		aTag += ">";
+		aTag += text;
+		aTag += "</a>\n"
+		DOMParent.innerHTML += aTag;
 	}
 	
 	/*
 	 *    Constructor
 	 */
 	
-	var id         = id;
-	var event = (typeof event === "function") ? event.name + "()" : event = event;
-	var text       = text;
-	var desc       = desc;
-	var CSSClass   = CSSClass;
+	event = (typeof event === "function") ? event.name + "()" : event = event;
+	
+	return {
+		draw      : draw
+	}
+}
+
+// This Control is a <select>
+// id           : string       : DOM id
+// items        : array        : array of objects: "label", "value", "tooltip", "isDefault"
+// globalEvent  : string/func  : <select onchange="">
+// text         : string       : shown before the Control
+// CSSClass     : string       : CSS class
+// In most cases, you will need to set a globalInput - a function that will be called
+// when any value gets selected. item's ["value"] will be passed to that function.
+function ctrlSelect(id, items, globalEvent, text, CSSClass)
+{
+	function draw(DOMParent)
+	{
+		// start <select>
+		var out = "";
+		if (text) {
+			out = '<label class="ctrlLabel">' + text + "<br>\n";
+		}
+		var pClass  = CSSClass     ? ' class="' + CSSClass + '"' : "";
+		var pEvent  = ' onchange="' + globalEvent + '(this.options[this.selectedIndex].value)"';
+		out += '<select id="' + id + '"' + pClass + pEvent + '>\n';
+		
+		// <option>'s
+		for (var i in items) {
+			var option = items[i], optValue, optTitle, optIsDefault;
+			if (option.value)      optValue      = ' value="' + option.value + '"';
+			if (option.tooltip)    optTitle      = ' title="' + option.tooltip + '"';
+			if (option.isDefault)  optIsDefault  = ' checked';
+			out += '<option' + optValue + optTitle + optIsDefault + '>' + 
+			       option.label + '</option>\n';
+		}
+		
+		// end tag
+		out += "</select>\n";
+		if (text) {
+			out += "</label>";
+		}
+		
+		// show HTML
+		DOMParent.innerHTML += out;
+	}
+	
+	/*
+	 *    Constructor
+	 */
 	
 	return {
 		draw      : draw
