@@ -25,19 +25,20 @@ var plugins = function() {
 		for (var name in extensions) {
 			// link js file
 			var fileName = "data/ext/" + name.substr(3).toLowerCase() + "/main";
-			link("js", fileName);
+			UTILE.link("js", fileName);
 			
 			// extensions items could be an object of options
 			var params = (typeof window.extensions[name] !== "undefined") ? extensions[name] : {};
 			
 			// load single extension when link operation is done
-			queue.add("plugins.add('" + name + "', funcExts['" + name + "']);", ["funcExts['" + name + "']"]);
+			queue.add("plugins.add('" + name + "', UTILE.funcExts['" + name + "']);", ["UTILE.funcExts['" + name + "']"]);
 			toLoad++;
 		}
+		
 		if (toLoad === 0) {
 			this.ready = true;
-			defineEvents();
-			events.exec("PluginsReady");
+			UTILE.defineEvents();
+			UTILE.events.exec("PluginsReady");
 		}
 	}
 	
@@ -50,17 +51,17 @@ var plugins = function() {
 			var defaults = obj.defaultOptions;
 		else
 			var defaults = null;
-		obj.options = new opt(extensions[name], defaults);
+		obj.options = UTILE.opt(extensions[name], defaults);
 		
 		// now options are set; load plugin
 		obj.load();
-		events.exec("PluginLoaded");
+		UTILE.events.exec("PluginLoaded");
 		
 		// plugin-specific dictionary/locale file to load?
 		if (typeof obj.dictionary !== "undefined" && typeof loadedFiles["dict"][name] !== "undefined") {
 			toLoad++;
 			loadedFiles["dict"][name] = true;
-			queue.add("link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/dict/" + SW.options.get("defaultDictionary") + "');");
+			queue.add("UTILE.link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/dict/" + SW.options.get("defaultDictionary") + "');");
 		}
 		if (typeof obj.locale !== "undefined" && typeof loadedFiles["locale"][name] !== "undefined") {
 			var lang;
@@ -68,15 +69,16 @@ var plugins = function() {
 				lang = SW.options.get("lang");
 			} else if (SW.options.get("defaultLocale")) {
 				lang = SW.options.get("defaultLocale");
-			} else lang = obj.locale[0];
+			} else {
+				lang = obj.locale[0];
+			}
 			toLoad++;
 			loadedFiles["locale"][name] = true;
-			queue.add("link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/locale/" + lang + "');");
+			queue.add("UTILE.link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/locale/" + lang + "');");
 		}
 		
 		// add instance to plugins
 		objExtensions[name]  = obj;
-		//funcExts[name]      = undefined;
 		
 		this.fileLoaded();
 	}
@@ -89,16 +91,16 @@ var plugins = function() {
 			this.ready = true;
 			
 			// define standard events
-			defineEvents();
-			events.exec("PluginsReady");
+			UTILE.defineEvents();
+			UTILE.events.exec("PluginsReady");
 		}
 	}
 	
 	// free memory if the plugin is not needed
 	function unload(name)
 	{
-		unlink("js", "ext/" + name);
-		if (typeof objExtensions[name].unload != "undefined")
+		UTILE.unlink("js", "ext/" + name);
+		if (typeof objExtensions[name].unload !== "undefined")
 			objExtensions[name].unload();
 		delete objExtensions[name];
 	}
@@ -114,7 +116,7 @@ var plugins = function() {
 	function get(name)
 	{
 		if (name && typeof objExtensions[name] === "undefined") {
-			issue(locale.getp("pluginUndefined", name));
+			UTILE.issue(locale.getp("pluginUndefined", name));
 			return false;
 		}
 		return name = name ? objExtensions[name] : objExtensions;

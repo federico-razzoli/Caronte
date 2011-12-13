@@ -30,31 +30,31 @@ function area(id, type, title, size)
 	 */
 	
 	// append buffer to old text and empty()
-	this.toBox = function()
+	function toBox()
 	{
-		if (this.type == "box" && typeof document.getElementById(id) != "undefined") {
-			removeFromDOM(id);
+		if (type == "box" && typeof document.getElementById(id) != "undefined") {
+			UTILE.removeFromDOM(id);
 		}
-		this.type = "box";
+		type = "box";
 		var tag = document.createElement("div");
 		tag.setAttribute("id", id);
 		if (id != "boxMain") tag.setAttribute("class", "boxAux");
-		tag.style.height = this.size + "%";
+		tag.style.height = size + "%";
 		document.body.appendChild(tag);
 		elmArea = document.getElementById(id);
-		this.applyCSS();
-		if (title) this.printBoxTitle();
+		applyCSS();
+		if (title) printBoxTitle();
 	}
 	
 	// resize box or win
-	this.resizeBox = function(height)
+	function resizeBox(height)
 	{
 		elmArea.style.height = String(height) + "%";
-		this.size = height;
+		size = height;
 	}
 	
 	// create <h1> tag
-	this.printBoxTitle = function()
+	function printBoxTitle()
 	{
 		var tag = document.createElement("h1");
 		tag.setAttribute("class", "auxTitle");
@@ -63,7 +63,7 @@ function area(id, type, title, size)
 	}
 	
 	// apply CSS props defined in arrStyles
-	this.applyCSS = function()
+	function applyCSS()
 	{
 		for (var i = 0; i < arrStyles.length; i++) {
 			var prop = getSupportedProperty(elmArea, arrStyles[i]["names"]);
@@ -76,17 +76,17 @@ function area(id, type, title, size)
 	// first argument is value, latter is an array of property names.
 	// properties names must be specified in javascript style: text-align => textAlign.
 	// if a property has been set returns true, else false
-	this.setCSSProperty = function(value, names)
+	function setCSSProperty(value, names)
 	{
-		if (!isArray(names)) names = [names];
+		if (!UTILE.isArray(names)) names = [names];
 		var i = arrStyles.length;
-		arrStyles[i]           = new Object;
+		arrStyles[i]           = {};
 		arrStyles[i]["value"]  = value.replace("'", "\'");;
 		arrStyles[i]["names"]  = names;
 	}
 	
-	// sets specified html attribute. if value is null, remove attribute.
-	this.setHTMLAttribute = function(name, value)
+	// set specified html attribute. if value is null, remove attribute.
+	function setHTMLAttribute(name, value)
 	{
 		if (value == null || typeof value == "undefined")
 			elmArea.removeAttribute(name);
@@ -94,8 +94,8 @@ function area(id, type, title, size)
 			elmArea.setAttribute(name, value);
 	}
 	
-	// gets specified html attribute
-	this.getHTMLAttribute = function(name)
+	// get specified html attribute
+	function getHTMLAttribute(name)
 	{
 		if (typeof elmArea.getAttribute(name) == "undefined")
 			return null;
@@ -108,37 +108,37 @@ function area(id, type, title, size)
 	 */
 	
 	// add text to the buffer
-	this.write = function(text)
+	function write(text)
 	{
 		buffer += text;
 	}
 	
 	// empty buffer
-	this.empty = function()
+	function empty()
 	{
 		buffer = "";
 	}
 	
 	// clear element's content
-	this.clear = function()
+	function clear()
 	{
 		elmArea.innerHTML = "";
 	}
 	
 	// replace old text with buffer and empty()
-	this.send = function()
+	function send()
 	{
-		this.clear();
-		this.printBoxTitle();
+		clear();
+		printBoxTitle();
 		elmArea.innerHTML += buffer;
-		this.empty();
+		empty();
 	}
 	
 	// append buffer to old text and empty()
-	this.append = function()
+	function append()
 	{
 		elmArea.innerHTML += buffer;
-		this.empty();
+		empty();
 	}
 	
 	/*
@@ -152,14 +152,35 @@ function area(id, type, title, size)
 	// set members
 	var buffer          = "";
 	var elmArea         = {};
-	this.type           = type;
-	this.size           = size;
+	var type            = type;
+	var size            = size;
 	var arrStyles       = [];
+	
+	// public
+	return {
+		// area methods
+		toBox             : toBox,
+		resizeBox         : resizeBox,
+		setCSSProperty    : setCSSProperty,
+		getHTMLAttribute  : getHTMLAttribute,
+		setHTMLAttribute  : getHTMLAttribute,
+		
+		// output methods
+		write             : write,
+		empty             : empty,
+		clear             : clear,
+		send              : send,
+		append            : append,
+		
+		// props
+		type              : type,
+		size              : size
+	}
 }
 
 
 // user interface handler
-var gui = new function ()
+var gui = function ()
 {
 	/*
 	 *    Methods
@@ -168,10 +189,10 @@ var gui = new function ()
 	// create new writeble area
 	var createArea = function(id, type, title, before, size)
 	{
-		events.exec("GUICreateArea");
+		UTILE.events.exec("GUICreateArea");
 		
 		// create elem
-		var newArea = new area(id, type, title, size); // befor must not be passed
+		var newArea = area(id, type, title, size); // befor must not be passed
 		if (before) {
 			for (var i in arrArea) {
 				arrArea[parseInt(i + 1)] = arrArea[i];
@@ -195,7 +216,7 @@ var gui = new function ()
 	{
 		// remove from DOM
 		for (var i in arrArea) {
-			removeFromDOM(arrArea[i].id);
+			UTILE.removeFromDOM(arrArea[i].id);
 		}
 		// re-init vars
 		arrArea   = [];
@@ -206,7 +227,7 @@ var gui = new function ()
 	// draw all boxes
 	var draw = function()
 	{
-		events.exec("GUIDraw");
+		UTILE.events.exec("GUIDraw");
 		
 		// get all non-main boxes size
 		var oldSize = 0;
@@ -246,7 +267,7 @@ var gui = new function ()
 		erase       : erase,
 		draw        : draw
 	}
-}
+}();
 
 
 // return 1st CSS property supported by specified element (with current useragent)

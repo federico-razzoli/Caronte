@@ -13,7 +13,7 @@
 
 "use strict";
 
-funcExts["extObjects"] = function () {
+UTILE.funcExts["extObjects"] = function () {
 	function load() {
 		// box
 		boxObjects = gui.createArea("boxObjects", "box", this.options.get("title"), false, this.options.get("size"));
@@ -87,7 +87,7 @@ funcExts["extObjects"] = function () {
 	
 	// Identica a rinvioOgg, ma mostra l'opzione come una scelta
 	function sceltaOgg(desc, defaultAct) { //seguono argomenti opzionali, vedi sopra
-		var tavola = new Object() //hash table con coppie oggetto-azione
+		var tavola = {}; //hash table con coppie oggetto-azione
 		tavola["-"] = defaultAct
 		for (var i = 1; i < arguments.length; i++) {
 			tavola[arguments[i]] = arguments[i + 1]

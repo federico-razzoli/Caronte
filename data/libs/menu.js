@@ -25,27 +25,26 @@
 
 "use strict";
 
-function menuHandler(idMenu)
-{
+UTILE.menuHandler = function(idMenu) {
 	/*
 	 *    Methods
 	 */
 	
 	function addSection(id, title, tooltip, position)
 	{
-		var sec = new section(id, title, tooltip);
-		insert(this.sections, sec, position);
+		var sec = new UTILE.section(id, title, tooltip);
+		UTILE.insert(this.sections, sec, position);
 		return this.sections[this.sections.length - 1];
 	}
 	
 	function dropSection(id)
 	{
-		return drop(this.sections, id);
+		return UTILE.drop(this.sections, id);
 	}
 	
 	function getSection(id)
 	{
-		return getById(this.sections, id);
+		return UTILE.getById(this.sections, id);
 	}
 	
 	// if menu has been drawn, erase it
@@ -55,7 +54,7 @@ function menuHandler(idMenu)
 			for (var i in this.sections)
 				this.sections[i].erase();
 			this.sections = new Array;
-			removeFromDOM(this.id);
+			UTILE.removeFromDOM(this.id);
 		}
 	}
 	
@@ -94,35 +93,35 @@ function menuHandler(idMenu)
 }
 
 
-function section(id, title, tooltip)
+UTILE.section = function(id, title, tooltip)
 {
-	function addButton(id, event, position, text, desc, CSSClass)
+	function addButton(position, id, event, text, desc, CSSClass)
 	{
 		var button = new ctrlButton(id, event, text, desc, CSSClass);
-		insert(elements, button, position);
+		UTILE.insert(elements, button, position);
 		return elements[elements.length - 1];
 	}
 	
 	function addSelect(position, id, items, globalEvent, text, CSSClass)
 	{
 		var ctrl = new ctrlSelect(id, items, globalEvent, text, CSSClass);
-		insert(elements, ctrl, position);
+		UTILE.insert(elements, ctrl, position);
 		return elements[elements.length - 1];
 	}
 	
 	function dropControl(id)
 	{
-		return drop(elements, id);
+		return UTILE.drop(elements, id);
 	}
 	
 	function erase()
 	{
 		// remove controls
 		for (var i in elements)
-			removeFromDOM(elements[i].id);
+			UTILE.removeFromDOM(elements[i].id);
 		elements = [];
 		// remove section
-		removeFromDOM(id);
+		UTILE.removeFromDOM(id);
 	}
 	
 	function draw(DOMParent)
@@ -169,10 +168,8 @@ function section(id, title, tooltip)
 }
 
 
-function ctrlButton(id, event, text, desc, CSSClass)
-{
-	function draw(DOMParent)
-	{
+function ctrlButton(id, event, text, desc, CSSClass) {
+	function draw(DOMParent) {
 		// <a id="" href="">
 		var aTag = '<a id="';
 		aTag += id;
@@ -222,10 +219,8 @@ function ctrlButton(id, event, text, desc, CSSClass)
 // CSSClass     : string       : CSS class
 // In most cases, you will need to set a globalInput - a function that will be called
 // when any value gets selected. item's ["value"] will be passed to that function.
-function ctrlSelect(id, items, globalEvent, text, CSSClass)
-{
-	function draw(DOMParent)
-	{
+function ctrlSelect(id, items, globalEvent, text, CSSClass) {
+	function draw(DOMParent) {
 		// start <select>
 		var out = "";
 		if (text) {

@@ -25,8 +25,8 @@
 		eventi.probabilita  = 5;            // probabilità che una frase sia visualizzata
 
 
-var menu = new menuHandler("boxMenu");
-var v = new Object;
+var menu = new UTILE.menuHandler("boxMenu");
+var v = {}
 
 var SW = new function()
 {
@@ -41,7 +41,7 @@ var SW = new function()
 		defaultTheme       : "classic",
 		defaultDictionary  : "it",
 		defaultLang        : "it"
-	};
+	}
 	
 	/*
 	 *    Meta Info
@@ -95,10 +95,10 @@ var SW = new function()
 	{
 		here = pag; // ricorda la pagina
 		this.pageBegin();
-		events.exec("PageBegin");
+		UTILE.events.exec("PageBegin");
 		if (typeof args == "undefined") args = null;
 		pag(args); // write page
-		events.exec("PageEnd");
+		UTILE.events.exec("PageEnd");
 		this.pageEnd();
 	}
 	
@@ -109,7 +109,7 @@ var SW = new function()
 			eval(strFunc + "()");
 			return true;
 		} else {
-			issue("Undefined function: " + strFunc);
+			UTILE.issue("Undefined function: " + strFunc);
 			return false;
 		}
 	}
@@ -280,16 +280,16 @@ var SW = new function()
 	{
 		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle"));
 		if (typeof info != "undefined") {
-			secInfo.addButton("bttInfoApp",  "SW.showInfo(info, 'app')",  null,  locale.get("infoApp"),  locale.get("infoAppTitle"));
+			secInfo.addButton(null, "bttInfoApp", "SW.showInfo(info, 'app')", locale.get("infoApp"),  locale.get("infoAppTitle"));
 		}
-		secInfo.addButton("bttInfoSW",  "SW.showInfo(SW.info)",  null,  this.info.name, locale.getp("infoAbout", this.info.name));
+		secInfo.addButton(null, "bttInfoSW", "SW.showInfo(SW.info)", this.info.name, locale.getp("infoAbout", this.info.name));
 		for (var p in plugins.get()) {
 			if (typeof plugins.get(p).info != "undefined") {
-				secInfo.addButton("bttInfoPlugin" + p,  "SW.showInfo(plugins.get('" + p + "').info)",  null,  p,  locale.getp("infoAboutExt", p));
+				secInfo.addButton(null, "bttInfoPlugin" + p, "SW.showInfo(plugins.get('" + p + "').info)", p, locale.getp("infoAboutExt", p));
 			}
 		}
 		if (typeof dictInfo != "undefined") {
-			secInfo.addButton("bttInfoDict",  "SW.showInfo(dictInfo)",  null,  locale.get("dictionary"),  locale.get("currentDictionary"));
+			secInfo.addButton(null, "bttInfoDict", "SW.showInfo(dictInfo)", locale.get("dictionary"), locale.get("currentDictionary"));
 		}
 	}
 	
@@ -313,7 +313,7 @@ var SW = new function()
 			}
 			if (infoSet["URL"]) {
 				var URL = "";
-				if (isArray(infoSet["URL"])) {
+				if (UTILE.isArray(infoSet["URL"])) {
 					for (var u in infoSet["URL"]) {
 						// split url from text?
 						var p = infoSet["URL"][u].indexOf(" ");
@@ -411,20 +411,28 @@ var SW = new function()
 		// assign Application options
 		if (typeof defaultOptions === "undefined")
 			window.defaultOptions = null;
-		options = new opt(options, defaultOptions);
+		options = new UTILE.opt(options, defaultOptions);
 		window.defaultOptions = undefined;
 		
 		// assign SW options
 		if (typeof this.defaultOptions === "undefined")
 			this.defaultOptions = null;
-		this.options = new opt(SWOptions, this.defaultOptions);
-		window.SWOptions = undefined; // cant delete globals in strict mode
+		this.options = new UTILE.opt(UTILE.SWOptions, this.defaultOptions);
+		delete UTILE.SWOptions;
 		delete this.defaultOptions;
+		
+		// get & apply selected theme
+		if (options.get("theme") === "string") {
+			var theme = options.get("theme");
+		} else {
+			var theme = this.options.get("defaultTheme");
+		}
+		UTILE.themes.select(theme);
 		
 		// choose & load Application language
 		if (typeof options.get("lang") !== "undefined" && typeof appLocaleInfo === "undefined") {
 			var appLang = options.get("lang");
-			queue.add("link('js', 'apps/" + window.appName + "/locale/" + appLang + "')");
+			queue.add("UTILE.link('js', 'apps/" + window.appName + "/locale/" + appLang + "')");
 			// localized functions (if useless, don't create them)
 			this.sayLocale = function()
 			{
@@ -490,12 +498,12 @@ var SW = new function()
 		
 		// load Caronte localization file
 		if (typeof langOk === "undefined") {
-			queue.add("link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
+			queue.add("UTILE.link('js', 'data/locale/' + SW.options.get('defaultLang'))", [], "locale");
 		}
 		
 		// load dictionary
 		if (typeof dictionary === "undefined") window.dictionary = this.options.get("defaultDictionary");
-		if (dictionary != "") link("js", "data/dict/" + dictionary);
+		if (dictionary != "") UTILE.link("js", "data/dict/" + dictionary);
 		else var dictOk = true;
 		
 		if (typeof extensions === "undefined") window.extensions = {};
@@ -507,8 +515,8 @@ var SW = new function()
 		sound.addSelect(null, "selTest",  [{label : "elem 1", value: "uno"}, {label : "elem 2", value: "due"}],  "modal.info",  "Prova:");
 		*/
 		var sound = menu.addSection("secSound");
-		sound.addButton("bttMusic",  "playstop()",  null,  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
-		sound.addButton("bttFx",     "fx()",        null,  "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
+		sound.addButton(null,  "bttMusic",  "playstop()",  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
+		sound.addButton(null,  "bttFx",     "fx()",        "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
 		
 		gui.erase();
 		this.boxMain = gui.createArea("boxMain", "box");
@@ -517,7 +525,7 @@ var SW = new function()
 		plugins.loadAll();
 		
 		if (this.options.get("no_exec") !== true)
-			queue.add("SW.start()",            ["?typeof appLocaleInfo !== 'undefined' && typeof plugins !== 'undefined' && plugins.ready",  "dictOk", "localeInfo"]);
+			queue.add("SW.start()", ["?typeof appLocaleInfo !== 'undefined' && typeof plugins !== 'undefined' && plugins.ready",  "dictOk", "localeInfo"]);
 	}
 	
 	this.start = function()
@@ -538,7 +546,7 @@ var SW = new function()
 				parent.document.title = locale.get(info.name);
 		}
 		
-		events.exec("ApplicationBegin");
+		UTILE.events.exec("ApplicationBegin");
 		
 		// initialize start Application
 		this.callUserFunc("Inizia");

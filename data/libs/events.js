@@ -30,8 +30,7 @@
 
 "use strict";
 
-function hooks()
-{
+UTILE.hooks = function() {
 	// add a hook
 	//     @hookId      : String    : hook id
 	//     @func        : function  : function that will be executed
@@ -72,7 +71,7 @@ function hooks()
 }
 
 
-var events = function ()
+UTILE.events = function ()
 {
 	// define an event and associate existing handlers
 	//     @eventId      : String   : event unique id
@@ -81,11 +80,11 @@ var events = function ()
 	{
 		// check for error but dont stop execution
 		if ((typeof list[eventId] != "undefined") && !force) {
-			issue("Event " + eventId + " was already defined\n" +
+			UTILE.issue("Event " + eventId + " was already defined\n" +
 				"(caller: " + arguments.callee.caller.name + ")");
 		}
 		
-		list[eventId] = new hooks();
+		list[eventId] = UTILE.hooks();
 		var handlerName = "on" + eventId;
 		
 		// low-level events which are defined before plugins
@@ -121,7 +120,7 @@ var events = function ()
 	{
 		// is eventId defined?
 		if (typeof list[eventId] === "undefined") {
-			issue("Event " + eventId + " was not defined");
+			UTILE.issue("Event " + eventId + " was not defined");
 			return false;
 		}
 		

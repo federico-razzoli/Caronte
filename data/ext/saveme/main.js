@@ -18,12 +18,12 @@
 
 //"use strict";
 
-funcExts["extSaveMe"] = function(){
+UTILE.funcExts["extSaveMe"] = function(){
 	function load() { 
 		var saveMe = menu.addSection("secSaveMe");
-		saveMe.addButton("bttSave",     "appSave()",     null,  "Salva",       "Salva la situazione corrente");
-		saveMe.addButton("bttLoad",     "appLoad()",     null,  "Carica",      "Riprendi una situazione salvata");
-		saveMe.addButton("bttRestart",  "SW.prepare()",  null,  "Ricomincia",  "Ricomincia l'avventura");
+		saveMe.addButton(null,  "bttSave",     "appSave()",     "Salva",       "Salva la situazione corrente");
+		saveMe.addButton(null,  "bttLoad",     "appLoad()",     "Carica",      "Riprendi una situazione salvata");
+		saveMe.addButton(null,  "bttRestart",  "SW.prepare()",  "Ricomincia",  "Ricomincia l'avventura");
 	}
 	
 	// save current situation (SW.v)

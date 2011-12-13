@@ -175,41 +175,34 @@ TINY.box = function()
 	}
 }();
 
-var modal = new function()
+var modal = function()
 {
-	this.setButton = function(id, label, value)
-	{
-		buttons[buttons.length].id     = id;
-		buttons[buttons.length].label  = label;
-		buttons[buttons.length].value  = value;
-	}
-	
 	// SW.options is ready?
 	// (always true for netscape)
-	this.light = function(msg)
+	function light(msg)
 	{
 		if (navigator.userAgent.indexOf("Navigator") != -1) return true;
 		return ((typeof SW == "undefined") || (SW.options.get("light"))) ? true : false;
 	}
 	
-	this.bad = function(msg)
+	function bad(msg)
 	{
 		TINY.box.show(
 			{
 				html :    msg,
-				animate:  !this.light(),
+				animate:  !light(),
 				close:    false,
 				boxid:    'winError'
 			}
 		);
 	}
 	
-	this.good = function(msg)
+	function good(msg)
 	{
 		TINY.box.show(
 			{
 				html:      msg,
-				animate:   !this.light(),
+				animate:   !light(),
 				close:     false,
 				mask:      true,
 				boxid:     'winSuccess',
@@ -218,14 +211,14 @@ var modal = new function()
 		);
 	}
 	
-	this.info = function(msg, txtButton)
+	function info(msg, txtButton)
 	{
 		msg += '<br>\n<input type="button" id="butClose" value="' + locale.get("SW.close") + '" onclick="TINY.box.hide()">';
 		
 		TINY.box.show(
 			{
 				html:      msg,
-				animate:   !this.light(),
+				animate:   !light(),
 				close:     false,
 				mask:      true,
 				boxid:     'winInfo'
@@ -233,7 +226,15 @@ var modal = new function()
 		);
 	}
 	
-	var buttons  = new Array();
+	// private members
+	var buttons  = [];
 	var msg      = "";
-}
+	
+	// public methods
+	return {
+		bad   : bad,
+		good  : good,
+		info  : info
+	}
+}();
 
