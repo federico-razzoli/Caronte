@@ -19,16 +19,30 @@
 "use strict";
 
 var plugins = function() {
+	// public props
+	var objExtensions   = {},
+		ready           = false,
+	
+	// private props
+		toLoad          = 0,  // number of files to load: when 0 we're ready
+		loadedFiles     = {}; // log of loaded files (won't be reloaded)
+	loadedFiles.dict    = {};
+	loadedFiles.locale  = {};
+	
 	// link & load all extensions
 	function loadAll () {
+		var name,
+			fileName,
+			params;
+		
 		objExtensions = {};
-		for (var name in extensions) {
+		for (name in extensions) {
 			// link js file
-			var fileName = "data/ext/" + name.substr(3).toLowerCase() + "/main";
+			fileName = "data/ext/" + name.substr(3).toLowerCase() + "/main";
 			UTILE.link("js", fileName);
 			
 			// extensions items could be an object of options
-			var params = (typeof window.extensions[name] !== "undefined") ? extensions[name] : {};
+			params = (typeof window.extensions[name] !== "undefined") ? extensions[name] : {};
 			
 			// load single extension when link operation is done
 			queue.add("plugins.add('" + name + "', UTILE.funcExts['" + name + "']);", ["UTILE.funcExts['" + name + "']"]);
@@ -46,11 +60,15 @@ var plugins = function() {
 	//     name     : String    : plugin name
 	//     obj      : Object    : instance of plugin
 	function add (name, obj) {
+		var defaults,
+			lang;
+		
 		// options
-		if (typeof obj.defaultOptions !== "undefined")
-			var defaults = obj.defaultOptions;
-		else
-			var defaults = null;
+		if (typeof obj.defaultOptions !== "undefined") {
+			defaults = obj.defaultOptions;
+		} else {
+			defaults = null;
+		}
 		obj.options = UTILE.opt(extensions[name], defaults);
 		
 		// now options are set; load plugin
@@ -64,7 +82,6 @@ var plugins = function() {
 			queue.add("UTILE.link('js', 'data/ext/" + name.substr(3).toLowerCase() + "/dict/" + SW.options.get("defaultDictionary") + "');");
 		}
 		if (typeof obj.locale !== "undefined" && typeof loadedFiles["locale"][name] !== "undefined") {
-			var lang;
 			if (SW.options.get("lang")) {
 				lang = SW.options.get("lang");
 			} else if (SW.options.get("defaultLocale")) {
@@ -79,7 +96,6 @@ var plugins = function() {
 		
 		// add instance to plugins
 		objExtensions[name]  = obj;
-		
 		this.fileLoaded();
 	}
 	
@@ -97,40 +113,28 @@ var plugins = function() {
 	}
 	
 	// free memory if the plugin is not needed
-	function unload(name)
-	{
+	function unload(name) {
 		UTILE.unlink("js", "ext/" + name);
-		if (typeof objExtensions[name].unload !== "undefined")
+		if (typeof objExtensions[name].unload !== "undefined") {
 			objExtensions[name].unload();
+		}
 		delete objExtensions[name];
 	}
 	
 	// return true if loaded, else false
-	function isLoaded(name)
-	{
-		return (typeof objExtensions[name] !== "undefined") ? true : false;
+	function isLoaded(name) {
+		return (typeof objExtensions[name] === "undefined") ? false : true;
 	}
 	
 	// if name is specified, return matching plugin; 
 	// else return an array of plugin objects
-	function get(name)
-	{
+	function get(name) {
 		if (name && typeof objExtensions[name] === "undefined") {
 			UTILE.issue(locale.getp("pluginUndefined", name));
 			return false;
 		}
 		return name = name ? objExtensions[name] : objExtensions;
 	}
-	
-	// public props
-	var objExtensions   = {};
-	var ready     = false;
-	
-	// private props
-	var toLoad          = 0;  // number of files to load: when 0 we're ready
-	var loadedFiles     = {}; // log of loaded files (won't be reloaded)
-	loadedFiles.dict    = {};
-	loadedFiles.locale  = {};
 	
 	return {
 		loadAll      : loadAll,

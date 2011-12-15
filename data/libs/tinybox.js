@@ -175,66 +175,59 @@ TINY.box = function()
 	}
 }();
 
-var modal = function()
-{
+var modal = function() {
+	// private members
+	var buttons  = [];
+	var msg      = "";
+	
 	// SW.options is ready?
 	// (always true for netscape)
-	function light(msg)
-	{
-		if (navigator.userAgent.indexOf("Navigator") != -1) return true;
+	function light(msg) {
+		if (navigator.userAgent.indexOf("Navigator") != -1) {
+			return true;
+		}
 		return ((typeof SW == "undefined") || (SW.options.get("light"))) ? true : false;
 	}
 	
-	function bad(msg)
-	{
-		TINY.box.show(
-			{
+	function bad(msg) {
+		TINY.box.show( {
 				html :    msg,
 				animate:  !light(),
 				close:    false,
 				boxid:    'winError'
-			}
-		);
+			});
 	}
 	
-	function good(msg)
-	{
-		TINY.box.show(
-			{
+	function good(msg) {
+		TINY.box.show( {
 				html:      msg,
 				animate:   !light(),
 				close:     false,
 				mask:      true,
 				boxid:     'winSuccess',
 				autohide:  5
-			}
-		);
+			} );
 	}
 	
-	function info(msg, txtButton)
-	{
-		msg += '<br>\n<input type="button" id="butClose" value="' + locale.get("SW.close") + '" onclick="TINY.box.hide()">';
+	function info(msg, txtButton) {
+		msg += '<br>\n<input type="button" id="butClose" value="';
+		msg += locale.get("SW.close");
+		msg += '" onclick="TINY.box.hide()">';
 		
-		TINY.box.show(
-			{
+		TINY.box.show( {
 				html:      msg,
 				animate:   !light(),
 				close:     false,
 				mask:      true,
 				boxid:     'winInfo'
-			}
-		);
+			} );
 	}
-	
-	// private members
-	var buttons  = [];
-	var msg      = "";
 	
 	// public methods
 	return {
 		bad   : bad,
 		good  : good,
 		info  : info
-	}
+	};
 }();
 

@@ -26,6 +26,10 @@ locale.set("infoAppLocaleShow",    "Informazioni sulla localizzazione");
 
 // errori
 locale.set("pluginUndefined",      "Il plugin %1 non esiste o non è attualmente caricato");
+locale.set("errNoAction",          "Azione non definita");
+locale.set("errInvalidAction",     "Azione non valida: %1");
+locale.set("errNoFunc",            "Funzione non definita: %1");
+locale.set("errInvalidFunc",       "%1 non è una funzione");
 
 // varie
 locale.set("SW.close",                "Chiudi");

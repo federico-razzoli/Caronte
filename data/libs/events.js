@@ -28,96 +28,101 @@
 */
 
 
+/*global UTILE : false, plugins : false */
+
 "use strict";
 
 UTILE.hooks = function() {
+	var list = {};
+	
 	// add a hook
 	//     @hookId      : String    : hook id
 	//     @func        : function  : function that will be executed
-	function add(hookId, obj, func)
-	{
+	function add(hookId, obj, func) {
 		list[hookId]       = {};
 		list[hookId].obj   = obj;
 		list[hookId].func  = func;
 	}
 	
 	// exec hooked funcs
-	function exec(args)
-	{
-		for (var hook in list) {
-			var obj   = list[hook].obj;
-			var func  = list[hook].func;
-			if (typeof args === "undefined") // IE7 bug
+	function exec(args) {
+		var hook,
+			obj,
+			func;
+		for (hook in list) {
+			obj   = list[hook].obj;
+			func  = list[hook].func;
+			if (typeof args === "undefined") { // IE7 bug
 				func.apply(obj);
-			else
+			} else {
 				func.apply(obj, args);
+			}
 		}
 	}
 	
 	// drop a hook
 	//     @hookId      : String    : hook id
-	function drop(hookId)
-	{
+	function drop(hookId) {
 		delete list[hookId];
 	}
-	
-	var list = {};
 	
 	return {
 		add     : add,
 		exec    : exec,
 		drop    : drop
 	};
-}
+};
 
 
-UTILE.events = function ()
-{
+UTILE.events = function () {
+	var list = {};
+	
 	// define an event and associate existing handlers
 	//     @eventId      : String   : event unique id
 	//     @force        : Bool     : if already defined, re-define
-	function define(eventId, force)
-	{
+	function define(eventId, force) {
+		var pluginList,
+			handlerName,
+			o,
+			hookId;
+		
 		// check for error but dont stop execution
-		if ((typeof list[eventId] != "undefined") && !force) {
-			UTILE.issue("Event " + eventId + " was already defined\n" +
-				"(caller: " + arguments.callee.caller.name + ")");
+		if ((typeof list[eventId] !== "undefined") && !force) {
+			UTILE.issue("Event " + eventId + " was already defined\n");
 		}
 		
 		list[eventId] = UTILE.hooks();
-		var handlerName = "on" + eventId;
+		handlerName = "on" + eventId;
 		
 		// low-level events which are defined before plugins
 		// will not be filled this way
 		// (extensions developers should know this)
-		if (typeof plugins != "undefined") {
-			var pluginList = plugins.get();
-			for (var o in pluginList) {
-				if (typeof pluginList[o][handlerName] != "undefined") {
-					var hookId = o + "." + handlerName;
+		if (typeof plugins !== "undefined") {
+			pluginList = plugins.get();
+			for (o in pluginList) {
+				if (typeof pluginList[o] === "object" && typeof pluginList[o][handlerName] !== "undefined") {
+					hookId = o + "." + handlerName;
 					list[eventId].add(hookId, pluginList[o], pluginList[o][handlerName]);
 				}
 			}
 		}
 		
 		// check for global function
-		if (typeof window[handlerName] != "undefined") {
-			var hookId = "window." + handlerName;
+		if (typeof window[handlerName] !== "undefined") {
+			hookId = "window." + handlerName;
 			list[eventId].add(hookId, window, window[handlerName]);
 		}
 	}
 	
 	// return true if event is defined, else false
 	//     @eventId      : String   : event unique id
-	function isDefined(eventId)
-	{
-		return (typeof list[eventId] != "undefined");
+	function isDefined(eventId) {
+		return (typeof list[eventId] !== "undefined");
 	}
 	
 	// execute all hooks in an event
 	//     @eventId      : String   : event id
-	function exec(eventId, args)
-	{
+	function exec(eventId, args) {
 		// is eventId defined?
 		if (typeof list[eventId] === "undefined") {
 			UTILE.issue("Event " + eventId + " was not defined");
@@ -130,18 +135,15 @@ UTILE.events = function ()
 	
 	// delete an event and all its hooks
 	//     @eventId      : String   : event id
-	function undefine(eventId)
-	{
+	function undefine(eventId) {
 		delete list[eventId];
 	}
-	
-	var list = {};
 	
 	return {
 		define     : define,
 		isDefined  : isDefined,
 		exec       : exec,
-		undefined  : undefined
-	}
+		undefine   : undefine
+	};
 }();
 

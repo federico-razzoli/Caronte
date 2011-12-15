@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
     <meta content="text/html; charset=ISO-8859-1"
@@ -7,61 +7,115 @@
   </head>
   <body>
     <h1>Documentazione di Caronte</h1>
-    Caronte si basa su IDRA, di Enrico Colombini.<br>
-    <h2>Creare un'estensione</h2>
-    Segue la documentazione dell'API.<br>
-    <h3>API</h3>
-    <h4>Classe queue()</h4>
-    <div style="margin-left: 40px;">La classe queue() &egrave; stata
-      creata per uso interno, ma potrebbe risultare utile alle
-      estensioni che interagiscono con altre estensioni o fanno un uso
-      intensivo degli eventi del DOM.<br>
-    </div>
-    <br>
-    Quando si caricano dinamicamente diverse librerie, si usano gli
-    eventi del DOM o i timeout di JavaScript, non &egrave; sempre facile
-    stabilire l'ordine di esecuzione delle varie porzioni di codice. In
-    alcuni casi potrebbe addirittura dipendere dal browser, anche se non
-    abbiamo notizie certe in proposito. Un buon approfondimento &egrave;
-    l'articolo <a
-      href="http://ejohn.org/blog/how-javascript-timers-work/">How
-      JavaScript Timers Work</a>, di John Resig. 
-	<a href="http://dev.opera.com/articles/view/timing-and-synchronization-in-javascript/">
-	Timing and synchtonization in JavaScript</a>, sul sito di Opera,
-	è meno "didattico" ma molto più completo (ma probabilmente non è
-	privo di errori).
-    <br>
-    queue() permette di eseguire un'istruzione specificata soltanto
-    quando si saranno verificate le condizioni necessarie per la sua
-    esecuzione. Le condizioni vengono passate da programma sottoforma di
-    stringa e possono essere di due tipi:<br>
     <ul>
-      <li>Nome di un oggetto: quando l'oggetto sar&agrave; caricato
-        (cio&egrave; non sar&agrave; undefined) la condizione
-        sar&agrave; vera;</li>
-      <li>Espressione booleana: quando l'espressione non
-        restituir&agrave; false, la condizione sar&agrave; vera.<br>
+    </ul>
+    <a href="index.htm">Torna all'Indice</a><br>
+    <ul>
+      <li><a href="#history">Storia</a></li>
+      <ul>
+        <li><a href="#name">Il nome</a></li>
+      </ul>
+      <li><a href="#overview">Concetti generali</a></li>
+      <li><a href="copy">Diritti e licenza</a><br>
       </li>
     </ul>
-    Le condizioni vanno passate in un unico array. Se la condizione
-    &egrave; una sola, non &egrave; necessario che si trovi in un array.
-    Se viene passato un array vuoto o il valore null, l'istruzione
-    verr&agrave; eseguita senza aspettare (nessuna condizione &egrave;
-    stata specificata).<br>
+    <h2><a name="history">Storia</a></h2>
+    Le Avventure Testuali sono state uno dei primi tipi di videogiochi.
+    In Italia si sono diffuse negli anni '80, e venivano giocate su
+    computer e sistemi operativi che oggi sembrano dei pezzi di
+    antiquariato. A scrivere le prime avventure in lingua italiana
+    &egrave; stato <a href="http://www.erix.it/">Enrico Colombini</a>
+    (da qui in avanti Erix), sfruttando una piattaforma scritta da lui
+    stesso che si chiamava Modulo Base. Da allora le avventure si sono
+    evolute in pi&ugrave; direzioni. Con la nascita del World Wide Web,
+    nella seconda met&agrave; degli anni '90, alcuni siti hanno
+    presentato delle loro Avventure Testuali, giocabili attraverso un
+    browser. Nel 2000, Erix ha scritto <a
+      href="http://www.erix.it/idra.html">Idra</a> (Ipertesto Dinamico
+    per Racconti d'Avventura), che consente di scrivere avventure in
+    JavaScript, il linguaggio che si usa per creare programmi eseguibili
+    da un browser.<br>
     <br>
-    Esempi:<br>
+    Nel 2011, Federico Razzoli ha deciso di estendere Idra rendendola
+    pi&ugrave; modulare e permettendole di sfruttare tecnologie
+    pi&ugrave; moderne. Da questo lavoro &egrave; nato Caronte.<br>
+    <h3><a name="name">Il nome</a></h3>
+    Il nome Caronte &egrave; un omaggio a Idra per vari motivi:<br>
+    <ul>
+      <li>sono entrambi personaggi della mitologia greca legati
+        all'acqua;</li>
+      <li>sono entrambi satelliti di Plutone, il nono pianeta del nostro
+        sistema solare;</li>
+      <li>Hydra &egrave; un bellissimo disco dei Toto, mentre Caronte
+        &egrave; un bellissimo disco dei Trip.<br>
+      </li>
+    </ul>
+    Ma state tranquilli: per scaricarlo non &egrave; necessario dare un
+    obolo a chicchessia!<br>
+    <h2><a name="overview">Concetti generali</a></h2>
+    Caronte &egrave; un <span style="font-style: italic;">framework </span>(piattaforma)
+
+    che consente di scrivere, in maniera semplice, <span
+      style="font-weight: bold;">Applicazioni</span> all'interno di un
+    browser. E' stato pensato principalmente per la scrittura di
+    Avventure Testuali, ma poich&egrave; potrebbe essere usato per
+    creare altri programmi, si &egrave; scelto il termine generico
+    Applicazione.<br>
     <br>
-    queue.add("alert('extExample &egrave; caricato')",
-    "plugins.get('extExample')");<br>
-    queue.add("alert('extExample &egrave; caricato')",
-    ["plugins.get('extExample')"]);<br>
-    queue.add("plugins.get('extExample').faiQualcosa()",
-    ["plugins.get('extExample')",
-    "?plugins.get('extEsempio').isReady"]);<br>
-    queue.add("alert('Odio aspettare!')", []);<br>
-    queue.add("alert('Odio aspettare!')");<br>
+    Ogni Applicazione utilizza un suo <span style="font-weight: bold;">Dizionario</span>
+    di Funzioni. Le funzioni sono i termini che l'Autore di Applicazioni
+    user&agrave; per farsi comprendere da Caronte (e quindi dal
+    browser). I Dizionari sono raccolte di funzioni. Ogni Autore
+    sar&agrave; libero di usare il Dizionario corrispondente alla sua
+    lingua, se disponibile. Ad esempio, supponendo di voler usare il
+    Dizionario italiano ("it"), l'Autore potr&agrave; comunicare in
+    questo modo con Caronte:<br>
     <br>
+    titolo("Scala a chiocciola");<br>
+    testo("Ti trovi in una scala a chiocciola che, dagli spalti del
+    castello, scende nella fitta oscurit&agrave;.");<br>
+    scelta("Sali", Spalti);<br>
+    scelta("Scendi", StanzaDellaCatapulta);<br>
     <br>
+    Non preoccupatevi se al momento la sintassi non vi &egrave; chiara o
+    vi sembra strana: verr&agrave; spiegata pi&ugrave; avanti. Quello
+    che &egrave; importante capire, &egrave; che &egrave; possibile
+    comunicare con Caronte utilizzando termini come "titolo", "testo" e
+    "scelta" grazie al dizionario italiano.<br>
+    <br>
+    Le funzionalit&agrave; base di Caronte sono volutamente molto
+    ridotte. Si &egrave; scelto di non mettere insieme tutte le
+    funzionalit&agrave; che potrebbero servire, in un unico blob che
+    potrebbe essere pesante sui computer lenti. Le funzionalit&agrave;
+    aggiuntive per&ograve; sono disponibili attraverso le <span
+      style="font-weight: bold;">Estensioni</span>, cio&egrave; moduli
+    aggiuntivi che possono essere "inseriti" in Caronte.<br>
+    <h2><a name="copy">Diritti e licenza</a></h2>
+    Anche se il codice di Idra &egrave; stato in gran parte riscritto
+    Caronte nel suo complesso eredita la licenza <a
+      href="http://www.gnu.org/licenses/gpl-2.0.html">GNU GPL2</a>,
+    mentre alcune librerie sono distribuite con licenza <a
+      href="http://www.gnu.org/copyleft/gpl.html">GNU GPL 3</a>.<br>
+    <br>
+    La presente documentazione &egrave; distribuita invece con licenza <a
+      href="http://creativecommons.org/licenses/by-nc-nd/3.0/">CC
+      BY-NC-SA versione 3</a>.<br>
+    <br>
+    L'autore di Caronte &egrave; fortemente contrario alla
+    propriet&agrave; in tutte le sue forme. Purtroppo:<br>
+    <ul>
+      <li>in pochissimi paesi &egrave; riconosciuto il pubblico dominio,
+        e comunque si applica solo in casi particolari;</li>
+      <li>se non si specifica una lincenza, in base ai soprusi
+        concordati tra gli stati, si sottintende che "Tutti i diritti
+        sono riservati";</li>
+      <li>licenze teoricamente "libere" coma la BSD permettono di fatto
+        a un programmatore di scaricare un programma libero,
+        modificarlo, e farne un software proprietario.</li>
+    </ul>
+    Per questi motivi, l'autore di Caronte considera licenze come la GPL
+    un male necessario. Con tanti auguri (di cadere in un precipizio) a
+    chi le usa per far soldi.<br>
     <br>
     <br>
   </body>

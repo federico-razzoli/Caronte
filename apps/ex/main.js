@@ -5,29 +5,25 @@
 	with any license; there is no condition.
 */
 
-function Inizia()
-{
+function Inizia() {
 	vai(Intro);
 }
 
-function Intro()
-{
+function Intro() {
 	SW.titleLocale("intro.title");
 	SW.sayLocale("intro.text");
 	SW.moreLocale("more", Stanza2);
 }
 
-function Stanza2()
-{
+function Stanza2() {
 	SW.titleLocale("stanza2.title");
 	SW.sayNlLocale("stanza2.text", "stanza2.text");
 	SW.sayNlCSSLocale("evidFrase", "stanza2.text", "stanza2.text");
 }
 
-var info =
-{
+var info = {
 	name       : "app.title",
 	author     : "Federico Razzoli",
 	copyright  : "app.copy"
-}
+};
 

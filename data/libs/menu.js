@@ -23,62 +23,59 @@
 //   * menu.getSection().dropControl()
 
 
+/*global UTILE: false */
+
 "use strict";
 
 UTILE.menuHandler = function(idMenu) {
+	// private members
+	var id        = idMenu,
+		sections  = [],
+		drawn     = false;
+	
 	/*
 	 *    Methods
 	 */
 	
-	function addSection(id, title, tooltip, position)
-	{
+	function addSection(id, title, tooltip, position) {
 		var sec = new UTILE.section(id, title, tooltip);
 		UTILE.insert(this.sections, sec, position);
 		return this.sections[this.sections.length - 1];
 	}
 	
-	function dropSection(id)
-	{
+	function dropSection(id) {
 		return UTILE.drop(this.sections, id);
 	}
 	
-	function getSection(id)
-	{
+	function getSection(id) {
 		return UTILE.getById(this.sections, id);
 	}
 	
 	// if menu has been drawn, erase it
-	function erase()
-	{
+	function erase() {
+		var i;
 		if (drawn) {
-			for (var i in this.sections)
+			for (i in this.sections) {
 				this.sections[i].erase();
-			this.sections = new Array;
+			}
+			this.sections = [];
 			UTILE.removeFromDOM(this.id);
 		}
 	}
 	
-	function draw()
-	{
-		var DOMMenu = document.createElement("div");
+	function draw() {
+		var DOMMenu = document.createElement("div"),
+			i;
 		DOMMenu.setAttribute("id", this.id);
 		document.body.insertBefore(DOMMenu, document.body.firstChild);
 		
 		// draw all sections
-		for (var i = 0; i < this.sections.length; i++) {
+		for (i = 0; i < this.sections.length; i++) {
 			this.sections[i].draw(DOMMenu);
 		}
 		
 		drawn = true;
 	}
-	
-	/*
-	 *    Constructor
-	 */
-	
-	var id        = idMenu;
-	var sections  = [];
-	var drawn     = false;
 	
 	// expose public props
 	return {
@@ -89,33 +86,35 @@ UTILE.menuHandler = function(idMenu) {
 		draw         : draw,
 		id           : id,
 		sections     : sections
-	}
+	};
 }
 
 
-UTILE.section = function(id, title, tooltip)
-{
-	function addButton(position, id, event, text, desc, CSSClass)
-	{
-		var button = new ctrlButton(id, event, text, desc, CSSClass);
+UTILE.section = function(id, title, tooltip) {
+	// private members
+	var DOM       = {};
+	var id        = id;
+	var title     = title;
+	var tooltip   = tooltip;
+	var elements  = [];
+	
+	function addButton(position, id, event, text, desc, CSSClass) {
+		var button = new UTILE.ctrlButton(id, event, text, desc, CSSClass);
 		UTILE.insert(elements, button, position);
 		return elements[elements.length - 1];
 	}
 	
-	function addSelect(position, id, items, globalEvent, text, CSSClass)
-	{
-		var ctrl = new ctrlSelect(id, items, globalEvent, text, CSSClass);
+	function addSelect(position, id, items, globalEvent, text, CSSClass) {
+		var ctrl = new UTILE.ctrlSelect(id, items, globalEvent, text, CSSClass);
 		UTILE.insert(elements, ctrl, position);
 		return elements[elements.length - 1];
 	}
 	
-	function dropControl(id)
-	{
+	function dropControl(id) {
 		return UTILE.drop(elements, id);
 	}
 	
-	function erase()
-	{
+	function erase() {
 		// remove controls
 		for (var i in elements)
 			UTILE.removeFromDOM(elements[i].id);
@@ -124,8 +123,7 @@ UTILE.section = function(id, title, tooltip)
 		UTILE.removeFromDOM(id);
 	}
 	
-	function draw(DOMParent)
-	{
+	function draw(DOMParent) {
 		// section DIV
 		// (workaround IE7 idiotic bug)
 		DOMParent.innerHTML += '<div id="' + id + '" class="menuSectionBody"></div>';
@@ -142,20 +140,12 @@ UTILE.section = function(id, title, tooltip)
 		}
 		
 		// controls
-		for (var i in elements)
+		for (var i in elements) {
 			elements[i].draw(sTag);
+		}
 	}
 	
-	/*
-	 *    Constructor
-	 */
-	
-	var DOM       = {};
-	var id        = id;
-	var title     = title;
-	var tooltip   = tooltip;
-	var elements  = [];
-	
+	// expose public members
 	return {
 		addButton    : addButton,
 		addSelect    : addSelect,
@@ -164,11 +154,11 @@ UTILE.section = function(id, title, tooltip)
 		draw         : draw,
 		id           : id,
 		elements     : elements
-	}
+	};
 }
 
 
-function ctrlButton(id, event, text, desc, CSSClass) {
+UTILE.ctrlButton = function(id, event, text, desc, CSSClass) {
 	function draw(DOMParent) {
 		// <a id="" href="">
 		var aTag = '<a id="';
@@ -204,11 +194,11 @@ function ctrlButton(id, event, text, desc, CSSClass) {
 	 *    Constructor
 	 */
 	
-	event = (typeof event === "function") ? event.name + "()" : event = event;
+	event = (typeof event === "function") ? event.name + "()" : event;
 	
 	return {
 		draw      : draw
-	}
+	};
 }
 
 // This Control is a <select>
@@ -219,20 +209,25 @@ function ctrlButton(id, event, text, desc, CSSClass) {
 // CSSClass     : string       : CSS class
 // In most cases, you will need to set a globalInput - a function that will be called
 // when any value gets selected. item's ["value"] will be passed to that function.
-function ctrlSelect(id, items, globalEvent, text, CSSClass) {
+UTILE.ctrlSelect = function(id, items, globalEvent, text, CSSClass) {
 	function draw(DOMParent) {
+		var out,
+			pClass,
+			pEvent,
+			i,
+			option;
 		// start <select>
-		var out = "";
+		out = "";
 		if (text) {
 			out = '<label class="ctrlLabel">' + text + "<br>\n";
 		}
-		var pClass  = CSSClass     ? ' class="' + CSSClass + '"' : "";
-		var pEvent  = ' onchange="' + globalEvent + '(this.options[this.selectedIndex].value)"';
+		pClass  = CSSClass     ? ' class="' + CSSClass + '"' : "";
+		pEvent  = ' onchange="' + globalEvent + '(this.options[this.selectedIndex].value)"';
 		out += '<select id="' + id + '"' + pClass + pEvent + '>\n';
 		
 		// <option>'s
-		for (var i in items) {
-			var option = items[i], optValue, optTitle, optIsDefault;
+		for (i in items) {
+			option = items[i], optValue, optTitle, optIsDefault;
 			if (option.value)      optValue      = ' value="' + option.value + '"';
 			if (option.tooltip)    optTitle      = ' title="' + option.tooltip + '"';
 			if (option.isDefault)  optIsDefault  = ' checked';
@@ -256,6 +251,6 @@ function ctrlSelect(id, items, globalEvent, text, CSSClass) {
 	
 	return {
 		draw      : draw
-	}
+	};
 }
 

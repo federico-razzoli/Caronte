@@ -30,11 +30,12 @@ if (typeof appLocaleInfo !== "undefined") {
 }
 
 // luoghi speciali
-if (typeof Intestazione  !== "undefined")
+if (typeof Intestazione  !== "undefined") {
 	window.onPageBegin   = function()  { Intestazione.apply(window, arguments); }
-if (typeof PiePagina     !== "undefined")
-	window.onPageEnd     = function()  { PiePagina.apply(window, arguments);; }
-
+}
+if (typeof PiePagina     !== "undefined") {
+	window.onPageEnd     = function()  { PiePagina.apply(window, arguments); }
+}
 
 
 // info sul Dizionario (opzionale)
@@ -52,5 +53,5 @@ var dictInfo =
 
 
 // -- FINE DEL DIZIONARIO
-var dictOk = true
+var dictOk = true;
 

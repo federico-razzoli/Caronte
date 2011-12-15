@@ -60,13 +60,14 @@ var locale = function() {
 	// first param is message id, later params (if any) are message params
 	// if message id does not exist, return boolean false
 	function getp(msgId) {
-		var msg = arrMsg[msgId];
+		var msg = arrMsg[msgId],
+			i;
 		if (typeof msg === "undefined") { // missing
 			return false;
 		}
 		if (arguments.length > 0) {
 			msg = msg.replace("%%", "&#37;");
-			for (var i = 1; i < arguments.length; i++) {
+			for (i = 1; i < arguments.length; i++) {
 				msg = msg.replace("%" + i, arguments[i]);
 			}
 		}
@@ -84,6 +85,6 @@ var locale = function() {
 		get    : get,
 		getp   : getp,
 		isSet  : isSet
-	}
+	};
 }();
 

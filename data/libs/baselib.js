@@ -24,130 +24,152 @@
 
 "use strict";
 
-
 // this should contain all that is not callable by user and not in SW
 var UTILE = {};
 
 // error handler
-window.onerror = function(err, url, line, stop)
-{
+window.onerror = function (err, url, line) {
+	var out;
 	if (typeof err === "string") {
 		// we have a message to display
-		var out  = "Error: "  + err;
+		out  = "Error: "  + err;
 	} else {
-		var out = "Error: Unknown";
-		if (typeof err.srcElement !== "undefined" && typeof err.srcElement.id !== "undefined")
+		out = "Error: Unknown";
+		if (typeof err.srcElement !== "undefined" && typeof err.srcElement.id !== "undefined") {
 			out += "\nFile: " + err.srcElement.id;
-		//for (var x in err) alert(x + ": " + err[x]);
+		}
 	}
 	
 	// if we have url and line, display them
-	if (url)           out += "\n" + "File: "    + url;
-	if (line)          out += "\n" + "Line: "   + line;
+	if (url) {
+		out += "\n" + "File: "    + url;
+	}
+	if (line) {
+		out += "\n" + "Line: "   + line;
+	}
 	
-	if (typeof modal != "undefined") {
+	if (typeof modal !== "undefined") {
 		// if modal is ready, show error gracefully
 		modal.bad(out.replace("\n", "<br>\n"));
 	} else { // modal is not ready, use nasty alert()
 		alert(out);
 	}
-}
+};
 UTILE.issue = window.onerror;
 
 
 // application options will be loaded later
-var options    = {};
+var options      = {};
 UTILE.SWOptions  = {};
 
 // functions constructors
 UTILE.funcExts   = [];
 
 // wait all passed objects are loaded, then execute func
-var queue = function()
-{
-	// add new item to queue
-	function add(func, objects, id)
-	{
-		list.push([func, objects, id]);
-		if (list.length == 1) tryToExec();
+var queue = function () {
+	// private members
+	var millisec  = 0,
+		list      = [],
+		done      = [],
+		lock      = false;  // prevents conflicts
+	
+	// set new timeout
+	function defer() {
+		window.setTimeout(function (queue) { queue.tryToExec(); }, millisec, queue);
+	}
+	
+	// condition is (alreay) satisfied?
+	function checkCondition(cond) {
+		// check condition type
+		if (cond.charAt(0) === '?') {
+			// starts with '?' - it's boolean condition
+			cond = cond.substr(1);
+			return eval(cond) !== false;
+		} else if (cond.charAt(0) === '@') {
+			// starts with '@' - id of another task, is it done already?
+			cond = cond.substr(1);
+			return (typeof done[cond] !== "undefined");
+		} else {
+			// no suffix: object
+			return eval("typeof " + cond + " !== 'undefined';");
+		}
 	}
 	
 	// exec next item
-	function tryToExec()
-	{
-		if (lock) return false;
+	function tryToExec() {
+		if (lock) {
+			return false;
+		}
 		lock = true;
 		
 		// repeat loop on items until an item exist or a loop was useless
 		while (true) {
-			var itemLazy;              // current item is lazy?
-			var itemExecuted = false;  // at least 1 item ecexuted?
+			var itemLazy,              // current item is lazy?
+				itemExecuted = false,  // at least 1 item ecexuted?
+				x,
+				item,
+				func,
+				objects,
+				id,
+				y;
 			
 			// loop on items
-			for (var x in list) {
-				// get item
-				var item     = list[x];
-				var func     = item[0];
-				var objects  = item[1];
-				var id       = item[2];
-				
-				// check objects validity
-				if (objects == null) objects = [];
-				else if (!UTILE.isArray(objects)) objects = [objects];
-				
-				// this item is lazy? (loop on objects)
-				itemLazy = false;
-				for (var y in objects) {
-					// check current condition
-					if (!checkCondition(objects[y])) itemLazy = true;
-					if (itemLazy) break;
-					//else alert("lazy " + objects[y]);
-				}
-				
-				if (!itemLazy) {
-					// item is ready! exec & drop it
-					eval(func);
-					list.splice(x, 1);
-					done[id]  = true;
-					itemExecuted   = true;
+			for (x in list) {
+				if (typeof list[x] !== "function") {
+					// get item
+					item     = list[x];
+					func     = item[0];
+					objects  = item[1];
+					id       = item[2];
+					
+					// check objects validity
+					if (objects === null) {
+						objects = [];
+					} else if (!UTILE.isArray(objects)) {
+						objects = [objects];
+					}
+					
+					// this item is lazy? (loop on objects)
+					itemLazy = false;
+					for (y in objects) {
+						if (typeof objects[y] === "string") {
+							// check current condition
+							if (!checkCondition(objects[y])) {
+								itemLazy = true;
+							}
+							if (itemLazy) {
+								break;
+							}
+						}
+					}
+					
+					if (!itemLazy) {
+						// item is ready! exec & drop it
+						eval(func);
+						list.splice(x, 1);
+						done[id]  = true;
+						itemExecuted   = true;
+					}
 				}
 			}
 			// nothin more to do or nothin done
-			if (list.length == 0 || !itemExecuted) break;
+			if (list.length === 0 || !itemExecuted) {
+				break;
+			}
 		}
 		lock = false;
-		if (list.length > 0) defer();
-	}
-	
-	// condition is (alreay) satisfied?
-	function checkCondition(cond)
-	{
-		// check condition type
-		if (cond.charAt(0) == '?') {
-			// starts with '?' - it's boolean condition
-			cond = cond.substr(1);
-			return !(eval(cond) === false);
-		} else if (cond.charAt(0) == '@') {
-			// starts with '@' - id of another task, is it done already?
-			cond = cond.substr(1);
-			return (typeof done[cond] != "undefined");
-		} else {
-			// no suffix: object
-			return eval("typeof " + cond + " != 'undefined';");
+		if (list.length > 0) {
+			defer();
 		}
 	}
 	
-	// set new timeout
-	function defer()
-	{
-		window.setTimeout(function(queue){queue.tryToExec()}, millisec, queue);
+	// add new item to queue
+	function add(func, objects, id) {
+		list.push([func, objects, id]);
+		if (list.length === 1) {
+			tryToExec();
+		}
 	}
-	
-	// constructor
-	var millisec  = 0;
-	var list      = [];
-	var done      = [];
-	var lock      = false;  // prevents conflicts
 	
 	// public properties
 	return {
@@ -157,7 +179,7 @@ var queue = function()
 }();
 
 // defines all Caronte events
-UTILE.defineEvents = function() {
+UTILE.defineEvents = function () {
 	// define events
 	this.events.define("GUIDraw", true);             // gui.draw()
 	this.events.define("GUICreateArea", true);       // gui.createArea()
@@ -166,12 +188,13 @@ UTILE.defineEvents = function() {
 	this.events.define("ApplicationBegin", true);    // gioca()
 	this.events.define("PageBegin", true);           // vai()
 	this.events.define("PageEnd", true);             // vai()
-}
+};
 
 // all themes avaible for the current app
-UTILE.themes = function() {
-	var list      = {};
-	var selected;
+//    supported    : object    : list of supported themes
+UTILE.themes = function (supported) {
+	var list      = {},
+		selected;
 	
 	// empty list of themes
 	function empty() {
@@ -181,16 +204,18 @@ UTILE.themes = function() {
 	// add a theme object to the list
 	function add(id, name) {
 		// in the future maybe more options will be avaible
-		list[id] = {};
-		list[id]["name"] = name;
+		list[id]       = {};
+		list[id].name  = name;
 	}
 	
 	// create/replace <style> tag
 	function select(id) {
 		// delete old links
-		var links     = document.getElementsByTagName("link");
-		var numLinks  = links.length;
-		for (var i = 0; i < numLinks; i++) {
+		var links     = document.getElementsByTagName("link"),
+			numLinks  = links.length,
+			i,
+			tag;
+		for (i = 0; i < numLinks; i++) {
 			UTILE.removeFromDOM(links[i]);
 		}
 		
@@ -200,7 +225,7 @@ UTILE.themes = function() {
 		// link new
 		if (navigator.appName === 'Microsoft Internet Explorer') { // IE
 			// define tag
-			var tag = document.createElement("link");
+			tag = document.createElement("link");
 			tag.setAttribute("rel",    "stylesheet");
 			tag.setAttribute("type",   "text/css");
 			tag.setAttribute("id",     "theme");
@@ -208,16 +233,16 @@ UTILE.themes = function() {
 			// insert into DOM
 			document.getElementById("headTag").appendChild(tag);
 		} else { // decent browsers
-			var sTag   = '<link rel="stylesheet" type="text/css" id="theme" href="data/themes/';
-			sTag      += id;
-			sTag      += '/main.css"></link>';
-			document.getElementById("headTag").innerHTML += sTag;
+			tag   = '<link rel="stylesheet" type="text/css" id="theme" href="data/themes/';
+			tag   += id;
+			tag   += '/main.css"></link>';
+			document.getElementById("headTag").innerHTML += tag;
 		}
 	}
 	
 	// return selected theme's id
 	function getSelected() {
-		return selected;
+		return list[selected];
 	}
 	
 	// expose public methods
@@ -226,11 +251,21 @@ UTILE.themes = function() {
 		add          : add,
 		select       : select,
 		getSelected  : getSelected
-	}
+	};
 }();
 
 // includes js libs and calls adventure
 function init() {
+	var appName = null,
+		URL,
+		qs,                 // querystring parsing
+		separatorPos,
+		params,
+		x,
+		temp,
+		key,
+		val;
+	
 	// load libs, if not already loaded (restart)
 	if (typeof SW === "undefined") {
 		// localization
@@ -250,31 +285,30 @@ function init() {
 		queue.add("UTILE.link('js', 'data/libs/plugin_loader')", ["SW"]);
 	}
 	
-	var appName = null;
-	
-	if (typeof document.URL !== "undefined")
-		var URL = document.URL;
-	else if (typeof window.location !== "undefined")
-		var URL = window.location;
-	else
-		var URL = document.location.href;
+	if (typeof document.URL !== "undefined") {
+		URL = document.URL;
+	} else if (typeof window.location !== "undefined") {
+		URL = window.location;
+	} else {
+		URL = document.location.href;
+	}
 	
 	if (URL.indexOf("?") > 0 && URL.indexOf("?") < (URL.length - 1)) { // not last char
-		var qs = URL.substring(document.URL.indexOf("?") + 1);
-		var separatorPos = qs.indexOf("/");
+		qs = URL.substring(document.URL.indexOf("?") + 1);
+		separatorPos = qs.indexOf("/");
 		if (separatorPos === -1) {
 			// only appName
 			appName = qs;
 		} else {
 			// appName + params
 			appName = qs.substr(0, separatorPos);
-			var params = qs.substr(separatorPos + 1);;
+			params = qs.substr(separatorPos + 1);
 			params = params.split("&");
-			for (var x in params) {
+			for (x in params) {
 				// divide keys from values
-				var temp  = params[x].split("=");
-				var key   = temp[0];
-				var val   = temp[1] ? temp[1] : true;
+				temp  = params[x].split("=");
+				key   = temp[0];
+				val   = temp[1] || true;
 				if (key.charAt(0) === "_") {
 					UTILE.SWOptions[key.substr(1)] = val;
 				} else {
@@ -302,24 +336,24 @@ function init() {
 // given filetype and filename, returns id
 //     @type    : string     : "js or "node"
 //     @file    : string     : file path+name from data/
-UTILE.libId = function(type, file) {
+UTILE.libId = function (type, file) {
 	return "__" + type + "_" + file.replace(/\//g, "_");
-}
+};
 
 // remove a DOM element (cross browser, no exception if element not exist)
 //     @id     : string     : node id
-UTILE.removeFromDOM = function(id) {
+UTILE.removeFromDOM = function (id) {
 	var el = document.getElementById(id);
-	if (el != null && typeof el != "undefined")
+	if (el !== null && typeof el !== "undefined") {
 		el.parentNode.removeChild(el);
-}
+	}
+};
 
 // include 1 js lib with <SCRIPT>
 // or 1 CSS stylesheet with <LINK>
 //     @type    : string     : "js" for JavaScript, "css" for StyleSheet
 //     @file    : string     : file path + name starting from "data"
-UTILE.link = function(type, file)
-{
+UTILE.link = function (type, file) {
 	// define tag
 	var tag = document.createElement("script");
 	tag.setAttribute("type",    "text/javascript");
@@ -328,45 +362,45 @@ UTILE.link = function(type, file)
 	
 	// insert into DOM
 	document.getElementsByTagName("head")[0].appendChild(tag);
-}
+};
 
 // removes <script> or <link> pointing to specified file
-UTILE.unlink = function(type, file) {
+UTILE.unlink = function (type, file) {
 	var id = this.libId(type, file);
 	this.removeFromDOM(id);
-}
+};
 
 // object which contains options
 //     @userOptions     : Object    : options specified by user / extension
 //     @defaultOptions  : Object    : default values, only used for unspecified options
-UTILE.opt = function(userOptions, defaultOptions) {
-	// accessor
-	function get(o)
-	{
-		return list[o];
-	}
-	
-	var list = {};
-	
-	// Constructor
+UTILE.opt = function (userOptions, defaultOptions) {
 	// set default values
+	var list = {},
+		o;
 	
 	// write defaults (if any)
-	if (defaultOptions != null) {
-		for (var o in defaultOptions) {
+	if (defaultOptions !== null) {
+		for (o in defaultOptions) {
 			list[o] = defaultOptions[o];
 		}
 	}
 	
 	// overwrite defaults
-	for (var o in userOptions) {
+	for (o in userOptions) {
 		list[o] = userOptions[o];
+	}
+	
+	o = null;
+	
+	// accessor
+	function get(item) {
+		return list[item];
 	}
 	
 	return {
 		get    : get
-	}
-}
+	};
+};
 
 
 /*
@@ -380,8 +414,9 @@ UTILE.opt = function(userOptions, defaultOptions) {
 //     @arr      : Array     : array
 //     @item     : string    : item's id
 UTILE.drop = function (arr, item) {
-	for (var i = 0; i < arr.length; i++) {
-		if (arr[i].id == item) {
+	var i;
+	for (i = 0; i < arr.length; i++) {
+		if (arr[i].id === item) {
 			// found; shift left all following items
 			// current will be overwritten
 			while (i < arr.length) {
@@ -393,25 +428,26 @@ UTILE.drop = function (arr, item) {
 		}
 	}
 	return false;
-}
+};
 
 // return true if input is an Array, else false
-UTILE.isArray = function(input) {
+UTILE.isArray = function (input) {
 	if (typeof input === 'undefined') {
 		return false;
 	}
 	return input.constructor === Array;
-}
+};
 
 // insert an item into Array and shift right next elements
 //    @arr       : Array      : array
 //    @item      : mixed      : new item for array
 //    @position  : integer    : index for new item; null = last
-UTILE.insert = function(arr, item, position) {
-	if (position == null) {
+UTILE.insert = function (arr, item, position) {
+	var i;
+	if (!position) {
 		arr[arr.length] = item;
 	} else {
-		var i = arr.length - 1;
+		i = arr.length - 1;
 		while (i > position) {
 			arr[i + 1] = arr[i];
 			i--;
@@ -419,15 +455,18 @@ UTILE.insert = function(arr, item, position) {
 		arr[i + 1] = arr[i];
 		arr[i] = item;
 	}
-}
+};
 
 // given an array, returns item with specified id, null if not found
-UTILE.getById = function(arr, id) {
-	for (var i in arr) {
-		if (arr[i].id == id) return arr[i];
+UTILE.getById = function (arr, id) {
+	var i;
+	for (i in arr) {
+		if (arr[i].id === id) {
+			return arr[i];
+		}
 	}
 	return null;
-}
+};
 
 
 /*

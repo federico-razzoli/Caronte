@@ -58,13 +58,16 @@ function PiePagina(pag) { }
 
 // Visualizza un messaggio e il link per tornare alla pagina precedente
 // Non può chiamare messaggio()
-function Inutile()
-{
-	var txt = "";
-	var num = dado(3);
-	if      (num == 1) txt = "E' tutto inutile.";
-	else if (num == 2) txt = "Qualunque cosa tu stia cercando di fare... non ci riesci.";
-	else if (num == 3) txt = "Fare una cosa simile non ti servirebbe a nulla.";
+function Inutile() {
+	var txt = "",
+		num = dado(3);
+	if (num === 1) {
+		txt = "E' tutto inutile.";
+	} else if (num === 2) {
+		txt = "Qualunque cosa tu stia cercando di fare... non ci riesci.";
+	} else if (num === 3) {
+		txt = "Fare una cosa simile non ti servirebbe a nulla.";
+	}
 	messaggio(txt);
 }
 

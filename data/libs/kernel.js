@@ -20,35 +20,33 @@
 "use strict";
 
 	// ### eventi needs to be moved to an extension!!! ###
-	var eventi = new Object;
-		eventi.frasi        = new Array();  // array di frasi che si alternano
+	var eventi = {};
+		eventi.frasi        = [];  // array di frasi che si alternano
 		eventi.probabilita  = 5;            // probabilità che una frase sia visualizzata
 
 
-var menu = new UTILE.menuHandler("boxMenu");
-var v = {}
+var menu  = new UTILE.menuHandler("boxMenu");
+var v     = {};
 
-var SW = new function()
-{
+var SW = new function() {
 	/*
 	 *    Default Options
 	 */
 	
-	this.defaultOptions =
-	{
-		showInfo           : true,
-		light              : false,
-		defaultTheme       : "classic",
-		defaultDictionary  : "it",
-		defaultLang        : "it"
-	}
+	this.defaultOptions = {
+		showInfo           : true,        // show info in menu
+		light              : false,       // light version
+		no_exec            : false,       // load Caronte but dont load Application
+		defaultTheme       : "classic",   // theme selected by default (id)
+		defaultDictionary  : "it",        // default dict for Applications
+		defaultLang        : "it"         // default UI lang
+	};
 	
 	/*
 	 *    Meta Info
 	 */
 	
-	this.info =
-	{
+	this.info = {
 		name        : "Caronte",
 		URL         : ["https://github.com/santec/Caronte Progetto su GitHub",
 					   "http://www.erix.it/idra.html IDRA, di Enrico Colombini"],
@@ -70,17 +68,10 @@ var SW = new function()
 	 *    Properties
 	 */
 	
-	var links            = new Array();   // links created by SW
-	var numLinks         = 0;
-	var here             = null;         // current page function
-	
-	
-	/*
-	 *    Games Variables
-	 */
-
-	window.v = new Object;  // contains game variables
-	
+	var links            = [],    // links created by Application
+		numLinks         = 0,     // number of links
+		here             = null,  // current page function
+		boxMain;
 	
 	// ##########################################################################
 	// ##  Inizio area funzioni chiamabili dall'autore                         ##
@@ -91,70 +82,73 @@ var SW = new function()
 	// Va alla pagina pag, che viene ricordata nella proprietà here
 	// come pagina corrente, chiama:
 	// Intestazione(pag) se esiste, pag(), PiePagina(pag) se esiste
-	this.goTo = function(pag, args)
-	{
+	this.goTo = function(pag, args) {
 		here = pag; // ricorda la pagina
 		this.pageBegin();
 		UTILE.events.exec("PageBegin");
-		if (typeof args == "undefined") args = null;
+		if (typeof args === "undefined") {
+			args = null;
+		}
 		pag(args); // write page
 		UTILE.events.exec("PageEnd");
 		this.pageEnd();
 	}
 	
 	// check if user-defined function exist before calling
-	this.callUserFunc = function(strFunc)
-	{
-		if (eval("typeof strFunc != 'function'")) {
+	this.callUserFunc = function(strFunc) {
+		if (typeof strFunc === "function" || typeof strFunc === "string") {
 			eval(strFunc + "()");
 			return true;
-		} else {
-			UTILE.issue("Undefined function: " + strFunc);
+		} else { // errors
+			if (typeof strFunc === "undefined") {
+				UTILE.issue(locale.getp("errNoFunc", strFunc));
+			} else {
+				UTILE.issue(locale.getp("errInvalidFunc", strFunc));
+			}
 			return false;
 		}
 	}
 	
-	// Esegue nuovamente la pagina corrente, cioe' quella ricordata nella variabile here
-	this.refresh = function()
-	{
+	// exec again current page (here)
+	this.refresh = function() {
 		this.goTo(here);
 	}
 	
 	// ===== Funzioni di creazione pagina =======================================
 	
 	// update boxMain title
-	this.title = function(tit)
-	{
+	this.title = function(tit) {
 		this.say('<h2>' + tit + "</h2>");
 	}
 	
-	// Scrive (parte del) testo della pagina, inclusi eventuali comandi HTML,
-	// accetta un numero variabile di argomenti e li stampa di seguito
-	this.say = function()
-	{
+	// write text in mainBox. accepts an arbitrary number of args.
+	// there is no separator between args.
+	this.say = function() {
 		for (var i = 0; i < arguments.length; i++) {
-			this.boxMain.write(arguments[i]);
+			boxMain.write(arguments[i]);
 		}
 	}
 	
-	// Come say(), ma dopo ogni parametro scrive un a capo (<br>);
-	// il tutto inoltre è incluso nei tag <p>...</p>
-	// Utile per non scrivere i tag manualmente
-	this.sayNl = function()
-	{
-		var out = "\n<p>\n";
-		for (var i = 0; i < arguments.length; i++) {
+	// similar to say(), but:
+	//   * args are separated by a <br>\n
+	//   * <p>args</p>
+	// So you don't have to write all the tags.
+	this.sayNl = function() {
+		var out = "\n<p>\n",
+			i;
+		for (i = 0; i < arguments.length; i++) {
 			out += arguments[i] + "<br>\n";
 		}
 		out += "\n</p>\n";
 		this.say(out);
 	}
 	
-	// write empty line
-	this.nl = function(n)
-	{
+	// empty line
+	this.nl = function(n) {
 		var out;
-		if (n < 1) n = 1;
+		if (n < 1) {
+			n = 1;
+		}
 		while (n > 0) {
 			out = "\n<br>&nbsp;<br>\n";
 			n--;
@@ -162,17 +156,24 @@ var SW = new function()
 		this.say(out);
 	}
 	
-	// Come say(), ma dopo ogni parametro scrive un a capo (<br>);
-	// il tutto inoltre è incluso nei tag <p>...</p>
-	// classeCSS, se non è vuoto/null, è lo stile CSS (attributo HTML class)
-	// Utile per non scrivere i tag manualmente
-	this.sayNlCSS = function(classeCSS)
-	{
-		var out;
-		if (classeCSS) out = "\n<p class=\"" + classeCSS + "\">\n";
-		else out = "\n<p>\n";
-		for (var i = 1; i < arguments.length; i++) {
-			out += arguments[i] + "<br>\n";
+	// similar to say(), but:
+	//   * args are separated by a <br>\n
+	//   * <p>args</p>
+	// CSSClass, if specified, is the CSS class used (HTML attr "class")
+	// So you don't have to write all the tags and CSS classes.
+	this.sayNlCSS = function(CSSClass) {
+		var out,
+			i;
+		if (CSSClass) {
+			out   = '\n<p class="';
+			out  += CSSClass;
+			out  += '">\n';
+		} else {
+			out = "\n<p>\n";
+		}
+		for (i = 1; i < arguments.length; i++) {
+			out += arguments[i];
+			out += "<br>\n";
 		}
 		out += "\n</p>\n";
 		this.say(out);
@@ -181,14 +182,11 @@ var SW = new function()
 	// Show a message and a link to prev location or another action
 	//    @txt      : String     : Message
 	//    @action   : mixed      : Function or string to execute; default: here
-	this.message = function(txt, action)
-	{
+	this.message = function(txt, action) {
 		this.pageBegin();
 		this.say("<p>" + txt + "</p>\n");
-		if (action == null) action = here;
-		this.option(locale.get("SW.more"), action);
+		this.option(locale.get("SW.more"), action || here);
 		this.pageEnd();
-		//modal.info(txt);
 	}
 	
 	// Aggiunge una scelta al menu della pagina se la condizione cond e' vera,
@@ -196,21 +194,25 @@ var SW = new function()
 	// Se chiamata con due soli argomenti, sono desc e act (la condizione e' sempre vera).
 	// SW.option(cond, desc, act)
 	// SW.option(desc, act)
-	this.option = function(p1, p2, p3)
-	{
-	  var cond = p1; var desc = p2; var act = p3 //3 argomenti
-	  if (arguments.length == 2) { cond = 1; desc = p1; act = p2 } //2 argomenti
-	  if (cond) {
-		this.say("<ul><li>") //usa stile 'lista' mettendo la scelta in una lista a se' stante
-		this.link(desc, act) //aggiunge scelta nel testo
-		this.say("</li></ul>")
-	  }
+	this.option = function(p1, p2, p3) {
+		var cond  = p1,
+			desc  = p2,
+			act   = p3;
+		if (arguments.length === 2) { //2 argoments
+			cond  = 1;
+			desc  = p1;
+			act   = p2;
+		}
+		if (cond) {
+			this.say("<ul><li>"); //usa stile 'lista' mettendo la scelta in una lista a se' stante
+			this.link(desc, act); //aggiunge scelta nel testo
+			this.say("</li></ul>");
+		}
 	} 
 	
 	// Aggiunge una scelta nel testo, ricorda l'azione in links[], il link e'
 	// preceduto da idPagina per evitare problemi con la navigazione del browser
-	this.link = function(desc, act)
-	{
+	this.link = function(desc, act) {
 		this.say("<a href=\"javascript:SW.exec('" + numLinks + "');\">");
 		this.say(desc, "</a>");
 		links[numLinks] = act;
@@ -221,10 +223,14 @@ var SW = new function()
 	// Se chiamata con un solo argomento, aggiunge la scelta in ogni caso
 	// SW.more(cond, act1, act2)
 	// SW.more(act)
-	this.more = function(p1, p2, p3)
-	{
-		var cond = p1; var act1 = p2; var act2 = p3 //3 argomenti
-		if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argomento
+	this.more = function(p1, p2, p3) {
+		var cond = p1,
+			act1 = p2,
+			act2 = p3; //3 argomenti
+		if (arguments.length === 1) {  //1 argument
+			cond = 1;
+			act1 = p1;
+		}
 		if (cond) {
 			this.option(cond, locale.get("SW.more"), act1)
 		} else if (act2) {
@@ -236,66 +242,66 @@ var SW = new function()
 	
 	// assegna un identificatore univoco per rilevare problemi causati dai comandi 
 	// di navigazione del browser, azzera il contatore delle scelte
-	this.pageBegin = function(opzioni, stylesheet)
-	{
-		numLinks = 0; // reset contatore scelte
+	this.pageBegin = function() {
+		numLinks = 0;
 	}
 	
 	// Termina la scrittura di una pagina
-	this.pageEnd = function()
-	{
-		this.boxMain.send();
+	this.pageEnd = function() {
+		boxMain.send();
 	}
 	
 	// ===== Funzioni ausiliarie ================================================
 	
 	// Ritorna il nome di una pagina (funzione)
-	this.pageName = function(p)
-	{
+	this.pageName = function(p) {
 		var s = p.toString();
 		// salta "function" e uno spazio, tiene fino alla parentesi esclusa
-		return this.trim(s.substring(9, s.indexOf("(", 0)));
+		return trim(s.substring(9, s.indexOf("(", 0)));
 	}
 	
 	// Tira un dado a n facce (6 se non indicate), ritorna un intero tra 1 e n
-	this.dice = function(num)
-	{
-		if (num == null) num = 6; // default: 6 facce
+	this.dice = function(num) {
+		if (!num) {
+			num = 6; // default: 6 facce
+		}
 		return(Math.floor(Math.random() * (num - 1)) + 1); 
 	}
 	
-	// Elimina gli spazi attorno a una stringa (ritorna una nuova stringa)
-	this.trim = function(s)
-	{
-		var inizio  = 0;
-		var fine    = s.length; //primo carattere oltre la fine
+	// trim() does not exist in javascript
+	function trim(s) {
+		var inizio  = 0,
+			fine    = s.length; //primo carattere oltre la fine
 		if (fine > 0) {
-			while (s.charAt(inizio) == " ") inizio++;
-			while (s.charAt(fine - 1) == " " && fine > inizio) fine--;
+			while (s.charAt(inizio) === " ") {
+				inizio++;
+			}
+			while (s.charAt(fine - 1) === " " && fine > inizio) {
+				fine--;
+			}
 		}
 		return s.substring(inizio, fine);
 	}
 	
-	this.infoMenu = function()
-	{
-		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle"));
-		if (typeof info != "undefined") {
+	this.infoMenu = function() {
+		var secInfo = menu.addSection("secInfo", locale.get("about"), locale.get("aboutTitle")),
+			p;
+		if (typeof info !== "undefined") {
 			secInfo.addButton(null, "bttInfoApp", "SW.showInfo(info, 'app')", locale.get("infoApp"),  locale.get("infoAppTitle"));
 		}
 		secInfo.addButton(null, "bttInfoSW", "SW.showInfo(SW.info)", this.info.name, locale.getp("infoAbout", this.info.name));
-		for (var p in plugins.get()) {
-			if (typeof plugins.get(p).info != "undefined") {
+		for (p in plugins.get()) {
+			if (typeof plugins.get(p).info !== "undefined") {
 				secInfo.addButton(null, "bttInfoPlugin" + p, "SW.showInfo(plugins.get('" + p + "').info)", p, locale.getp("infoAboutExt", p));
 			}
 		}
-		if (typeof dictInfo != "undefined") {
+		if (typeof dictInfo !== "undefined") {
 			secInfo.addButton(null, "bttInfoDict", "SW.showInfo(dictInfo)", locale.get("dictionary"), locale.get("currentDictionary"));
 		}
 	}
 	
-	this.showInfo = function(infoSet, moduleType)
-	{
-		if (typeof infoSet != "undefined") {
+	this.showInfo = function(infoSet, moduleType) {
+		if (typeof infoSet !== "undefined") {
 			var out = "";
 			if (infoSet["name"] || infoSet["title"])
 				out += "<p><strong>" + 
@@ -395,7 +401,7 @@ var SW = new function()
 					   "  </tr>\n";
 			}
 			out += "</table>\n";
-			if (moduleType == "app" && typeof appLocaleInfo === "object") {
+			if (moduleType === "app" && typeof appLocaleInfo === "object") {
 				out += '<a href="javascript:SW.showInfo(appLocaleInfo)">' +
 				       locale.get("infoAppLocaleShow") + "</a>";
 			}
@@ -406,28 +412,21 @@ var SW = new function()
 	}
 	
 	// (re)start the App. Call plugins.loadAll() + start
-	this.prepare = function()
-	{
+	this.prepare = function() {
 		// assign Application options
-		if (typeof defaultOptions === "undefined")
+		if (typeof defaultOptions === "undefined") {
 			window.defaultOptions = null;
+		}
 		options = new UTILE.opt(options, defaultOptions);
-		window.defaultOptions = undefined;
+		defaultOptions = undefined;
 		
 		// assign SW options
-		if (typeof this.defaultOptions === "undefined")
+		if (typeof this.defaultOptions === "undefined") {
 			this.defaultOptions = null;
+		}
 		this.options = new UTILE.opt(UTILE.SWOptions, this.defaultOptions);
 		delete UTILE.SWOptions;
 		delete this.defaultOptions;
-		
-		// get & apply selected theme
-		if (options.get("theme") === "string") {
-			var theme = options.get("theme");
-		} else {
-			var theme = this.options.get("defaultTheme");
-		}
-		UTILE.themes.select(theme);
 		
 		// choose & load Application language
 		if (typeof options.get("lang") !== "undefined" && typeof appLocaleInfo === "undefined") {
@@ -470,8 +469,14 @@ var SW = new function()
 			}
 			this.optionLocale = function()
 			{
-				var cond = p1; var desc = p2; var act = p3; //3 arguments
-				if (arguments.length == 2) { cond = 1; desc = p1; act = p2 } //2 arguments
+				var cond  = p1,
+					desc  = p2,
+					act   = p3;
+				if (arguments.length === 2) {
+					cond  = 1;
+					desc  = p1;
+					act   = p2;
+				}
 				desc = locale.get(desc);
 				if (cond) {
 					this.say("<ul><li>") //usa stile 'lista' mettendo la scelta in una lista a se' stante
@@ -486,15 +491,22 @@ var SW = new function()
 			}
 			this.moreLocale = function(p1, p2, p3)
 			{
-				var cond = p1; var act1 = p2; var act2 = p3 //3 arguments
-				if (arguments.length == 1) { cond = 1; act1 = p1 } //1 argument
+				var cond = p1,
+					act1 = p2,
+					act2 = p3;
+				if (arguments.length === 1) {
+					cond = 1;
+					act1 = p1;
+				}
 				if (cond) {
 					this.option(cond, locale.get("SW.more"), act1)
 				} else if (act2) {
 					this.option(!cond, locale.get("SW.more"), act2) 
 				}
 			}
-		} else window.appLocaleInfo = true;
+		} else {
+			window.appLocaleInfo = true;
+		}
 		
 		// load Caronte localization file
 		if (typeof langOk === "undefined") {
@@ -502,11 +514,18 @@ var SW = new function()
 		}
 		
 		// load dictionary
-		if (typeof dictionary === "undefined") window.dictionary = this.options.get("defaultDictionary");
-		if (dictionary != "") UTILE.link("js", "data/dict/" + dictionary);
-		else var dictOk = true;
+		if (typeof dictionary === "undefined") {
+			window.dictionary = this.options.get("defaultDictionary");
+		}
+		if (dictionary) {
+			UTILE.link("js", "data/dict/" + dictionary);
+		} else {
+			var dictOk = true;
+		}
 		
-		if (typeof extensions === "undefined") window.extensions = {};
+		if (typeof extensions === "undefined") {
+			extensions = {};
+		}
 		
 		// erase if exists
 		menu.erase();
@@ -519,31 +538,44 @@ var SW = new function()
 		sound.addButton(null,  "bttFx",     "fx()",        "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
 		
 		gui.erase();
-		this.boxMain = gui.createArea("boxMain", "box");
+		boxMain = gui.createArea("boxMain", "box");
 		
 		// load extensions
 		plugins.loadAll();
 		
-		if (this.options.get("no_exec") !== true)
+		if (this.options.get("no_exec") !== true) {
 			queue.add("SW.start()", ["?typeof appLocaleInfo !== 'undefined' && typeof plugins !== 'undefined' && plugins.ready",  "dictOk", "localeInfo"]);
+		}
 	}
 	
-	this.start = function()
-	{
+	this.start = function() {
+		var theme;
+		
+		// get & apply selected theme
+		if (options.get("theme") === "string") {
+			theme = options.get("theme");
+		} else {
+			theme = this.options.get("defaultTheme");
+		}
+		UTILE.themes.select(theme);
+		
 		gui.draw();
 		
 		// add info section + draw() menu
-		if (SW.options.get("showInfo") != "0") SW.infoMenu();
+		if (this.options.get("showInfo") !== "0") {
+			this.infoMenu();
+		}
 		menu.draw();
 		
-		here = null; // no page open
-		v = new Object(); // re-alloc to clean garbage
+		here  = null;  // no page open
+		v     = {};       // re-alloc to remove garbage
 		
-		if (typeof info != "undefined") {
-			if (typeof info.title === "string")
+		if (typeof info !== "undefined") {
+			if (typeof info.title === "string") {
 				parent.document.title = locale.get(info.title);
-			else if (typeof info.name === "string")
+			} else if (typeof info.name === "string") {
 				parent.document.title = locale.get(info.name);
+			}
 		}
 		
 		UTILE.events.exec("ApplicationBegin");
@@ -555,44 +587,35 @@ var SW = new function()
 	// Esegue l'azione act, che puo' essere:
 	// - una stringa da eseguire, ad esempio "goTo(P1)"
 	// - una funzione (pagina) a cui andare, ad esempio P1
-	this.exec = function(act, args)
-	{
+	this.exec = function(act, args) {
 		act = links[act];
-		if (typeof(act) == "function") { //se e' una funzione (pagina)
+		if (typeof(act) === "function") {       // function (page)
 			this.goTo(act, args);
-		} else if (typeof(act) == "string") { //se e' una stringa
+		} else if (typeof(act) === "string") {  // javascript expr
 			eval(act);
+		} else { // errors
+			if (typeof act === "undefined") {
+				modal.bad(locale.get(errNoAction));
+			} else if (typeof act.toString !== "undefined") {
+				modal.bad(locale.getp(errInvalidAction, act.toString()));
+			} else {
+				modal.bad(locale.get(errInvalidAction, act));
+			}
 		}
 	}
-	
-	// Rimette il gioco nello stato descritto dalla stringa state
-	this.ripristinaStato = function(state)
-	{
-		state           = state.split("|");
-		var listKeys    = state[0];
-		var listValues  = state[1];
-		var curPair     = 0;  // current key/value pair
-		var len         = listValues.length;  // listValues len, used to loop through chars
-		for (curChar = 0; curChar < len; chrChar++) {
-			
-		}
-		// get & redraw current page
-		here = state[2];
-	}
-}
+};
+
 
 // Date alcune frasi (o comunque stringhe) ne restituisce una a caso
 
-function FraseCasuale()
-{
+function FraseCasuale() {
 	var num = SW.dice(arguments.length);
 	return arguments[num];
 }
 
 // Eventi casuali
 
-function Eventi()
-{
+function Eventi() {
 	var eTesto;
 	if (SW.dice(100) <= eventi.probabilita) {
 		eTesto = eventi.frasi[SW.dice(eventi.frasi.length)];
