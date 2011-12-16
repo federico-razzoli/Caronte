@@ -318,19 +318,22 @@ function init() {
 		}
 	}
 	
+	// framework configuration
+	queue.add("UTILE.link('js', 'data/conf/general')", [], "confSW");
+	
 	if (appName === null) {
 		// application configuration
-		queue.add('UTILE.link("js", "apps/gioco_conf")',  [], "conf");
-		queue.add('UTILE.link("js", "apps/gioco")',       ["plugins", "@conf"]);
+		queue.add('UTILE.link("js", "apps/gioco_conf")',  [], "confApp");
+		queue.add('UTILE.link("js", "apps/gioco")',       ["plugins", "@confApp"]);
 	} else {
 		// application configuration
-		queue.add("UTILE.link('js', 'apps/" + appName + "/conf')", [], "conf");
+		queue.add("UTILE.link('js', 'apps/" + appName + "/conf')", [], "confApp");
 		// application code
-		queue.add("UTILE.link('js', 'apps/" + appName + "/main')", ["plugins", "@conf"]);
+		queue.add("UTILE.link('js', 'apps/" + appName + "/main')", ["plugins", "@confApp"]);
 	}
 	window.appName = appName;
 	
-	queue.add("SW.prepare('" + appName + "')", ["Inizia"]);
+	queue.add("SW.prepare('" + appName + "')", ["Inizia", "@confSW"]);
 }
 
 // given filetype and filename, returns id
@@ -397,8 +400,20 @@ UTILE.opt = function (userOptions, defaultOptions) {
 		return list[item];
 	}
 	
+	// convert item to bool and return it;
+	// "0" is false
+	function toBool(item) {
+		item = list[item];
+		if (item === "0") {
+			return false;
+		}
+		return item ? true : false;
+	}
+	
+	// public methods
 	return {
-		get    : get
+		get     : get,
+		toBool  : toBool
 	};
 };
 

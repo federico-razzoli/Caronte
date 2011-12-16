@@ -30,19 +30,6 @@ var v     = {};
 
 var SW = new function() {
 	/*
-	 *    Default Options
-	 */
-	
-	this.defaultOptions = {
-		showInfo           : true,        // show info in menu
-		light              : false,       // light version
-		no_exec            : false,       // load Caronte but dont load Application
-		defaultTheme       : "classic",   // theme selected by default (id)
-		defaultDictionary  : "it",        // default dict for Applications
-		defaultLang        : "it"         // default UI lang
-	};
-	
-	/*
 	 *    Meta Info
 	 */
 	
@@ -421,12 +408,12 @@ var SW = new function() {
 		defaultOptions = undefined;
 		
 		// assign SW options
-		if (typeof this.defaultOptions === "undefined") {
-			this.defaultOptions = null;
+		if (typeof UTILE.SWdefaultOptions === "undefined") {
+			UTILE.SWdefaultOptions = null;
 		}
-		this.options = new UTILE.opt(UTILE.SWOptions, this.defaultOptions);
+		this.options = new UTILE.opt(UTILE.SWOptions, UTILE.SWdefaultOptions);
 		delete UTILE.SWOptions;
-		delete this.defaultOptions;
+		delete UTILE.SWDefaultOptions;
 		
 		// choose & load Application language
 		if (typeof options.get("lang") !== "undefined" && typeof appLocaleInfo === "undefined") {
@@ -562,7 +549,7 @@ var SW = new function() {
 		gui.draw();
 		
 		// add info section + draw() menu
-		if (this.options.get("showInfo") !== "0") {
+		if (this.options.toBool("showInfo")) {
 			this.infoMenu();
 		}
 		menu.draw();
