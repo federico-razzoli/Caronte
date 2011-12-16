@@ -3,7 +3,7 @@
 
 var extObjects = plugins.get("extObjects");
 
-var mostraOggetti         = function()  { extObjects.show.apply(extObjects, arguments); }
+var mostraOggetti         = function()  { extObjects.show.apply(extObjects, arguments); };
 
 delete extObjects;
 

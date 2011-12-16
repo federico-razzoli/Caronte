@@ -25,15 +25,13 @@ Copyright note for modal Object:
 
 "use strict";
 
-var TINY={};
+var TINY = {};
 
-TINY.box = function()
-{
+TINY.box = function() {
 	var j, m, b, g, v, p = 0;
 	return {
 		show:function(params){
-			v =
-			{
+			v = {
 				opacity:   70,
 				animate:   1,
 				fixed:     1,
@@ -177,8 +175,8 @@ TINY.box = function()
 
 var modal = function() {
 	// private members
-	var buttons  = [];
-	var msg      = "";
+	var buttons  = [],
+		msg      = "";
 	
 	// SW.options is ready?
 	// (always true for netscape)

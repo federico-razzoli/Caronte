@@ -18,7 +18,7 @@
 
 //"use strict";
 
-UTILE.funcExts["extSaveMe"] = function(){
+UTILE.funcExts["extSaveMe"] = function () {
 	function load() { 
 		var saveMe = menu.addSection("secSaveMe");
 		saveMe.addButton(null,  "bttSave",     "appSave()",     "Salva",       "Salva la situazione corrente");
@@ -115,14 +115,14 @@ UTILE.funcExts["extSaveMe"] = function(){
 		return listKeys + "|" + listValues + "|" + SW.pageName(SW.qui);
 	}
 	
-	var nomeCookie         = "app";
-	var durataCookie       = 365;
-	var situazioneSalvata  = null;   // null if empty
+	var nomeCookie         = "app",
+		durataCookie       = 365,
+		situazioneSalvata  = null;   // null if empty
 	
 	return {
 		load:load,
 		appSave:appSave,
 		appLoad:appLoad
-	}
+	};
 }();
 

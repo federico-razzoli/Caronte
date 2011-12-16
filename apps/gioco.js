@@ -5,14 +5,12 @@
 	with any license; there is no condition.
 */
 
-function Inizia()
-{
+function Inizia() {
 	vai(Introduzione);
 }
 
-function Introduzione()
-{
-  titolo("Benvenuto a Caronte!");
+function Introduzione() {
+  titolo("Benvenuto in Caronte!");
   testoNl(
 		"Questo file serve solo a testare che per default venga caricato gioco.js, e come scorciatoia per le seguenti Applicazioni:",
 		"",
