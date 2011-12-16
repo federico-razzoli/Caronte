@@ -1,9 +1,9 @@
 ﻿// Configurazione dell'Applicazione
 
+"use strict";
 
 // info sull'Applicazione (opzionale)
-var info =
-{
+var info = {
 	name        : "In fuga da Torturina",
 	title       : "In fuga da Torturina",
 	URL         : "",
@@ -20,8 +20,7 @@ var info =
 };
 
 // estensioni da usare
-var extensions =
-{
+var extensions = {
 	extSaveMe :                  // estensione per il salvataggio delle avventure
 	{ },                         // nessuna opzione
 	
@@ -33,8 +32,7 @@ var extensions =
 };
 
 // opzioni di default per l'avventura (opzionale)
-var defaultOptions =
-{
+var defaultOptions = {
 	level : "easy"
 };
 

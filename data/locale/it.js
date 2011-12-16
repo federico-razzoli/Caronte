@@ -30,6 +30,7 @@ locale.set("errNoAction",          "Azione non definita");
 locale.set("errInvalidAction",     "Azione non valida: %1");
 locale.set("errNoFunc",            "Funzione non definita: %1");
 locale.set("errInvalidFunc",       "%1 non è una funzione");
+locale.set("errNoOption",          "Opzione non definita: %1");
 
 // varie
 locale.set("SW.close",                "Chiudi");

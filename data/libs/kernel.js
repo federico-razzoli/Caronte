@@ -398,7 +398,7 @@ var SW = new function() {
 		}
 	}
 	
-	// (re)start the App. Call plugins.loadAll() + start
+	// (re)start the Application Call plugins.loadAll() + start
 	this.prepare = function() {
 		// assign Application options
 		if (typeof defaultOptions === "undefined") {
@@ -511,7 +511,7 @@ var SW = new function() {
 		}
 		
 		if (typeof extensions === "undefined") {
-			extensions = {};
+			window.extensions = {};
 		}
 		
 		// erase if exists
@@ -530,7 +530,7 @@ var SW = new function() {
 		// load extensions
 		plugins.loadAll();
 		
-		if (this.options.get("no_exec") !== true) {
+		if (this.options.toBool("noExec") !== true) {
 			queue.add("SW.start()", ["?typeof appLocaleInfo !== 'undefined' && typeof plugins !== 'undefined' && plugins.ready",  "dictOk", "localeInfo"]);
 		}
 	}

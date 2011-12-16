@@ -24,8 +24,8 @@
 
 "use strict";
 
-// this should contain all that is not callable by user and not in SW
-var UTILE = {};
+var UTILE  = {},       // this should contain all that is not callable by user and not in SW
+	APP    = {};      // Application meta info
 
 // error handler
 window.onerror = function (err, url, line) {
@@ -403,15 +403,29 @@ UTILE.opt = function (userOptions, defaultOptions) {
 	// convert item to bool and return it;
 	// "0" is false
 	function toBool(item) {
-		item = list[item];
+		item = get(item);
 		if (item === "0") {
 			return false;
 		}
 		return item ? true : false;
 	}
 	
-	// public methods
+	// if a passed param is not defined key in item, show error
+	function check(mandatoryOptions) {
+		var a,
+			len = mandatoryOptions.length,
+			key;
+		for (a = 0; i < len; a++) {
+			key = mandatoryOptions[a];
+			if (typeof item[key] === "undefined") {
+				locale.getp("errNoOption", key);
+			}
+		}
+	}
+	
+	// expose public methods
 	return {
+		check   : check,
 		get     : get,
 		toBool  : toBool
 	};

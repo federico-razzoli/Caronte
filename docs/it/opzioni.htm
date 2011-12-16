@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>Panoramica - Caronte</title>
+  </head>
+  <body>
+    <h1>Documentazione di Caronte</h1>
+    <h2>Le opzioni<br>
+    </h2>
+    <h2> </h2>
+    <ul>
+    </ul>
+    <a href="index.htm">Torna all'Indice</a><br>
+    <br>
+    <h2>Chiamare una Applicazione</h2>
+    Per chiamare un'applicazione, &egrave; sufficiente chiamare l'URL di
+    Caronte aggiungendo il nome dell'Applicazione desiderata nella <span
+      style="font-style: italic;">Query String</span>. Molto
+    semplicemente, se vogliamo chiamare l'Applicazione castello.js l'URL
+    sar&agrave; il seguente:<br>
+    <pre>index.htm?castello</pre>
+    Si noti che non occorre (e non si deve) specificare il percorso
+    completo, n&egrave; l'estensione js. Si consiglia di usare solo
+    lettere minuscole nel nome del file di Applicazione e di usare solo
+    lettere minuscole nell'URL.<br>
+    <h2>Opzioni di Applicazione<br>
+    </h2>
+    Per passare delle opzioni a una Applicazione, la sintassi &egrave;
+    la seguente:<br>
+    <pre>index.htm?nome_applicazione/lista_opzioni</pre>
+    lista_opzioni si specifica in questo modo:<br>
+    <pre>opzione1=valore1&amp;opzione2=valore2...</pre>
+    Generalmente ad ogni opzione corrisponde un valore: si parla quindi
+    di opzioni <span style="font-style: italic;">contenitore</span>. A
+    volte per&ograve; le opzioni sono di tipo <span style="font-style:
+      italic;">flag</span>, il che significa che &egrave; sufficiente
+    nominarle perch&eacute; esse sortiscano un effetto.<br>
+    <br>
+    Nei nomi delle opzioni, la distinzione tra lettere minuscole e
+    lettere maiuscole &egrave; importante. Se esiste un'opzione livello,
+    non sar&agrave; possibile scrivere nell'URL LIVELLO o Livello.<br>
+    <br>
+    Ogni Applicazione, se necessario, ha delle opzioni proprie. Per
+    conoscerle si consulti la documentazione dell'Applicazione. Ad ogni
+    modo ecco due esempi di fantasia:<br>
+    <pre>index.htm?castello/livello=facile<br>index.htm?doom/invulnerabile&amp;numero_nemici=50</pre>
+    <p>Si consulti il capitolo sul file di configurazione delle
+      Applicazioni per sapere come specificare dei valori predefiniti
+      per le opzioni.<br>
+    </p>
+    <h2>Opzioni di Caronte</h2>
+    Anche il framework Caronte ha delle opzioni, che influenzano i suoi
+    comportamenti. Esse si distinguono dalle opzioni di Applicazione
+    perch&egrave; il primo carattere &egrave; sempre un underscore (_).
+    Se gli autori delle Applicazione eviteranno di creare opzioni che
+    iniziano con l'underscore, non vi saranno conflitti fra i nomi delle
+    opzioni.<br>
+    <br>
+    Le opzioni di Caronte sono i seguenti:<br>
+    <br>
+    <span style="font-weight: bold;">_defaultDictionary</span><br>
+    Il Dizionario utilizzato dall'Applicazione, nel caso che questa non
+    lo specifichi o in cui il file di configurazione dell'Applicazione
+    sia del tutto assente. Il valore di default &egrave; "it".<br>
+    Comunque, gli autori delle Applicazioni dovrebbero sempre
+    specificare il Dizionario desiderato.<br>
+    <br>
+    <span style="font-weight: bold;">_defaultLang</span><br>
+    La lingua da utilizzare nell'interfaccia di Caronte, nel caso in cui
+    l'Applicazione non lo specifichi o in cui il file di configurazione
+    dell'Applicazione sia del tutto assente. Il valore di default
+    &egrave; "it".<br>
+    Gli autori delle Applicazioni dovrebbero sempre specificare la
+    lingua desiderata.<br>
+    <br>
+    <span style="font-weight: bold;">_defaultTheme</span><br>
+    Il Tema che verr&agrave; selezionato nel caso in cui l'Applicazione
+    non lo specifichi. Il valore di default &egrave; "classic".<br>
+    <br>
+    <span style="font-weight: bold;">_light</span><br>
+    Specificare questo Flag se si desidera che Caronte sia eseguito in
+    una versione un po' pi&ugrave; leggera, per venire incontro ai
+    browser pi&ugrave; vecchi e ai computer pi&ugrave; lenti. Il
+    comportamento di Caronte cambier&agrave; di poco, ma pu&ograve;
+    comunque essere d'aiuto; inoltre le Applicazioni potrebbero tenere
+    conto di questa opzione - sebbene sia un'opzione di Caronte.<br>
+    <br>
+    <span style="font-weight: bold;">_noExec</span><br>
+    Carica in memoria Caronte ma non lo esegue, e non carica alcuna
+    Applicazione. I programmatori JavaScript potrebbero utilizzare
+    questa opzione in situazioni particolari, gli altri non se ne
+    preoccupino. La regola generale &egrave;: se non capisci a cosa
+    serve, non ti serve a nulla.<br>
+    <br>
+    <span style="font-weight: bold;">_showInfo</span><br>
+    Impostare a 1 se si desidera che nel menu vengano visualizzati i
+    Bottoni per ottenere informazioni su Caronte, sui Plugin e
+    sull'Applicazione. Si sconsiglia di utilizzare valori diversi da 0 e
+    1: attualmente hanno lo stesso effetto di 1, ma in futuro questo
+    comportamento potrebbe cambiare.<br>
+    <br>
+  </body>
+</html>
