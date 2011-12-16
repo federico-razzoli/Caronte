@@ -1,6 +1,8 @@
 // Caronte configuration file
 
-UTILE.SWdefaultOptions = {
+"use strict";
+
+UTILE.SWDefaultOptions = {
 	showInfo           : true,        // show info in menu
 	light              : false,       // light version
 	no_exec            : false,       // load Caronte but dont load Application

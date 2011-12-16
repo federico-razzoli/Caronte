@@ -408,10 +408,10 @@ var SW = new function() {
 		defaultOptions = undefined;
 		
 		// assign SW options
-		if (typeof UTILE.SWdefaultOptions === "undefined") {
-			UTILE.SWdefaultOptions = null;
+		if (typeof UTILE.SWDefaultOptions === "undefined") {
+			UTILE.SWDefaultOptions = null;
 		}
-		this.options = new UTILE.opt(UTILE.SWOptions, UTILE.SWdefaultOptions);
+		this.options = new UTILE.opt(UTILE.SWOptions, UTILE.SWDefaultOptions);
 		delete UTILE.SWOptions;
 		delete UTILE.SWDefaultOptions;
 		
