@@ -400,12 +400,13 @@ var SW = new function() {
 	
 	// (re)start the Application Call plugins.loadAll() + start
 	this.prepare = function() {
+		var curTheme;
+		
 		// assign Application options
 		if (typeof defaultOptions === "undefined") {
 			window.defaultOptions = null;
 		}
 		options = new UTILE.opt(options, defaultOptions);
-		defaultOptions = undefined;
 		
 		// assign SW options
 		if (typeof UTILE.SWDefaultOptions === "undefined") {
@@ -413,7 +414,21 @@ var SW = new function() {
 		}
 		this.options = new UTILE.opt(UTILE.SWOptions, UTILE.SWDefaultOptions);
 		delete UTILE.SWOptions;
-		delete UTILE.SWDefaultOptions;
+		
+		// register themes
+		for (var key in UTILE.allThemes) {
+			if (typeof key === "string") {
+				curTheme = UTILE.allThemes[key];
+				if (key === this.options.get("defaultTheme")) {
+					curTheme.isDefault = true;
+				}
+				UTILE.themes.add(key, curTheme);
+			}
+		}
+		
+		// apply selected theme
+		var theme = options.get("theme") || this.options.get("defaultTheme");
+		UTILE.themes.select(theme);
 		
 		// choose & load Application language
 		if (typeof options.get("lang") !== "undefined" && typeof appLocaleInfo === "undefined") {
@@ -516,13 +531,6 @@ var SW = new function() {
 		
 		// erase if exists
 		menu.erase();
-		/*
-		var sound = menu.addSection("secXXX");
-		sound.addSelect(null, "selTest",  [{label : "elem 1", value: "uno"}, {label : "elem 2", value: "due"}],  "modal.info",  "Prova:");
-		*/
-		var sound = menu.addSection("secSound");
-		sound.addButton(null,  "bttMusic",  "playstop()",  "Musica:&nbsp;&nbsp;S&igrave;",  "Attiva/Disattiva la musica");
-		sound.addButton(null,  "bttFx",     "fx()",        "Suoni:&nbsp;&nbsp;S&igrave;",   "Attiva/Disattiva i suoni");
 		
 		gui.erase();
 		boxMain = gui.createArea("boxMain", "box");
@@ -535,34 +543,43 @@ var SW = new function() {
 		}
 	}
 	
+	// this is called then Caronte's locale & plugins are loaded
 	this.start = function() {
-		var theme;
-		
-		// get & apply selected theme
-		if (options.get("theme") === "string") {
-			theme = options.get("theme");
-		} else {
-			theme = this.options.get("defaultTheme");
-		}
-		UTILE.themes.select(theme);
+		var secThemes,
+			themes;
 		
 		gui.draw();
+		
+		// add themes Control
+		if (!this.options.toBool("noThemes")) {
+			secThemes  = menu.addSection("secThemes");
+			themes     = UTILE.themes.getAll();
+			/*
+			for (var t in themes) {
+				var al = (t + "\n");
+				for (var p in themes[t]) {
+					al += (p + ": " + themes[t][p]) + "\n";
+				}
+				alert(al);
+			}
+			*/
+			secThemes.addSelect(null, "selTheme", themes, "UTILE.themes.select", locale.get("mnuThemes"));
+		}
 		
 		// add info section + draw() menu
 		if (this.options.toBool("showInfo")) {
 			this.infoMenu();
 		}
+		
 		menu.draw();
 		
 		here  = null;  // no page open
-		v     = {};       // re-alloc to remove garbage
+		v     = {};    // re-alloc to remove garbage
 		
-		if (typeof info !== "undefined") {
-			if (typeof info.title === "string") {
-				parent.document.title = locale.get(info.title);
-			} else if (typeof info.name === "string") {
-				parent.document.title = locale.get(info.name);
-			}
+		if (typeof info !== "undefined" && typeof info.title === "string") {
+			parent.document.title = locale.get(info.title);
+		} else {
+			parent.document.title = locale.get(this.options.get("winTitle"));
 		}
 		
 		UTILE.events.exec("ApplicationBegin");

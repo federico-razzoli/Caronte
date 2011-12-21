@@ -194,6 +194,7 @@ UTILE.defineEvents = function () {
 //    supported    : object    : list of supported themes
 UTILE.themes = function (supported) {
 	var list      = {},
+		cursor,				// Iterator
 		selected;
 	
 	// empty list of themes
@@ -202,10 +203,8 @@ UTILE.themes = function (supported) {
 	}
 	
 	// add a theme object to the list
-	function add(id, name) {
-		// in the future maybe more options will be avaible
-		list[id]       = {};
-		list[id].name  = name;
+	function add(id, obj) {
+		list[id] = obj;
 	}
 	
 	// create/replace <style> tag
@@ -213,30 +212,36 @@ UTILE.themes = function (supported) {
 		// delete old links
 		var links     = document.getElementsByTagName("link"),
 			numLinks  = links.length,
-			i,
+			files     = [],
+			f,  // files / links loop index
 			tag;
-		for (i = 0; i < numLinks; i++) {
-			UTILE.removeFromDOM(links[i]);
+		for (f = 0; f < numLinks; f++) {
+			UTILE.removeFromDOM(links[f]);
 		}
 		
 		// remember new
 		selected = id;
 		
-		// link new
-		if (navigator.appName === 'Microsoft Internet Explorer') { // IE
-			// define tag
-			tag = document.createElement("link");
-			tag.setAttribute("rel",    "stylesheet");
-			tag.setAttribute("type",   "text/css");
-			tag.setAttribute("id",     "theme");
-			tag.setAttribute("href",   "data/themes/" + id + "/main.css");
-			// insert into DOM
-			document.getElementById("headTag").appendChild(tag);
-		} else { // decent browsers
-			tag   = '<link rel="stylesheet" type="text/css" id="theme" href="data/themes/';
-			tag   += id;
-			tag   += '/main.css"></link>';
-			document.getElementById("headTag").innerHTML += tag;
+		// link new theme
+		files[0] = id;
+		
+		for (f in files) {
+			id = files[f]; // id = filename
+			if (navigator.appName === 'Microsoft Internet Explorer') { // IE has idiotic bugs
+				// define tag
+				tag = document.createElement("link");
+				tag.setAttribute("rel",    "stylesheet");
+				tag.setAttribute("type",   "text/css");
+				tag.setAttribute("id",     "theme");
+				tag.setAttribute("href",   "data/themes/" + id + "/main.css");
+				// insert into DOM
+				document.getElementById("headTag").appendChild(tag);
+			} else { // decent browsers
+				tag    = '<link rel="stylesheet" type="text/css" id="theme" href="data/themes/';
+				tag   += id;
+				tag   += '/main.css"></link>';
+				document.getElementById("headTag").innerHTML += tag;
+			}
 		}
 	}
 	
@@ -245,12 +250,19 @@ UTILE.themes = function (supported) {
 		return list[selected];
 	}
 	
+	// return whole list
+	function getAll() {
+		return list;
+	}
+	
+	
 	// expose public methods
 	return {
 		empty        : empty,
 		add          : add,
 		select       : select,
-		getSelected  : getSelected
+		getSelected  : getSelected,
+		getAll       : getAll
 	};
 }();
 

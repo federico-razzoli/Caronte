@@ -68,6 +68,7 @@ UTILE.menuHandler = function(idMenu) {
 			i;
 		DOMMenu.setAttribute("id", this.id);
 		document.body.insertBefore(DOMMenu, document.body.firstChild);
+		//document.body.appendChild(DOMMenu, document.body.firstChild);
 		
 		// draw all sections
 		for (i = 0; i < this.sections.length; i++) {
@@ -214,24 +215,32 @@ UTILE.ctrlSelect = function(id, items, globalEvent, text, CSSClass) {
 		var out,
 			pClass,
 			pEvent,
-			i,
-			option;
+			key,             // item's id
+			option,
+			optValue,
+			optTitle,
+			optIsDefault;
 		// start <select>
 		out = "";
 		if (text) {
 			out = '<label class="ctrlLabel">' + text + "<br>\n";
 		}
-		pClass  = CSSClass     ? ' class="' + CSSClass + '"' : "";
+		pClass  = CSSClass ? ' class="' + CSSClass + '"' : "";
 		pEvent  = ' onchange="' + globalEvent + '(this.options[this.selectedIndex].value)"';
-		out += '<select id="' + id + '"' + pClass + pEvent + '>\n';
+		out    += '<select id="' + id + '"' + pClass + pEvent + '>\n';
 		
 		// <option>'s
-		for (i in items) {
-			option = items[i], optValue, optTitle, optIsDefault;
-			if (option.value)      optValue      = ' value="' + option.value + '"';
-			if (option.tooltip)    optTitle      = ' title="' + option.tooltip + '"';
-			if (option.isDefault)  optIsDefault  = ' checked';
-			out += '<option' + optValue + optTitle + optIsDefault + '>' + 
+		for (key in items) {
+			option = items[key];
+			
+			optValue  = ' value="' + key + '"';
+			if (option.isDefault) {
+				optIsDefault  = ' selected="selected"';
+			} else {
+				optIsDefault  = "";
+			}
+			
+			out += '<option' + optValue + optIsDefault + '>' + 
 			       option.label + '</option>\n';
 		}
 		

@@ -36,7 +36,7 @@ div
 	float: left;
 	width: 15%;
 	padding: 0 1% 0 1%;
-	background-color: #cccc88;
+	background-color: rgb(80, 200, 80);
 	height:100%;
 	overflow: auto;
 	clear:right;
@@ -52,7 +52,7 @@ div
 	width: 81%;
 	overflow: auto;
 	clear:right;
-	background-color: white;
+	background-color: black;
 }
 
 /* auxiliary boxes */
@@ -130,7 +130,7 @@ A
 }
 A:link, A:visited
 {
-	color: blue;
+	color: rgb(80, 200, 80);
 }
 A:hover, A:active
 {
@@ -154,7 +154,7 @@ LI {
 	font-family: "Times Roman", freeSerif, BitstreamVera;
 	font-size: 32px;
 	line-height:100%;
-	color: green;
+	color: white;
 	padding-top:0;
 	margin-top:0;
 	margin-bottom:10px;
@@ -166,7 +166,7 @@ H2
 	font-family : "Bitstream Vera Sans", "DejaVu Sans", Tahoma, Sans-serif;
 	font-size: 18px;
 	font-weight: bold;
-	color: #444444;
+	color: white;
 	margin-top:0;
 	margin-bottom:0;
 }
@@ -175,7 +175,7 @@ P
 {
 	font-family: "Times Roman", freeSerif, BitstreamVera;
 	font-size: 15px;
-	color: black;
+	color: white;
 }
 
 

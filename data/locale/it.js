@@ -24,6 +24,9 @@ locale.set("notes",                "Note");
 locale.set("noInfo",               "Nessuna informazione disponibile su questo modulo");
 locale.set("infoAppLocaleShow",    "Informazioni sulla localizzazione");
 
+// altri menu
+locale.set("mnuThemes",            "Tema:");
+
 // errori
 locale.set("pluginUndefined",      "Il plugin %1 non esiste o non è attualmente caricato");
 locale.set("errNoAction",          "Azione non definita");
