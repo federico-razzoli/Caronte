@@ -1,4 +1,4 @@
-/*
+﻿/*
     This file is part of Caronte.
 	
     Caronte is free software; you can redistribute it and/or modify

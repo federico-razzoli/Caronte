@@ -1,4 +1,4 @@
-// ITALIANO
+﻿// ITALIANO
 // File di localizzazione per un'applicazione Caronte
 
 

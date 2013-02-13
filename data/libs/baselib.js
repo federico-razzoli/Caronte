@@ -1,4 +1,4 @@
-/*
+﻿/*
     This file is part of Caronte.
 	
     Caronte is free software; you can redistribute it and/or modify
@@ -193,9 +193,7 @@ UTILE.defineEvents = function () {
 // all themes avaible for the current app
 //    supported    : object    : list of supported themes
 UTILE.themes = function (supported) {
-	var list      = {},
-		cursor,				// Iterator
-		selected;
+	var list      = {};
 	
 	// empty list of themes
 	function empty() {
@@ -218,9 +216,6 @@ UTILE.themes = function (supported) {
 		for (f = 0; f < numLinks; f++) {
 			UTILE.removeFromDOM(links[f]);
 		}
-		
-		// remember new
-		selected = id;
 		
 		// link new theme
 		files[0] = id;
@@ -245,11 +240,6 @@ UTILE.themes = function (supported) {
 		}
 	}
 	
-	// return selected theme's id
-	function getSelected() {
-		return list[selected];
-	}
-	
 	// return whole list
 	function getAll() {
 		return list;
@@ -261,7 +251,6 @@ UTILE.themes = function (supported) {
 		empty        : empty,
 		add          : add,
 		select       : select,
-		getSelected  : getSelected,
 		getAll       : getAll
 	};
 }();

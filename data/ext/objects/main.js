@@ -1,4 +1,4 @@
-// Estensioni oggetti e inventario per Caronte e IDRA
+﻿// Estensioni oggetti e inventario per Caronte e IDRA
 // (C) 2000 Enrico Colombini
 // (C) 2011 Federico Razzoli
 // Free software sotto la licenza GNU GPL 2
